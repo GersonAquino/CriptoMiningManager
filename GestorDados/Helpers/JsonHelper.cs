@@ -4,13 +4,15 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace CryptoMiningManager.Helpers
+namespace GestorDados.Helpers
 {
     public class JsonHelper
     {
+        public static JsonSerializerOptions _options = new JsonSerializerOptions() { PropertyNameCaseInsensitive = true, };
+
         public T Deserialize<T>(string json) where T : class
         {
-            return JsonSerializer.Deserialize<T>(json);
+            return JsonSerializer.Deserialize<T>(json, _options);
         }
         public T Deserialize<T>(Stream stream) where T : class
         {
@@ -19,7 +21,7 @@ namespace CryptoMiningManager.Helpers
 
             using (StreamReader reader = new StreamReader(stream))
             {
-                return JsonSerializer.Deserialize<T>(reader.ReadToEnd());
+                return JsonSerializer.Deserialize<T>(reader.ReadToEnd(), _options);
             }
         }
 
@@ -45,19 +47,19 @@ namespace CryptoMiningManager.Helpers
             try
             {
                 stream.Position = 0;
-                return await JsonSerializer.DeserializeAsync<List<T>>(stream);
+                return await JsonSerializer.DeserializeAsync<List<T>>(stream, _options);
             }
             catch (JsonException)
             {
                 stream.Position = 0;
-                return new List<T>() { await JsonSerializer.DeserializeAsync<T>(stream) };
+                return new List<T>() { await JsonSerializer.DeserializeAsync<T>(stream, _options) };
             }
         }
 
         public async Task<T> DeserializeSingleAsync<T>(Stream stream) where T : class
         {
             stream.Position = 0;
-            return await JsonSerializer.DeserializeAsync<T>(stream);
+            return await JsonSerializer.DeserializeAsync<T>(stream, _options);
         }
 
         /// <summary>

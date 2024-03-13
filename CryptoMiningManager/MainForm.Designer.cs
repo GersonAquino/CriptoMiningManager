@@ -16,6 +16,7 @@
             if (disposing && (components != null))
             {
                 components.Dispose();
+                RentabilidadeThread.Abort();
             }
             base.Dispose(disposing);
         }
