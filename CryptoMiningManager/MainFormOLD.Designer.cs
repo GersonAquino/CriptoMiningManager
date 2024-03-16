@@ -1,6 +1,6 @@
 ﻿namespace CryptoMiningManager
 {
-    partial class MainForm
+    partial class MainFormOLD
     {
         /// <summary>
         /// Required designer variable.
@@ -29,7 +29,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainFormOLD));
             this.ribbonControl1 = new DevExpress.XtraBars.Ribbon.RibbonControl();
             this.MainFormRP = new DevExpress.XtraBars.Ribbon.RibbonPage();
             this.OperacoesRPG = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();

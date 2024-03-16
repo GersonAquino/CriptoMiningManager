@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using CryptoMiningManager.Views;
+using System;
 using System.Windows.Forms;
 
 namespace CryptoMiningManager
@@ -16,6 +14,11 @@ namespace CryptoMiningManager
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+
+            //SerilogHelper.StartLogger(ConfigurationManager.ConnectionStrings["CriptoManager"].ConnectionString);
+
+            //SerilogHelper.EscreveLog(GestorDados.Enums.SerilogLevel.Information, "TESTE");
+
             Application.Run(new MainForm());
         }
     }

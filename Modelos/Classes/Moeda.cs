@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text.Json.Serialization;
 
-namespace Modelos.Cripto
+namespace Modelos.Classes
 {
     public class Moedas
     {
