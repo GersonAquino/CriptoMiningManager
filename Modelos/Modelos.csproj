@@ -42,6 +42,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\Configuracao.cs" />
+    <Compile Include="Classes\Comando.cs" />
+    <Compile Include="Classes\Minerador.cs" />
     <Compile Include="Classes\Moeda.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

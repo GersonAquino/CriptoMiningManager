@@ -1,6 +1,5 @@
 ﻿using GestorDados.JsonConverters;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Text.Json.Serialization;
 
@@ -8,7 +7,7 @@ namespace Modelos.Classes
 {
     public class Moedas
     {
-        public ListaMoedas coins { get; set; }
+        private ListaMoedas coins { get; set; }
 
         /// <summary>
         /// Pega em todas as propriedades do tipo <see cref="Moeda"/> em <see cref="coins"/> e passa-as para um <see cref="IEnumerable{T}"/> de <see cref="Moeda"/>
@@ -22,14 +21,18 @@ namespace Modelos.Classes
             foreach (PropertyInfo propriedade in propriedades)
             {
                 if (propriedade.GetValue(coins) is Moeda moeda)
+                {
+                    //"Nicehash".Equals(moeda.Tag, StringComparison.OrdinalIgnoreCase) ? $"Nicehash-{moeda.Algorithm}" : moeda.Nome = moeda.Tag;
+                    moeda.Nome = propriedade.Name;
                     moedas.Add(moeda);
+                }
             }
 
             return moedas;
         }
     }
 
-    public class ListaMoedas
+    internal class ListaMoedas
     {
         public Moeda Conflux { get; set; }
 
@@ -140,45 +143,53 @@ namespace Modelos.Classes
     public class Moeda
     {
         [JsonConverter(typeof(IntConverter))]
-        public int id { get; set; }
-        public string tag { get; set; }
-        public string algorithm { get; set; }
+        public int Id { get; set; }
+        public string Tag { get; set; }
+        public string Algorithm { get; set; }
         //public object block_time { get; set; } //Às vezes é string, outras é um int
         //public decimal block_reward { get; set; }
         //public decimal block_reward24 { get; set; }
         //public int last_block { get; set; }
         //public decimal difficulty { get; set; }
         //public decimal difficulty24 { get; set; }
-        public long nethash { get; set; }
+        public long Nethash { get; set; }
 
         [JsonConverter(typeof(DecimalConverter))]
-        public decimal exchange_rate { get; set; }
+        public decimal Exchange_rate { get; set; }
 
         [JsonConverter(typeof(DecimalConverter))]
-        public decimal exchange_rate24 { get; set; }
+        public decimal Exchange_rate24 { get; set; }
 
         [JsonConverter(typeof(DecimalConverter))]
-        public decimal exchange_rate_vol { get; set; }
-        public string exchange_rate_curr { get; set; }
-        public string market_cap { get; set; }
-        public string estimated_rewards { get; set; }
-        public string estimated_rewards24 { get; set; }
+        public decimal Exchange_rate_vol { get; set; }
+        public string Exchange_rate_curr { get; set; }
+        public string Market_cap { get; set; }
 
         [JsonConverter(typeof(DecimalConverter))]
-        public decimal btc_revenue { get; set; }
+        public decimal Estimated_rewards { get; set; }
 
         [JsonConverter(typeof(DecimalConverter))]
-        public decimal btc_revenue24 { get; set; }
+        public decimal Estimated_rewards24 { get; set; }
+
+        [JsonConverter(typeof(DecimalConverter))]
+        public decimal Btc_revenue { get; set; }
+
+        [JsonConverter(typeof(DecimalConverter))]
+        public decimal Btc_revenue24 { get; set; }
 
         [JsonConverter(typeof(IntConverter))]
-        public int profitability { get; set; }
+        public int Profitability { get; set; }
 
         [JsonConverter(typeof(IntConverter))]
-        public int profitability24 { get; set; }
-        public bool lagging { get; set; }
+        public int Profitability24 { get; set; }
+        public bool Lagging { get; set; }
 
         [JsonConverter(typeof(IntConverter))]
-        public int timestamp { get; set; }
+        public int Timestamp { get; set; }
+
+        //Propriedades extra
+        public int? IdMinerador { get; set; }
+        public string Nome { get; set; }
 
         public Moeda() { }
     }

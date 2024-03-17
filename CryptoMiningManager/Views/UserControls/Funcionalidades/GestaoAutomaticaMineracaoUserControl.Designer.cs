@@ -1,4 +1,4 @@
-﻿namespace CryptoMiningManager.Views.UserControls
+﻿namespace CryptoMiningManager.Views.UserControls.Funcionalidades
 {
     partial class GestaoAutomaticaMineracaoUserControl
     {

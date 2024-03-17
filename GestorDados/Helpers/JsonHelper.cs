@@ -8,7 +8,7 @@ namespace GestorDados.Helpers
 {
     public class JsonHelper
     {
-        public static JsonSerializerOptions _options = new JsonSerializerOptions() { PropertyNameCaseInsensitive = true, };
+        public static JsonSerializerOptions _options = new JsonSerializerOptions() { PropertyNameCaseInsensitive = true };
 
         public T Deserialize<T>(string json) where T : class
         {

@@ -40,7 +40,7 @@
             this.GeralRPG = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
             this.TemaRPG = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
             this.ribbonStatusBar = new DevExpress.XtraBars.Ribbon.RibbonStatusBar();
-            this.documentManager = new DevExpress.XtraBars.Docking2010.DocumentManager(this.components);
+            this.DocumentManager = new DevExpress.XtraBars.Docking2010.DocumentManager(this.components);
             this.TabbedView = new DevExpress.XtraBars.Docking2010.Views.Tabbed.TabbedView(this.components);
             this.dockManager = new DevExpress.XtraBars.Docking.DockManager(this.components);
             this.FuncionalidadesDockPanel = new DevExpress.XtraBars.Docking.DockPanel();
@@ -53,7 +53,7 @@
             this.ComandosACE = new DevExpress.XtraBars.Navigation.AccordionControlElement();
             ((System.ComponentModel.ISupportInitialize)(this.MainRibbon)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.repositoryItemTextEditVersao)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.documentManager)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.DocumentManager)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.TabbedView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dockManager)).BeginInit();
             this.FuncionalidadesDockPanel.SuspendLayout();
@@ -143,15 +143,15 @@
             this.ribbonStatusBar.Ribbon = this.MainRibbon;
             this.ribbonStatusBar.Size = new System.Drawing.Size(1359, 31);
             // 
-            // documentManager
+            // DocumentManager
             // 
-            this.documentManager.ContainerControl = this;
-            this.documentManager.MenuManager = this.MainRibbon;
-            this.documentManager.RibbonAndBarsMergeStyle = DevExpress.XtraBars.Docking2010.Views.RibbonAndBarsMergeStyle.Always;
-            this.documentManager.View = this.TabbedView;
-            this.documentManager.ViewCollection.AddRange(new DevExpress.XtraBars.Docking2010.Views.BaseView[] {
+            this.DocumentManager.ContainerControl = this;
+            this.DocumentManager.MenuManager = this.MainRibbon;
+            this.DocumentManager.RibbonAndBarsMergeStyle = DevExpress.XtraBars.Docking2010.Views.RibbonAndBarsMergeStyle.Always;
+            this.DocumentManager.View = this.TabbedView;
+            this.DocumentManager.ViewCollection.AddRange(new DevExpress.XtraBars.Docking2010.Views.BaseView[] {
             this.TabbedView});
-            this.documentManager.DocumentActivate += new DevExpress.XtraBars.Docking2010.Views.DocumentEventHandler(this.documentManager_DocumentActivate);
+            this.DocumentManager.DocumentActivate += new DevExpress.XtraBars.Docking2010.Views.DocumentEventHandler(this.DocumentManager_DocumentActivate);
             // 
             // TabbedView
             // 
@@ -241,6 +241,7 @@
             this.MineradoresACE.Name = "MineradoresACE";
             this.MineradoresACE.Style = DevExpress.XtraBars.Navigation.ElementStyle.Item;
             this.MineradoresACE.Text = "Mineradores";
+            this.MineradoresACE.Click += new System.EventHandler(this.MineradoresACE_Click);
             // 
             // ComandosACE
             // 
@@ -265,7 +266,7 @@
             this.Load += new System.EventHandler(this.MainForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.MainRibbon)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.repositoryItemTextEditVersao)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.documentManager)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.DocumentManager)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.TabbedView)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dockManager)).EndInit();
             this.FuncionalidadesDockPanel.ResumeLayout(false);
@@ -282,7 +283,7 @@
         private DevExpress.XtraBars.Ribbon.RibbonPage GeralRibbonPage;
         private DevExpress.XtraBars.Ribbon.RibbonPageGroup GeralRPG;
         private DevExpress.XtraBars.Ribbon.RibbonStatusBar ribbonStatusBar;
-        private DevExpress.XtraBars.Docking2010.DocumentManager documentManager;
+        private DevExpress.XtraBars.Docking2010.DocumentManager DocumentManager;
         private DevExpress.XtraBars.Docking.ControlContainer dockPanel1_Container;
         private DevExpress.XtraBars.Docking.DockManager dockManager;
         private DevExpress.XtraBars.Navigation.AccordionControl FuncionalidadesAccordionControl;

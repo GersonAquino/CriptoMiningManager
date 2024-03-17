@@ -1,11 +1,15 @@
 ﻿using CryptoMiningManager.Views;
+using GestorDados;
 using System;
+using System.Configuration;
 using System.Windows.Forms;
 
 namespace CryptoMiningManager
 {
     internal static class Program
     {
+        internal static Dados Dados;
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -15,11 +19,15 @@ namespace CryptoMiningManager
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            //SerilogHelper.StartLogger(ConfigurationManager.ConnectionStrings["CriptoManager"].ConnectionString);
+            using (Dados = new Dados(ConfigurationManager.ConnectionStrings["CriptoManager"].ConnectionString, true))
+            {
 
-            //SerilogHelper.EscreveLog(GestorDados.Enums.SerilogLevel.Information, "TESTE");
+                //SerilogHelper.StartLogger(ConfigurationManager.ConnectionStrings["CriptoManager"].ConnectionString);
 
-            Application.Run(new MainForm());
+                //SerilogHelper.EscreveLog(GestorDados.Enums.SerilogLevel.Information, "TESTE");
+
+                Application.Run(new MainForm());
+            }
         }
     }
 }

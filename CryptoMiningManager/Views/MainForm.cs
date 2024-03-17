@@ -1,15 +1,10 @@
-﻿using CryptoMiningManager.Views.UserControls;
+﻿using CryptoMiningManager.Views.UserControls.Configuracoes;
+using CryptoMiningManager.Views.UserControls.Funcionalidades;
 using DevExpress.XtraBars.Docking2010.Views;
 using DevExpress.XtraBars.Navigation;
 using DevExpress.XtraEditors;
 using DevExpress.XtraSplashScreen;
-using GestorDados.Enums;
-using GestorDados.Helpers;
-using Modelos.Classes;
 using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace CryptoMiningManager.Views
@@ -68,15 +63,18 @@ namespace CryptoMiningManager.Views
         }
 
         #region Eventos Click que criam um tab com um UserControl
-
         private void GestaoAutomaticaMineracaoACE_Click(object sender, EventArgs e)
         {
             CallUserControlTab(sender, new GestaoAutomaticaMineracaoUserControl());
         }
 
+        private void MineradoresACE_Click(object sender, EventArgs e)
+        {
+            CallUserControlTab(sender, new MineradoresUserControl());
+        }
         #endregion
 
-        private void documentManager_DocumentActivate(object sender, DevExpress.XtraBars.Docking2010.Views.DocumentEventArgs e)
+        private void DocumentManager_DocumentActivate(object sender, DocumentEventArgs e)
         {
             if (this.Ribbon.MergedPages.Count > 0)
             {

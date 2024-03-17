@@ -9,6 +9,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Modelos", "Modelos\Modelos.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GestorDados", "GestorDados\GestorDados.csproj", "{CD9F410D-90C7-4CD6-8EF8-6BF37382F091}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ScriptsSQL", "ScriptsSQL", "{08B8FCB6-4C88-413C-89C9-56836BDA5CD1}"
+	ProjectSection(SolutionItems) = preProject
+		ScriptsSQL\CriarBD.sql = ScriptsSQL\CriarBD.sql
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

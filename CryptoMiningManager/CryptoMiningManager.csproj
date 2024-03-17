@@ -41,7 +41,9 @@
     <Reference Include="DevExpress.Utils.v23.2, Version=23.2.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="DevExpress.XtraBars.v23.2, Version=23.2.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="DevExpress.XtraEditors.v23.2, Version=23.2.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.XtraGrid.v23.2, Version=23.2.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="DevExpress.XtraLayout.v23.2, Version=23.2.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.XtraPrinting.v23.2, Version=23.2.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -57,31 +59,30 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DadosHelpers\MineradorHelper.cs" />
+    <Compile Include="DadosHelpers\QueryHelper.cs" />
     <Compile Include="Views\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Views\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="MainFormOLD.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="MainFormOLD.Designer.cs">
-      <DependentUpon>MainFormOLD.cs</DependentUpon>
-    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Views\UserControls\GestaoAutomaticaMineracaoUserControl.cs">
+    <Compile Include="Views\UserControls\Configuracoes\MineradoresUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Views\UserControls\GestaoAutomaticaMineracaoUserControl.Designer.cs">
+    <Compile Include="Views\UserControls\Configuracoes\MineradoresUserControl.Designer.cs">
+      <DependentUpon>MineradoresUserControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\UserControls\Funcionalidades\GestaoAutomaticaMineracaoUserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Views\UserControls\Funcionalidades\GestaoAutomaticaMineracaoUserControl.Designer.cs">
       <DependentUpon>GestaoAutomaticaMineracaoUserControl.cs</DependentUpon>
     </Compile>
     <EmbeddedResource Include="Views\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MainFormOLD.resx">
-      <DependentUpon>MainFormOLD.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\licenses.licx" />
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -93,12 +94,16 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="Views\UserControls\GestaoAutomaticaMineracaoUserControl.resx">
+    <EmbeddedResource Include="Views\UserControls\Configuracoes\MineradoresUserControl.resx">
+      <DependentUpon>MineradoresUserControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\UserControls\Funcionalidades\GestaoAutomaticaMineracaoUserControl.resx">
       <DependentUpon>GestaoAutomaticaMineracaoUserControl.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Database\CryptoManagerDB.db">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Properties\DataSources\Modelos.Classes.Minerador.datasource" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

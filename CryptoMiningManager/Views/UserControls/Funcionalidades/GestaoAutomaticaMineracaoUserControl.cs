@@ -9,7 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace CryptoMiningManager.Views.UserControls
+namespace CryptoMiningManager.Views.UserControls.Funcionalidades
 {
     public partial class GestaoAutomaticaMineracaoUserControl : DevExpress.XtraEditors.XtraUserControl
     {
@@ -56,11 +56,11 @@ namespace CryptoMiningManager.Views.UserControls
             {
                 Moedas classe = await Http.PedidoGETHttpSingle<Moedas>(URLRentabilidade);
 
-                var moedasOrdenadasPorRentabilidade = classe.GetMoedas().OrderByDescending(m => m.btc_revenue).ToList();
+                var moedasOrdenadasPorRentabilidade = classe.GetMoedas().OrderByDescending(m => m.Btc_revenue).ToList();
 
                 var moedaMaisRentavelAtualmente = moedasOrdenadasPorRentabilidade.First();
 
-                HaAlteracaoNaRentabilidade = MoedaMaisRentavel.id != moedaMaisRentavelAtualmente.id;
+                HaAlteracaoNaRentabilidade = MoedaMaisRentavel.Id != moedaMaisRentavelAtualmente.Id;
 
                 Thread.Sleep(TimeSpan.FromSeconds(5));
             }

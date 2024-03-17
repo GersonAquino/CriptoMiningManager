@@ -61,7 +61,7 @@ namespace GestorDados.Helpers
             string contentType = !string.IsNullOrWhiteSpace(contentTypeHeader) ? contentTypeHeader : "text/plain";
             using (HttpContent content = new StringContent(body, Encoding.UTF8, contentType))
             {
-                return await PedidoPOSTHttpBase<T>(uri, content, contentType, requestHeaders);
+                return await PedidoPOSTHttpBase<T>(uri, content, requestHeaders);
             }
         }
 
@@ -70,12 +70,12 @@ namespace GestorDados.Helpers
         {
             using (HttpContent content = new FormUrlEncodedContent(parameters))
             {
-                return await PedidoPOSTHttpBase<T>(uri, content, "application/x-www-form-urlencoded", requestHeaders);
+                return await PedidoPOSTHttpBase<T>(uri, content, requestHeaders);
             }
         }
 
         //FUNÇÕES AUXILIARES
-        private async Task<T> PedidoPOSTHttpBase<T>(string uri, HttpContent content, string contentTypeHeader, params (string Header, string Valor)[] requestHeaders) where T : class
+        private async Task<T> PedidoPOSTHttpBase<T>(string uri, HttpContent content, params (string Header, string Valor)[] requestHeaders) where T : class
         {
             using (HttpClient client = new HttpClient())
             {
