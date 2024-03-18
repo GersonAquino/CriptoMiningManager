@@ -1,4 +1,4 @@
-﻿using GestorDados.JsonConverters;
+﻿using Modelos.JsonConverters;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text.Json.Serialization;

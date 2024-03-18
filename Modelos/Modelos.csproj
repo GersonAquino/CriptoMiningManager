@@ -46,18 +46,16 @@
     <Compile Include="Classes\Comando.cs" />
     <Compile Include="Classes\Minerador.cs" />
     <Compile Include="Classes\Moeda.cs" />
+    <Compile Include="Interfaces\IDados.cs" />
+    <Compile Include="JsonConverters\DecimalConverter.cs" />
+    <Compile Include="JsonConverters\FloatConverter.cs" />
+    <Compile Include="JsonConverters\IntConverter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="System.Text.Json">
       <Version>8.0.3</Version>
     </PackageReference>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\GestorDados\GestorDados.csproj">
-      <Project>{CD9F410D-90C7-4CD6-8EF8-6BF37382F091}</Project>
-      <Name>GestorDados</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

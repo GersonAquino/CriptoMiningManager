@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Modelos.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace GestorDados
 {
-    public class Dados : IDisposable
+    public class Dados : IDisposable, IDados
     {
         private IDbConnection Conexao = null;
         private IDbTransaction Transacao = null;
@@ -128,10 +129,10 @@ namespace GestorDados
             return await Conexao.QueryAsync<T>(query, transaction: Transacao);
         }
 
-public async Task<IEnumerable<T>> QueryOpenAsync<Entidade1, Entidade2, T>(string query, Func<Entidade1, Entidade2, T> mapeamento, string splitOn = "Id")
-{
-    return await Conexao.QueryAsync(query, mapeamento, transaction: Transacao, splitOn: splitOn);
-}
+        public async Task<IEnumerable<T>> QueryOpenAsync<Entidade1, Entidade2, T>(string query, Func<Entidade1, Entidade2, T> mapeamento, string splitOn = "Id")
+        {
+            return await Conexao.QueryAsync(query, mapeamento, transaction: Transacao, splitOn: splitOn);
+        }
 
         public void Dispose()
         {

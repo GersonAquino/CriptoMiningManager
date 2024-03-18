@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CryptoMiningManager.DadosHelpers
+namespace CryptoMiningManager.Helpers.Dados
 {
     internal static class QueryHelper
     {

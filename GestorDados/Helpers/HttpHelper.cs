@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Modelos.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace GestorDados.Helpers
 {
-    public class HttpHelper
+    public class HttpHelper : IHttpHelper
     {
         private readonly JsonHelper jsonHelper;
 

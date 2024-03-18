@@ -24,6 +24,28 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes
             await AtualizarDados();
         }
 
+        private void NovoBBI_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
+        {
+            try
+            {
+
+            }
+            catch (Exception ex)
+            {
+                XtraMessageBox.Show("Erro ao criar novo Minerador!", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void EditarBBI_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
+        {
+
+        }
+
+        private void EliminarBBI_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
+        {
+
+        }
+
         //FUNÇÕES AUXILIARES
         private async Task AtualizarDados()
         {

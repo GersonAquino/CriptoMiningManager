@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GestorDados.Helpers
 {
-    public class JsonHelper
+    public class JsonHelper : IJsonHelper
     {
         public static JsonSerializerOptions _options = new JsonSerializerOptions() { PropertyNameCaseInsensitive = true };
 

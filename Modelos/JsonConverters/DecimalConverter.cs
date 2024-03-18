@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace GestorDados.JsonConverters
+namespace Modelos.JsonConverters
 {
     public class DecimalConverter : JsonConverter<decimal>
     {
