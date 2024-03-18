@@ -59,8 +59,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DadosHelpers\MineradorHelper.cs" />
-    <Compile Include="DadosHelpers\QueryHelper.cs" />
+    <Compile Include="Helpers\Dados\MineradorHelper.cs" />
+    <Compile Include="Helpers\Dados\QueryHelper.cs" />
     <Compile Include="Helpers\EntidadesHelper.cs" />
     <Compile Include="Views\MainForm.cs">
       <SubType>Form</SubType>

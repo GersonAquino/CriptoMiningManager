@@ -47,6 +47,8 @@
     <Compile Include="Classes\Minerador.cs" />
     <Compile Include="Classes\Moeda.cs" />
     <Compile Include="Interfaces\IDados.cs" />
+    <Compile Include="Interfaces\IHttpHelper.cs" />
+    <Compile Include="Interfaces\IJsonHelper.cs" />
     <Compile Include="JsonConverters\DecimalConverter.cs" />
     <Compile Include="JsonConverters\FloatConverter.cs" />
     <Compile Include="JsonConverters\IntConverter.cs" />

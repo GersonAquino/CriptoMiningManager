@@ -70,9 +70,6 @@ namespace CryptoMiningManager
             builder.RegisterAssemblyTypes(Assembly.Load(nameof(CryptoMiningManager)))
                 .Where(t => t.Namespace != null && t.Namespace.Contains(nameof(Views.UserControls))).InstancePerDependency().PreserveExistingDefaults();
 
-            // UserControls
-            builder.RegisterType<LoginUserControl>().SingleInstance();
-
             //Regista todas as classes dentro do namespace LeadingIntegradorErp.*.Views.UserControls.* como Instance Per Dependency.
             //É o equivalente ao Transient da Microsoft e é a opção default, por isso não é preciso especificar com o método InstancePerDependency()
             //PreserveExistingDefaults() previne overrides aos registos anteriores (sem isso o registo do LoginUserControl como singleton seria substituído)
