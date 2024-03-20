@@ -1,4 +1,5 @@
-﻿using CryptoMiningManager.DadosHelpers;
+﻿using CryptoMiningManager.Helpers;
+using CryptoMiningManager.Helpers.Dados;
 using DevExpress.Utils.Extensions;
 using DevExpress.XtraEditors;
 using System;
@@ -7,11 +8,15 @@ using System.Windows.Forms;
 
 namespace CryptoMiningManager.Views.UserControls.Configuracoes
 {
-    public partial class MineradoresUserControl : DevExpress.XtraEditors.XtraUserControl
+    internal partial class MineradoresUserControl : DevExpress.XtraEditors.XtraUserControl
     {
-        public MineradoresUserControl()
+        internal EntidadesHelper EntidadesHelper { get; }
+
+        internal MineradoresUserControl(EntidadesHelper entidadesHelper)
         {
             InitializeComponent();
+
+            EntidadesHelper = entidadesHelper;
         }
 
         private async void MineradoresUserControl_Load(object sender, EventArgs e)

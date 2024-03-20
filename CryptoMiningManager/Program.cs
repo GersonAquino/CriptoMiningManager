@@ -34,18 +34,14 @@ namespace CryptoMiningManager
             ProfileOptimization.StartProfile(assembly.GetName().Name);
             #endregion JIT Improve
 
-            using (Dados = new Dados(ConfigurationManager.ConnectionStrings["CriptoManager"].ConnectionString, true))
+            //SerilogHelper.StartLogger(ConfigurationManager.ConnectionStrings["CriptoManager"].ConnectionString);
+
+            //SerilogHelper.EscreveLog(GestorDados.Enums.SerilogLevel.Information, "TESTE");
+
+            using (IContainer container = ContainerConfig())
+            using (ILifetimeScope scope = container.BeginLifetimeScope())
             {
-
-                //SerilogHelper.StartLogger(ConfigurationManager.ConnectionStrings["CriptoManager"].ConnectionString);
-
-                //SerilogHelper.EscreveLog(GestorDados.Enums.SerilogLevel.Information, "TESTE");
-
-                using (IContainer container = ContainerConfig())
-                using (ILifetimeScope scope = container.BeginLifetimeScope())
-                {
-                    Application.Run(scope.Resolve<MainForm>());
-                }
+                Application.Run(scope.Resolve<MainForm>());
             }
         }
 
@@ -70,28 +66,9 @@ namespace CryptoMiningManager
             builder.RegisterAssemblyTypes(Assembly.Load(nameof(CryptoMiningManager)))
                 .Where(t => t.Namespace != null && t.Namespace.Contains(nameof(Views.UserControls))).InstancePerDependency().PreserveExistingDefaults();
 
-            //Regista todas as classes dentro do namespace LeadingIntegradorErp.*.Views.UserControls.* como Instance Per Dependency.
-            //É o equivalente ao Transient da Microsoft e é a opção default, por isso não é preciso especificar com o método InstancePerDependency()
-            //PreserveExistingDefaults() previne overrides aos registos anteriores (sem isso o registo do LoginUserControl como singleton seria substituído)
-            //Usar o nameof() facilita no caso de se alterar o namespace e ajuda a prevenir erros de escrita (IntelliSense)
-            //É preciso a validação "t.Namespace != null" por causa do Costura/Fody
-            builder.RegisterAssemblyTypes(Assembly.Load(nameof(LeadingIntegradorErp)))
-                .Where(t => t.Namespace != null && t.Namespace.Contains(nameof(Views) + '.' + nameof(Views.UserControls))).InstancePerDependency().PreserveExistingDefaults();
-
-            // Views Helpers
-            builder.RegisterType<EntidadesHelper>().InstancePerDependency();
-
-            //É possível juntar isto ao código de cima, mas caso haja alguma alteração de namespaces ou
-            //algo parecido a uma alteração geral nos parâmetros dos helpers, tornam-se menos claros os ajustes que se têm de fazer
-            //Poderia ser: Where(t => t.Namespace.Contains("Views.UserControls") || t.Namespace.EndsWith("Helpers"));
-            builder.RegisterAssemblyTypes(Assembly.Load(nameof(LeadingIntegradorErp)))
-                .Where(t => t.Namespace != null && t.Namespace.EndsWith(nameof(Helpers))).InstancePerDependency().PreserveExistingDefaults();
-
-            // Utils
-            builder.Register((context, parameters) => new StringEnum(parameters.TypedAs<Type>())).InstancePerDependency();
-
-            // Comparadores (maioritariamente para ser usado nos Dictionary<TKey, TValue> com classes Xpo)
-            builder.RegisterType<PagamentoEqualityComparer>().As<IEqualityComparer<Pagamento>>().SingleInstance();
+            //Helpers
+            builder.RegisterType<EntidadesHelper>().InstancePerLifetimeScope();
+            builder.RegisterType<Dados>().As<IDados>().InstancePerLifetimeScope();
 
             return builder.Build();
         }

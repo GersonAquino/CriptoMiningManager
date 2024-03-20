@@ -1,4 +1,6 @@
-﻿using DevExpress.XtraEditors;
+﻿using Autofac;
+using DevExpress.XtraEditors;
+using Modelos.Classes;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,7 +15,7 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes.Editores
 {
     public partial class MineradorEditorUserControl : DevExpress.XtraEditors.XtraUserControl
     {
-        public MineradorEditorUserControl()
+        public MineradorEditorUserControl(Minerador entidade, ILifetimeScope scope)
         {
             InitializeComponent();
         }

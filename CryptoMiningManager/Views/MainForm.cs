@@ -1,4 +1,5 @@
-﻿using CryptoMiningManager.Views.UserControls.Configuracoes;
+﻿using Autofac;
+using CryptoMiningManager.Views.UserControls.Configuracoes;
 using CryptoMiningManager.Views.UserControls.Funcionalidades;
 using DevExpress.XtraBars.Docking2010.Views;
 using DevExpress.XtraBars.Navigation;
@@ -11,9 +12,13 @@ namespace CryptoMiningManager.Views
 {
     public partial class MainForm : DevExpress.XtraBars.Ribbon.RibbonForm
     {
-        public MainForm()
+        private ILifetimeScope Scope { get; }
+
+        public MainForm(ILifetimeScope scope)
         {
             InitializeComponent();
+
+            Scope = scope;
         }
 
         private void MainForm_Load(object sender, EventArgs e)
@@ -65,12 +70,12 @@ namespace CryptoMiningManager.Views
         #region Eventos Click que criam um tab com um UserControl
         private void GestaoAutomaticaMineracaoACE_Click(object sender, EventArgs e)
         {
-            CallUserControlTab(sender, new GestaoAutomaticaMineracaoUserControl());
+            CallUserControlTab<GestaoAutomaticaMineracaoUserControl>(sender);
         }
 
         private void MineradoresACE_Click(object sender, EventArgs e)
         {
-            CallUserControlTab(sender, new MineradoresUserControl());
+            CallUserControlTab<MineradoresUserControl>(sender);
         }
         #endregion
 
@@ -100,7 +105,7 @@ namespace CryptoMiningManager.Views
         }
 
         //FUNÇÕES AUXILIARES
-        private void CallUserControlTab<T>(object sender, T userControl) where T : UserControl
+        private void CallUserControlTab<T>(object sender) where T : UserControl
         {
             if (!(sender is AccordionControlElement controlElement))
                 return;
@@ -109,6 +114,7 @@ namespace CryptoMiningManager.Views
             {
                 using (IOverlaySplashScreenHandle splashScreenHandler = SplashScreenManager.ShowOverlayForm(this))
                 {
+                    T userControl = Scope.Resolve<T>();
                     BaseDocument doc = this.TabbedView.AddOrActivateDocument(s => s.Caption == controlElement.Text, () => userControl);
                     doc.Caption = controlElement.Text;
                 }
