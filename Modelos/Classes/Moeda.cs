@@ -1,6 +1,5 @@
 ﻿using Modelos.JsonConverters;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Reflection;
 using System.Text.Json.Serialization;
 
@@ -141,7 +140,7 @@ namespace Modelos.Classes
     /// <summary>
     /// Classe genérica com propriedades desnecessárias comentadas para evitar stresses e simplificar a leitura do JSON
     /// </summary>
-    [Description("Moeda")]
+    [System.ComponentModel.Description("Moeda")]
     public class Moeda
     {
         /// <summary>
