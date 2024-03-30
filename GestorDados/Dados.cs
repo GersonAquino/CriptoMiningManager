@@ -19,7 +19,10 @@ namespace GestorDados
             ConnectionString = connectionString;
 
             if (iniciarConexao)
+            {
                 Conexao = new SQLiteConnection(connectionString);
+                Conexao.Open();
+            }
         }
 
         #region Conexões
@@ -39,6 +42,7 @@ namespace GestorDados
                 throw new ArgumentException("Não é possível inicar uma conexão sem uma connection string!");
 
             Conexao = new SQLiteConnection(ConnectionString);
+            Conexao.Open();
         }
 
         /// <summary>

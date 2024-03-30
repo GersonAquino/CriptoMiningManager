@@ -46,6 +46,7 @@
     <Compile Include="Classes\Comando.cs" />
     <Compile Include="Classes\Minerador.cs" />
     <Compile Include="Classes\Moeda.cs" />
+    <Compile Include="Exceptions\CustomException.cs" />
     <Compile Include="Interfaces\IDados.cs" />
     <Compile Include="Interfaces\IHttpHelper.cs" />
     <Compile Include="Interfaces\IJsonHelper.cs" />

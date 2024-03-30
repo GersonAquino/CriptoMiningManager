@@ -15,9 +15,13 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes.Editores
 {
     public partial class MineradorEditorUserControl : DevExpress.XtraEditors.XtraUserControl
     {
+        private Minerador Entidade { get; set; }
+
         public MineradorEditorUserControl(Minerador entidade, ILifetimeScope scope)
         {
             InitializeComponent();
+
+            Entidade = entidade;
         }
 
         private void GravarBBI_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)

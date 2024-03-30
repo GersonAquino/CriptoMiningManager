@@ -1,5 +1,8 @@
-﻿namespace Modelos.Classes
+﻿using System.ComponentModel;
+
+namespace Modelos.Classes
 {
+    [Description("Comando")]
     public class Comando : Configuracao
     {
         public string Comandos { get; set; }

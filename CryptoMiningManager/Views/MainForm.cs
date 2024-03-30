@@ -105,6 +105,11 @@ namespace CryptoMiningManager.Views
         }
 
         //FUNÇÕES AUXILIARES
+        /// <summary>
+        /// Cria um novo separador com uma <see cref="ILifetimeScope"/> nova
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="sender"></param>
         private void CallUserControlTab<T>(object sender) where T : UserControl
         {
             if (!(sender is AccordionControlElement controlElement))
@@ -114,9 +119,15 @@ namespace CryptoMiningManager.Views
             {
                 using (IOverlaySplashScreenHandle splashScreenHandler = SplashScreenManager.ShowOverlayForm(this))
                 {
-                    T userControl = Scope.Resolve<T>();
+                    ILifetimeScope scope = Scope.BeginLifetimeScope();
+                    T userControl = scope.Resolve<T>();
+
+                    //Fazer o dispose da scope do userControl sem ter de alterar o event handler dos designers
+                    userControl.Disposed += (s, e) => scope.Dispose();
+
                     BaseDocument doc = this.TabbedView.AddOrActivateDocument(s => s.Caption == controlElement.Text, () => userControl);
                     doc.Caption = controlElement.Text;
+
                 }
             }
             catch (Exception ex)

@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace Modelos.Classes
 {
+    [Description("Minerador")]
     public class Minerador : Configuracao
     {
         public int IdExterno { get; set; }

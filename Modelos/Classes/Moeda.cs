@@ -1,5 +1,6 @@
 ﻿using Modelos.JsonConverters;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Reflection;
 using System.Text.Json.Serialization;
 
@@ -140,10 +141,21 @@ namespace Modelos.Classes
     /// <summary>
     /// Classe genérica com propriedades desnecessárias comentadas para evitar stresses e simplificar a leitura do JSON
     /// </summary>
+    [Description("Moeda")]
     public class Moeda
     {
-        [JsonConverter(typeof(IntConverter))]
+        /// <summary>
+        /// Id utilizado internamente
+        /// </summary>
+        [JsonIgnore(Condition = JsonIgnoreCondition.Always)]
         public int Id { get; set; }
+        public int? IdMinerador { get; set; }
+        public string Nome { get; set; }
+
+        //Propriedades vindas da API
+        [JsonPropertyName("Id")]
+        [JsonConverter(typeof(IntConverter))]
+        public int IdExterno { get; set; }
         public string Tag { get; set; }
         public string Algorithm { get; set; }
         //public object block_time { get; set; } //Às vezes é string, outras é um int
@@ -186,10 +198,6 @@ namespace Modelos.Classes
 
         [JsonConverter(typeof(IntConverter))]
         public int Timestamp { get; set; }
-
-        //Propriedades extra
-        public int? IdMinerador { get; set; }
-        public string Nome { get; set; }
 
         public Moeda() { }
     }

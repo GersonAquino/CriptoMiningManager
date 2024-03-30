@@ -1,12 +1,12 @@
 ﻿using Autofac;
 using CryptoMiningManager.Helpers;
+using CryptoMiningManager.Helpers.Dados;
 using CryptoMiningManager.Views;
-using DevExpress.Xpf.Core.Native;
+using DevExpress.XtraEditors;
 using GestorDados;
 using GestorDados.Helpers;
 using Modelos.Interfaces;
 using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Reflection;
@@ -53,22 +53,29 @@ namespace CryptoMiningManager
             string connectionString = ConfigurationManager.ConnectionStrings["CriptoManager"].ConnectionString;
 
             // SQL e dados
-            //O Register pode ter uma lambda expression com 1 ou 2 parâmetros, IComponentContext e IEnumerable<Parameter> respetivamente.
-            //Pode-se usar o IComponentContext para fazer o Resolve de dependências registadas
-            builder.Register(context => new Dados(connectionString)).As<IDados>().InstancePerDependency();
+            builder.Register(context => new Dados(connectionString, true)).As<IDados>().InstancePerLifetimeScope();
 
             // Base Helpers
             builder.RegisterType<HttpHelper>().As<IHttpHelper>().InstancePerDependency();
             builder.RegisterType<JsonHelper>().As<IJsonHelper>().SingleInstance();
 
-            // Forms
+            // Forms e UserControls
             builder.RegisterType<MainForm>().SingleInstance();
+
+            //Regista os editores com o nome da classe correspondente
+            builder.RegisterAssemblyTypes(Assembly.Load(nameof(CryptoMiningManager)))
+                .Where(t => t.Namespace != null && t.Namespace.Contains(nameof(Views.UserControls.Configuracoes.Editores))).InstancePerDependency()
+                .Keyed<XtraUserControl>((tipo) =>
+                {
+                    return tipo.Name.Replace("EditorUserControl", string.Empty);
+                });
+
             builder.RegisterAssemblyTypes(Assembly.Load(nameof(CryptoMiningManager)))
                 .Where(t => t.Namespace != null && t.Namespace.Contains(nameof(Views.UserControls))).InstancePerDependency().PreserveExistingDefaults();
 
             //Helpers
             builder.RegisterType<EntidadesHelper>().InstancePerLifetimeScope();
-            builder.RegisterType<Dados>().As<IDados>().InstancePerLifetimeScope();
+            builder.RegisterType<MineradorHelper>().InstancePerLifetimeScope();
 
             return builder.Build();
         }
