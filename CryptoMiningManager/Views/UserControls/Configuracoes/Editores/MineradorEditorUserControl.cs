@@ -87,14 +87,14 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes.Editores
                     CheckFileExists = true,
                     Filter = "cmd files (*.bat)|*.bat|powershell files (*.ps1)|*.ps1|All files (*.*)|*.*",
                     //InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
-                    Multiselect = false, 
+                    Multiselect = false,
                     RestoreDirectory = true,
                     ValidateNames = true
                 })
                 {
                     if (ofd.ShowDialog() != DialogResult.OK)
                         return;
-                    
+
                     //Por alguma razão, alterar diretamente a Entidade não resulta aqui, portanto altera-se o EditValue do ButtonEdit e força-se a escrita imediata no Binding
                     LocalizacaoButtonEdit.EditValue = ofd.FileName;
                     LocalizacaoButtonEdit.DataBindings["EditValue"].WriteValue();

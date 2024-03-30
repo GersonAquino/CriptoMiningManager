@@ -84,10 +84,5 @@ namespace GestorDados.Helpers.Entidades
 
             return await Dados.ExecuteOpenAsync(query, minerador) == 1;
         }
-
-        //public void Dispose()
-        //{
-        //    Dados.Dispose();
-        //}
     }
 }
