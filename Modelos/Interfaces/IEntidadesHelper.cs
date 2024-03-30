@@ -1,0 +1,30 @@
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+
+namespace Modelos.Interfaces
+{
+    public interface IEntidadesHelper<T> //: IDisposable //Não se implementa IDisposable porque o Autofac já trata do Dispose do IDados sozinho, então tentar fazer dispose manualmente dá origem a um erro ao fechar o separador
+    {
+        /// <summary>
+        /// Elimina da base de dados todas as entidades (<typeparamref name="T"/>) com os <paramref name="ids"/> recebidos
+        /// </summary>
+        /// <param name="ids"></param>
+        /// <returns></returns>
+        Task<int> EliminarEntidades(IEnumerable<int> ids);
+
+        /// <summary>
+        /// Obtém todas entidades (<typeparamref name="T"/>) e preenche uma propriedade que seja uma <see cref="List{P}"/>
+        /// </summary>
+        /// <param name="condicoes"></param>
+        /// <param name="ordenacao"></param>
+        /// <returns>Dicionário de <see cref="int"/> e <typeparamref name="T"/> em que a chave é o Id de <typeparamref name="T"/></returns>
+        Task<Dictionary<int, T>> GetEntidadesComLista(string condicoes = null, string ordenacao = null);
+
+        /// <summary>
+        /// Grava a entidade (<typeparamref name="T"/>) na base de dados
+        /// </summary>
+        /// <param name="minerador"></param>
+        /// <returns></returns>
+        Task<bool> GravarEntidade(T minerador);
+    }
+}

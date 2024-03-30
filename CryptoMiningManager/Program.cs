@@ -1,6 +1,5 @@
 ﻿using Autofac;
 using CryptoMiningManager.Helpers;
-using CryptoMiningManager.Helpers.Dados;
 using CryptoMiningManager.Views;
 using DevExpress.XtraEditors;
 using GestorDados;
@@ -54,6 +53,9 @@ namespace CryptoMiningManager
 
             // SQL e dados
             builder.Register(context => new Dados(connectionString, true)).As<IDados>().InstancePerLifetimeScope();
+            builder.RegisterAssemblyTypes(Assembly.Load(nameof(GestorDados)))
+                .Where(t => t.Namespace != null && t.Namespace.Contains(nameof(GestorDados.Helpers.Entidades)))
+                .AsImplementedInterfaces().InstancePerLifetimeScope();
 
             // Base Helpers
             builder.RegisterType<HttpHelper>().As<IHttpHelper>().InstancePerDependency();
@@ -64,18 +66,17 @@ namespace CryptoMiningManager
 
             //Regista os editores com o nome da classe correspondente
             builder.RegisterAssemblyTypes(Assembly.Load(nameof(CryptoMiningManager)))
-                .Where(t => t.Namespace != null && t.Namespace.Contains(nameof(Views.UserControls.Configuracoes.Editores))).InstancePerDependency()
+                .Where(t => t.Namespace != null && t.Namespace.Contains(nameof(Views.UserControls.Configuracoes.Editores)))
                 .Keyed<XtraUserControl>((tipo) =>
                 {
                     return tipo.Name.Replace("EditorUserControl", string.Empty);
-                });
+                }).InstancePerDependency();
 
             builder.RegisterAssemblyTypes(Assembly.Load(nameof(CryptoMiningManager)))
                 .Where(t => t.Namespace != null && t.Namespace.Contains(nameof(Views.UserControls))).InstancePerDependency().PreserveExistingDefaults();
 
             //Helpers
-            builder.RegisterType<EntidadesHelper>().InstancePerLifetimeScope();
-            builder.RegisterType<MineradorHelper>().InstancePerLifetimeScope();
+            builder.RegisterType<ConfiguracoesEntidadesHelper>().InstancePerLifetimeScope();
 
             return builder.Build();
         }

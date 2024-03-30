@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace GestorDados
 {
-    public class Dados : IDisposable, IDados
+    public class Dados : IDados
     {
         private IDbConnection Conexao = null;
         private IDbTransaction Transacao = null;
@@ -26,12 +26,7 @@ namespace GestorDados
         }
 
         #region Conexões
-        /// <summary>
-        /// Fecha a <see cref="Conexao"/> e inicia uma nova com a connection string recebida ou com <see cref="ConnectionString"/> caso não se tenha recebido nenhuma.
-        /// <para>Altera a <see cref="ConnectionString"/> com a recebida</para>
-        /// </summary>
-        /// <param name="connectionString"></param>
-        /// <exception cref="ArgumentException">Se ambas as connection strings estiverem vazias</exception>
+        ///<inheritdoc/>
         public void IniciarConexao(string connectionString = null)
         {
             FecharConexao();
@@ -45,9 +40,7 @@ namespace GestorDados
             Conexao.Open();
         }
 
-        /// <summary>
-        /// Desfaz a <see cref="Transacao"/> e fecha a <see cref="Conexao"/>
-        /// </summary>
+        ///<inheritdoc/>
         public void FecharConexao()
         {
             if (Conexao != null)
@@ -61,9 +54,7 @@ namespace GestorDados
         #endregion
 
         #region Transações
-        /// <summary>
-        /// Desfaz a <see cref="Transacao"/> e inicia uma nova com <see cref="Conexao"/>
-        /// </summary>
+        ///<inheritdoc/>
         public void IniciarTransacao()
         {
             DesfazTransacao();
@@ -71,9 +62,7 @@ namespace GestorDados
             Transacao = Conexao.BeginTransaction();
         }
 
-        /// <summary>
-        /// Desfaz a <see cref="Transacao"/> descartando todas as alterações (fazendo rollback)
-        /// </summary>
+        ///<inheritdoc/>
         public void DesfazTransacao()
         {
             if (Transacao != null)
@@ -83,9 +72,7 @@ namespace GestorDados
             }
         }
 
-        /// <summary>
-        /// Aplica todas as alterações existentes na <see cref="Transacao"/>
-        /// </summary>
+        ///<inheritdoc/>
         public void TerminaTransacao()
         {
             if (Transacao != null)
@@ -96,48 +83,43 @@ namespace GestorDados
         }
         #endregion
 
-        /// <summary>
-        /// Executa um comando SQL e devolve o número de linhas afetadas
-        /// </summary>
-        /// <param name="query"></param>
-        /// <returns></returns>
+        ///<inheritdoc/>
         public async Task<int> ExecuteOpenAsync(string query)
         {
             return await Conexao.ExecuteAsync(query, transaction: Transacao);
         }
 
-        /// <summary>
-        /// Devolve o valor da primeira coluna devolvida pela <paramref name="query"/>
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="query"></param>
-        /// <returns></returns>
+        ///<inheritdoc/>
+        public async Task<int> ExecuteOpenAsync<T>(string query, T parametros)
+        {
+            return await Conexao.ExecuteAsync(query, parametros, transaction: Transacao);
+        }
+
+        ///<inheritdoc/>
         public async Task<T> ExecuteScalarOpenAsync<T>(string query)
         {
             return await Conexao.ExecuteScalarAsync<T>(query, transaction: Transacao);
         }
 
+        ///<inheritdoc/>
         public async Task<T> GetValorOpenAsync<T>(string query)
         {
             return await Conexao.QueryFirstOrDefaultAsync<T>(query, transaction: Transacao);
         }
 
-        /// <summary>
-        /// Executa e devolve os resultados de <paramref name="query"/>
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="query"></param>
-        /// <returns></returns>
+        ///<inheritdoc/>
         public async Task<IEnumerable<T>> QueryOpenAsync<T>(string query)
         {
             return await Conexao.QueryAsync<T>(query, transaction: Transacao);
         }
 
+        ///<inheritdoc/>
         public async Task<IEnumerable<T>> QueryOpenAsync<Entidade1, Entidade2, T>(string query, Func<Entidade1, Entidade2, T> mapeamento, string splitOn = "Id")
         {
             return await Conexao.QueryAsync(query, mapeamento, transaction: Transacao, splitOn: splitOn);
         }
 
+        ///<inheritdoc/>
         public void Dispose()
         {
             FecharConexao();

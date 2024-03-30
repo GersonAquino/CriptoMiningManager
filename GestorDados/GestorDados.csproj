@@ -44,6 +44,8 @@
   <ItemGroup>
     <Compile Include="Dados.cs" />
     <Compile Include="Enums\SerilogLevel.cs" />
+    <Compile Include="Helpers\Entidades\MineradorHelper.cs" />
+    <Compile Include="Helpers\QueryHelper.cs" />
     <Compile Include="Helpers\HttpHelper.cs" />
     <Compile Include="Helpers\JsonHelper.cs" />
     <Compile Include="Helpers\SerilogHelper.cs" />

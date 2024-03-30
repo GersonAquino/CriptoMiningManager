@@ -1,4 +1,4 @@
-﻿namespace CryptoMiningManager.Helpers.Dados
+﻿namespace GestorDados.Helpers
 {
     internal static class QueryHelper
     {

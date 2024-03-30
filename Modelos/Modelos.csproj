@@ -48,6 +48,7 @@
     <Compile Include="Classes\Moeda.cs" />
     <Compile Include="Exceptions\CustomException.cs" />
     <Compile Include="Interfaces\IDados.cs" />
+    <Compile Include="Interfaces\IEntidadesHelper.cs" />
     <Compile Include="Interfaces\IHttpHelper.cs" />
     <Compile Include="Interfaces\IJsonHelper.cs" />
     <Compile Include="JsonConverters\DecimalConverter.cs" />

@@ -38,7 +38,6 @@
             this.MineradoresBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.MineradoresGV = new DevExpress.XtraGrid.Views.Grid.GridView();
             this.colIdMinerador = new DevExpress.XtraGrid.Columns.GridColumn();
-            this.colIdExternoMinerador = new DevExpress.XtraGrid.Columns.GridColumn();
             this.colLocalizacaoMinerador = new DevExpress.XtraGrid.Columns.GridColumn();
             this.colParametrosMinerador = new DevExpress.XtraGrid.Columns.GridColumn();
             this.colAtivoMinerador = new DevExpress.XtraGrid.Columns.GridColumn();
@@ -113,7 +112,6 @@
             // 
             this.MineradoresGV.Columns.AddRange(new DevExpress.XtraGrid.Columns.GridColumn[] {
             this.colIdMinerador,
-            this.colIdExternoMinerador,
             this.colLocalizacaoMinerador,
             this.colParametrosMinerador,
             this.colAtivoMinerador,
@@ -143,17 +141,8 @@
             this.colIdMinerador.MinWidth = 23;
             this.colIdMinerador.Name = "colIdMinerador";
             this.colIdMinerador.Visible = true;
-            this.colIdMinerador.VisibleIndex = 4;
+            this.colIdMinerador.VisibleIndex = 3;
             this.colIdMinerador.Width = 87;
-            // 
-            // colIdExternoMinerador
-            // 
-            this.colIdExternoMinerador.FieldName = "IdExterno";
-            this.colIdExternoMinerador.MinWidth = 23;
-            this.colIdExternoMinerador.Name = "colIdExternoMinerador";
-            this.colIdExternoMinerador.Visible = true;
-            this.colIdExternoMinerador.VisibleIndex = 1;
-            this.colIdExternoMinerador.Width = 87;
             // 
             // colLocalizacaoMinerador
             // 
@@ -161,8 +150,8 @@
             this.colLocalizacaoMinerador.MinWidth = 23;
             this.colLocalizacaoMinerador.Name = "colLocalizacaoMinerador";
             this.colLocalizacaoMinerador.Visible = true;
-            this.colLocalizacaoMinerador.VisibleIndex = 2;
-            this.colLocalizacaoMinerador.Width = 87;
+            this.colLocalizacaoMinerador.VisibleIndex = 1;
+            this.colLocalizacaoMinerador.Width = 107;
             // 
             // colParametrosMinerador
             // 
@@ -170,8 +159,8 @@
             this.colParametrosMinerador.MinWidth = 23;
             this.colParametrosMinerador.Name = "colParametrosMinerador";
             this.colParametrosMinerador.Visible = true;
-            this.colParametrosMinerador.VisibleIndex = 3;
-            this.colParametrosMinerador.Width = 87;
+            this.colParametrosMinerador.VisibleIndex = 2;
+            this.colParametrosMinerador.Width = 107;
             // 
             // colAtivoMinerador
             // 
@@ -179,7 +168,7 @@
             this.colAtivoMinerador.MinWidth = 23;
             this.colAtivoMinerador.Name = "colAtivoMinerador";
             this.colAtivoMinerador.Visible = true;
-            this.colAtivoMinerador.VisibleIndex = 5;
+            this.colAtivoMinerador.VisibleIndex = 4;
             this.colAtivoMinerador.Width = 87;
             // 
             // colDataCriacaoMinerador
@@ -188,8 +177,8 @@
             this.colDataCriacaoMinerador.MinWidth = 23;
             this.colDataCriacaoMinerador.Name = "colDataCriacaoMinerador";
             this.colDataCriacaoMinerador.Visible = true;
-            this.colDataCriacaoMinerador.VisibleIndex = 6;
-            this.colDataCriacaoMinerador.Width = 87;
+            this.colDataCriacaoMinerador.VisibleIndex = 5;
+            this.colDataCriacaoMinerador.Width = 115;
             // 
             // colDataAlteracaoMinerador
             // 
@@ -197,8 +186,8 @@
             this.colDataAlteracaoMinerador.MinWidth = 23;
             this.colDataAlteracaoMinerador.Name = "colDataAlteracaoMinerador";
             this.colDataAlteracaoMinerador.Visible = true;
-            this.colDataAlteracaoMinerador.VisibleIndex = 7;
-            this.colDataAlteracaoMinerador.Width = 87;
+            this.colDataAlteracaoMinerador.VisibleIndex = 6;
+            this.colDataAlteracaoMinerador.Width = 126;
             // 
             // MineradoresRC
             // 
@@ -300,7 +289,6 @@
         private DevExpress.XtraBars.BarButtonItem EditarBBI;
         private DevExpress.XtraBars.BarButtonItem EliminarBBI;
         private System.Windows.Forms.BindingSource MineradoresBindingSource;
-        private DevExpress.XtraGrid.Columns.GridColumn colIdExternoMinerador;
         private DevExpress.XtraGrid.Columns.GridColumn colLocalizacaoMinerador;
         private DevExpress.XtraGrid.Columns.GridColumn colParametrosMinerador;
         private DevExpress.XtraGrid.Columns.GridColumn colIdMinerador;

@@ -15,11 +15,11 @@ using System.Windows.Forms;
 
 namespace CryptoMiningManager.Helpers
 {
-    internal class EntidadesHelper
+    public class ConfiguracoesEntidadesHelper
     {
         private ILifetimeScope Scope { get; }
 
-        public EntidadesHelper(ILifetimeScope scope)
+        public ConfiguracoesEntidadesHelper(ILifetimeScope scope)
         {
             Scope = scope;
         }
@@ -31,7 +31,7 @@ namespace CryptoMiningManager.Helpers
         /// <param name="caption"></param>
         /// <param name="entidadeAEditar"></param>
         /// <param name="activeControl">Control para apresentar a animação de loading</param>
-        internal void AbrirEditorUC<T>(T entidadeAEditar, string caption, Control activeControl = null)
+        public void AbrirEditorUC<T>(T entidadeAEditar, string caption, Control activeControl = null)
         {
             IOverlaySplashScreenHandle splashScreenHandler = activeControl == null ? null : SplashScreenManager.ShowOverlayForm(activeControl);
             try
@@ -69,7 +69,7 @@ namespace CryptoMiningManager.Helpers
         /// <param name="e"></param>
         /// <param name="gridView"></param>
         /// <param name="activeControl"></param>
-        internal void DuploCliqueEntidade<T>(EventArgs e, GridView gridView, Control activeControl = null) where T : Configuracao
+        public void DuploCliqueEntidade<T>(EventArgs e, GridView gridView, Control activeControl = null) where T : Configuracao
         {
             try
             {
@@ -92,7 +92,7 @@ namespace CryptoMiningManager.Helpers
         /// <typeparam name="T"></typeparam>
         /// <param name="gridView"></param>
         /// <param name="activeControl"></param>
-        internal void EditarEntidade<T>(GridView gridView, Control activeControl = null) where T : Configuracao
+        public void EditarEntidade<T>(GridView gridView, Control activeControl = null) where T : Configuracao
         {
             try
             {
