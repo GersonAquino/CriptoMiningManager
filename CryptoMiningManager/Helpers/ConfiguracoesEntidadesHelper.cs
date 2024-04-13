@@ -31,7 +31,7 @@ namespace CryptoMiningManager.Helpers
         /// <param name="caption"></param>
         /// <param name="entidadeAEditar"></param>
         /// <param name="activeControl">Control para apresentar a animação de loading</param>
-        public void AbrirEditorUC<T>(T entidadeAEditar, string caption, Control activeControl = null)
+        public void AbrirEditorUC<T>(string caption, Control activeControl = null, T entidadeAEditar = null) where T : class
         {
             IOverlaySplashScreenHandle splashScreenHandler = activeControl == null ? null : SplashScreenManager.ShowOverlayForm(activeControl);
             try
@@ -46,6 +46,10 @@ namespace CryptoMiningManager.Helpers
                 else
                 {
                     Type tipoEntidade = typeof(T);
+
+                    if (entidadeAEditar == null)
+                        entidadeAEditar = Scope.Resolve<T>();
+
                     XtraUserControl editor = Scope.ResolveKeyed<XtraUserControl>(tipoEntidade.Name, new TypedParameter(tipoEntidade, entidadeAEditar));
                     splashScreenHandler.QueueFocus(editor); //Previne que o foco volte instantâneamente para o UC "pai"
                     mainForm.TabbedView.AddDocument(editor, caption);
@@ -130,7 +134,7 @@ namespace CryptoMiningManager.Helpers
         /// <param name="activeControl">Control para apresentar a animação de loading</param>
         private void EditarEntidade<T>(T entidadeAEditar, Control activeControl = null) where T : Configuracao
         {
-            AbrirEditorUC(DeepCopier.Copy(entidadeAEditar), $"Editar {typeof(T).GetDescricaoClasse()} {entidadeAEditar?.Id}", activeControl);
+            AbrirEditorUC($"Editar {typeof(T).GetDescricaoClasse()} {entidadeAEditar?.Id}", activeControl, DeepCopier.Copy(entidadeAEditar));
         }
     }
 }

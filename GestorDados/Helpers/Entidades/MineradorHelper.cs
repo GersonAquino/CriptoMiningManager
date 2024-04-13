@@ -8,6 +8,8 @@ namespace GestorDados.Helpers.Entidades
 {
     public class MineradorHelper : IEntidadesHelper<Minerador>
     {
+        private const string Tabela = "Mineradores";
+
         private IDados Dados { get; set; }
 
         public MineradorHelper(IDados dados)
@@ -18,10 +20,16 @@ namespace GestorDados.Helpers.Entidades
         ///<inheritdoc/>
         public async Task<int> EliminarEntidades(IEnumerable<int> ids)
         {
-            string query = $@"DELETE FROM Mineradores
-                                WHERE Id IN @Ids";
+            string query = QueryHelper.Delete(Tabela, "Id IN @Ids");
 
             return await Dados.ExecuteOpenAsync(query, new { Ids = ids });
+        }
+
+        ///<inheritdoc/>
+        public async Task<IEnumerable<Minerador>> GetEntidades(string condicoes = null, string ordenacao = null)
+        {
+            string query = QueryHelper.Select("mi.*", "Mineradores mi", condicoes, ordenacao);
+            return await Dados.QueryOpenAsync<Minerador>(query);
         }
 
         ///<inheritdoc/>
@@ -59,6 +67,23 @@ namespace GestorDados.Helpers.Entidades
         ///<inheritdoc/>
         public async Task<bool> GravarEntidade(Minerador minerador)
         {
+            return await Dados.ExecuteOpenAsync(GravarEntidade_Base(minerador), minerador) == 1;
+        }
+
+        public async Task<int> GravarEntidade_GetIdGerado(Minerador minerador)
+        {
+            if (minerador.Id == -1)
+            {
+                string query = GravarEntidade_Base(minerador) + "; SELECT LAST_INSERT_ROWID();";
+                return await Dados.ExecuteScalarOpenAsync<int, Minerador>(query, minerador);
+            }
+
+            return await GravarEntidade(minerador) ? minerador.Id : -1;
+        }
+
+        //FUNÇÕES AUXILIARES
+        private string GravarEntidade_Base(Minerador minerador)
+        {
             if (minerador.Id < -1)
                 throw new ArgumentException($"Minerador tem Id inválido ({minerador.Id}).");
 
@@ -67,22 +92,15 @@ namespace GestorDados.Helpers.Entidades
             //Inserir caso Id seja um valor inválido mas esperado
             if (minerador.Id == -1)
             {
-                query = @"INSERT INTO Mineradores (Localizacao, Parametros, Ativo)
-                            VALUES (@Localizacao, @Parametros, @Ativo)";
+                query = QueryHelper.InsertParametrizado(Tabela, "Localizacao", "Parametros", "Ativo");
             }
             else //Atualizar caso tenha Id válido
             {
-                query = @"UPDATE Mineradores
-                            SET Localizacao = @Localizacao,
-                                Parametros = @Parametros,
-                                Ativo = @Ativo,
-                                DataAlteracao = @DataAlteracao
-                            WHERE Id = @Id";
+                query = QueryHelper.UpdateParametrizado(Tabela, "Id = @Id", "Localizacao", "Parametros", "Ativo", "DataAlteracao");
 
                 minerador.DataAlteracao = DateTime.Now;
             }
-
-            return await Dados.ExecuteOpenAsync(query, minerador) == 1;
+            return query;
         }
     }
 }

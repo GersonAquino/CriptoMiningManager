@@ -9,18 +9,18 @@ using System.Windows.Forms;
 
 namespace CryptoMiningManager.Views.UserControls.Configuracoes.Editores
 {
-    public partial class MineradorEditorUserControl : DevExpress.XtraEditors.XtraUserControl
+    public partial class MineradorEditorUserControl : XtraUserControl
     {
-        private IEntidadesHelper<Minerador> MineradorHelper { get; }
+        private IEntidadesHelper<Minerador> EntidadesHelper { get; }
 
         private Minerador Entidade { get; set; }
 
-        public MineradorEditorUserControl(Minerador entidade, IEntidadesHelper<Minerador> mineradorHelper)
+        public MineradorEditorUserControl(Minerador entidade, IEntidadesHelper<Minerador> entidadesHelper)
         {
             InitializeComponent();
 
             Entidade = entidade;
-            MineradorHelper = mineradorHelper;
+            EntidadesHelper = entidadesHelper;
 
             MineradorBindingSource.Add(Entidade);
         }
@@ -35,7 +35,7 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes.Editores
                 if (string.IsNullOrWhiteSpace(Entidade.Localizacao))
                 {
                     LocalizacaoButtonEdit.Focus();
-                    throw new CustomException("Localização não deve ficar vazia.", "Campos em falta");
+                    throw new CustomException("Campo 'Localização' não deve ficar vazio.", "Campos em falta");
                 }
 
                 if (!File.Exists(Entidade.Localizacao) &&
@@ -46,22 +46,26 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes.Editores
                     return;
                 }
 
-                if (await MineradorHelper.GravarEntidade(Entidade))
-                {
-                    Entidade.DataAlteracao = DateTime.Now;
-                    XtraMessageBox.Show("Minerador gravado com sucesso.", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                int idGerado = await EntidadesHelper.GravarEntidade_GetIdGerado(Entidade);
 
+                if (idGerado != -1)
+                {
+                    XtraMessageBox.Show("Minerador gravado com sucesso.", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                     if (this.Parent is DocumentContainer docContainer)
                     {
-                        if (docContainer.Document.Caption.StartsWith("Novo") || docContainer.Document.Caption.StartsWith("Editar") &&
-                            XtraMessageBox.Show("Pretende criar novos mineradores?", "Criar novos mineradores", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                        if (XtraMessageBox.Show("Pretende criar novos mineradores?", "Criar novos mineradores", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                         {
                             Entidade = new Minerador();
                             MineradorBindingSource.Clear();
                             MineradorBindingSource.Add(Entidade);
 
                             docContainer.Document.Caption = "Novo Minerador";
+                        }
+                        else
+                        {
+                            Entidade.Id = idGerado;
+                            docContainer.Document.Caption = $"Editar Minerador {Entidade.Id}";
                         }
                     }
                 }

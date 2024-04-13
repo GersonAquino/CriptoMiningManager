@@ -1,9 +1,11 @@
-﻿using System;
+﻿using PropertyChanged;
+using System;
 using System.ComponentModel;
 
 namespace Modelos.Classes
 {
-    [Description("Configuração")]
+    //A segunda anotação serve para poder usar os DataLayoutControls em condições, aka, para as alterações feitas ao objeto se refletirem nos controlos visualmente
+    [Description("Configuração"), AddINotifyPropertyChangedInterface]
     public class Configuracao
     {
         public int Id { get; set; } = -1;

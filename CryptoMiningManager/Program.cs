@@ -16,7 +16,7 @@ namespace CryptoMiningManager
 {
     internal static class Program
     {
-        /// <summary>
+        /// <summary>   
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
@@ -27,9 +27,8 @@ namespace CryptoMiningManager
 
             #region JIT Improve
             Assembly assembly = Assembly.GetExecutingAssembly();
-            string directoriaAplicacao = Path.GetDirectoryName(assembly.Location);
 
-            ProfileOptimization.SetProfileRoot(directoriaAplicacao);
+            ProfileOptimization.SetProfileRoot(Path.GetDirectoryName(assembly.Location));
             ProfileOptimization.StartProfile(assembly.GetName().Name);
             #endregion JIT Improve
 
@@ -44,12 +43,14 @@ namespace CryptoMiningManager
             }
         }
 
-
         private static IContainer ContainerConfig()
         {
             ContainerBuilder builder = new ContainerBuilder();
 
             string connectionString = ConfigurationManager.ConnectionStrings["CriptoManager"].ConnectionString;
+
+            //Modelos
+            builder.RegisterAssemblyTypes(Assembly.Load(nameof(Modelos))).Where(t => t.Namespace != null).InstancePerDependency();
 
             // SQL e dados
             builder.Register(context => new Dados(connectionString, true)).As<IDados>().InstancePerLifetimeScope();

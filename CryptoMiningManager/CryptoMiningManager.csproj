@@ -69,6 +69,18 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Views\UserControls\Configuracoes\ComandosUserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Views\UserControls\Configuracoes\ComandosUserControl.Designer.cs">
+      <DependentUpon>ComandosUserControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\UserControls\Configuracoes\Editores\ComandoEditorUserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Views\UserControls\Configuracoes\Editores\ComandoEditorUserControl.Designer.cs">
+      <DependentUpon>ComandoEditorUserControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Views\UserControls\Configuracoes\Editores\MineradorEditorUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -101,6 +113,12 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="Views\UserControls\Configuracoes\ComandosUserControl.resx">
+      <DependentUpon>ComandosUserControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\UserControls\Configuracoes\Editores\ComandoEditorUserControl.resx">
+      <DependentUpon>ComandoEditorUserControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Views\UserControls\Configuracoes\Editores\MineradorEditorUserControl.resx">
       <DependentUpon>MineradorEditorUserControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -110,9 +128,8 @@
     <EmbeddedResource Include="Views\UserControls\Funcionalidades\GestaoAutomaticaMineracaoUserControl.resx">
       <DependentUpon>GestaoAutomaticaMineracaoUserControl.cs</DependentUpon>
     </EmbeddedResource>
-    <None Include="Database\CryptoManagerDB.db">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <None Include="Database\CryptoManagerDB.db" />
+    <None Include="Properties\DataSources\Modelos.Classes.Comando.datasource" />
     <None Include="Properties\DataSources\Modelos.Classes.Minerador.datasource" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

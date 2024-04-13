@@ -68,6 +68,11 @@ namespace CryptoMiningManager.Views
         }
 
         #region Eventos Click que criam um tab com um UserControl
+        private void ComandosACE_Click(object sender, EventArgs e)
+        {
+            CallUserControlTab<ComandosUserControl>(sender);
+        }
+
         private void GestaoAutomaticaMineracaoACE_Click(object sender, EventArgs e)
         {
             CallUserControlTab<GestaoAutomaticaMineracaoUserControl>(sender);
@@ -81,7 +86,7 @@ namespace CryptoMiningManager.Views
 
         private void DocumentManager_DocumentActivate(object sender, DocumentEventArgs e)
         {
-            if (this.Ribbon.MergedPages.Count > 0)
+            if (this.Ribbon.MergedPages.Count != 0)
             {
                 this.Ribbon.SelectPage(this.Ribbon.MergedPages[0]);
                 this.Ribbon.SelectedPage = this.Ribbon.MergedPages[0];
@@ -90,8 +95,7 @@ namespace CryptoMiningManager.Views
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            DialogResult result = XtraMessageBox.Show("Pretende terminar a aplicação?", this.Text, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-            e.Cancel = result != DialogResult.Yes;
+            e.Cancel = XtraMessageBox.Show("Pretende terminar a aplicação?", this.Text, MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes;
         }
 
         private void TabbedView_DocumentClosing(object sender, DocumentCancelEventArgs e)

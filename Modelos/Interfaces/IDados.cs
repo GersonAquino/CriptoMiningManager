@@ -37,6 +37,15 @@ namespace Modelos.Interfaces
         Task<T> ExecuteScalarOpenAsync<T>(string query);
 
         /// <summary>
+        /// Devolve o valor da primeira coluna devolvida pela <paramref name="query"/>
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="query"></param>
+        /// <param name="parametros"></param>
+        /// <returns></returns>
+        Task<T> ExecuteScalarOpenAsync<T, P>(string query, P parametros);
+
+        /// <summary>
         /// Desfaz a <see cref="Transacao"/> e fecha a <see cref="Conexao"/>
         /// </summary>
         void FecharConexao();

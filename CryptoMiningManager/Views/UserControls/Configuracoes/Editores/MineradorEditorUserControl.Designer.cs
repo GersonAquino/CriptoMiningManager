@@ -35,11 +35,12 @@
             this.MineradorEditorRP = new DevExpress.XtraBars.Ribbon.RibbonPage();
             this.OperacoesRPG = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
             this.MineradorDLC = new DevExpress.XtraDataLayout.DataLayoutControl();
-            this.MineradorBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.ParametrosTextEdit = new DevExpress.XtraEditors.TextEdit();
+            this.MineradorBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.AtivoCheckEdit = new DevExpress.XtraEditors.CheckEdit();
             this.DataCriacaoDateEdit = new DevExpress.XtraEditors.DateEdit();
             this.DataAlteracaoDateEdit = new DevExpress.XtraEditors.DateEdit();
+            this.LocalizacaoButtonEdit = new DevExpress.XtraEditors.ButtonEdit();
             this.MineradorLCG = new DevExpress.XtraLayout.LayoutControlGroup();
             this.layoutControlGroup1 = new DevExpress.XtraLayout.LayoutControlGroup();
             this.ItemForLocalizacao = new DevExpress.XtraLayout.LayoutControlItem();
@@ -47,17 +48,18 @@
             this.ItemForDataCriacao = new DevExpress.XtraLayout.LayoutControlItem();
             this.ItemForAtivo = new DevExpress.XtraLayout.LayoutControlItem();
             this.ItemForDataAlteracao = new DevExpress.XtraLayout.LayoutControlItem();
-            this.LocalizacaoButtonEdit = new DevExpress.XtraEditors.ButtonEdit();
+            this.emptySpaceItem1 = new DevExpress.XtraLayout.EmptySpaceItem();
             ((System.ComponentModel.ISupportInitialize)(this.MineradorEditorRC)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.MineradorDLC)).BeginInit();
             this.MineradorDLC.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.MineradorBindingSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ParametrosTextEdit.Properties)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.MineradorBindingSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.AtivoCheckEdit.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.DataCriacaoDateEdit.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.DataCriacaoDateEdit.Properties.CalendarTimeProperties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.DataAlteracaoDateEdit.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.DataAlteracaoDateEdit.Properties.CalendarTimeProperties)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.LocalizacaoButtonEdit.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.MineradorLCG)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ItemForLocalizacao)).BeginInit();
@@ -65,7 +67,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.ItemForDataCriacao)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ItemForAtivo)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ItemForDataAlteracao)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.LocalizacaoButtonEdit.Properties)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).BeginInit();
             this.SuspendLayout();
             // 
             // MineradorEditorRC
@@ -125,10 +127,6 @@
             this.MineradorDLC.TabIndex = 1;
             this.MineradorDLC.Text = "dataLayoutControl1";
             // 
-            // MineradorBindingSource
-            // 
-            this.MineradorBindingSource.DataSource = typeof(Modelos.Classes.Minerador);
-            // 
             // ParametrosTextEdit
             // 
             this.ParametrosTextEdit.DataBindings.Add(new System.Windows.Forms.Binding("EditValue", this.MineradorBindingSource, "Parametros", true));
@@ -138,6 +136,10 @@
             this.ParametrosTextEdit.Size = new System.Drawing.Size(1273, 26);
             this.ParametrosTextEdit.StyleController = this.MineradorDLC;
             this.ParametrosTextEdit.TabIndex = 6;
+            // 
+            // MineradorBindingSource
+            // 
+            this.MineradorBindingSource.DataSource = typeof(Modelos.Classes.Minerador);
             // 
             // AtivoCheckEdit
             // 
@@ -154,7 +156,7 @@
             // 
             // DataCriacaoDateEdit
             // 
-            this.DataCriacaoDateEdit.DataBindings.Add(new System.Windows.Forms.Binding("DateTime", this.MineradorBindingSource, "DataCriacao", true));
+            this.DataCriacaoDateEdit.DataBindings.Add(new System.Windows.Forms.Binding("EditValue", this.MineradorBindingSource, "DataCriacao", true));
             this.DataCriacaoDateEdit.EditValue = null;
             this.DataCriacaoDateEdit.Location = new System.Drawing.Point(110, 97);
             this.DataCriacaoDateEdit.MenuManager = this.MineradorEditorRC;
@@ -170,7 +172,7 @@
             // 
             // DataAlteracaoDateEdit
             // 
-            this.DataAlteracaoDateEdit.DataBindings.Add(new System.Windows.Forms.Binding("DateTime", this.MineradorBindingSource, "DataAlteracao", true));
+            this.DataAlteracaoDateEdit.DataBindings.Add(new System.Windows.Forms.Binding("EditValue", this.MineradorBindingSource, "DataAlteracao", true));
             this.DataAlteracaoDateEdit.EditValue = null;
             this.DataAlteracaoDateEdit.Location = new System.Drawing.Point(797, 97);
             this.DataAlteracaoDateEdit.MenuManager = this.MineradorEditorRC;
@@ -183,6 +185,19 @@
             this.DataAlteracaoDateEdit.Size = new System.Drawing.Size(586, 26);
             this.DataAlteracaoDateEdit.StyleController = this.MineradorDLC;
             this.DataAlteracaoDateEdit.TabIndex = 9;
+            // 
+            // LocalizacaoButtonEdit
+            // 
+            this.LocalizacaoButtonEdit.DataBindings.Add(new System.Windows.Forms.Binding("EditValue", this.MineradorBindingSource, "Localizacao", true));
+            this.LocalizacaoButtonEdit.Location = new System.Drawing.Point(110, 12);
+            this.LocalizacaoButtonEdit.MenuManager = this.MineradorEditorRC;
+            this.LocalizacaoButtonEdit.Name = "LocalizacaoButtonEdit";
+            this.LocalizacaoButtonEdit.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
+            new DevExpress.XtraEditors.Controls.EditorButton()});
+            this.LocalizacaoButtonEdit.Size = new System.Drawing.Size(1273, 26);
+            this.LocalizacaoButtonEdit.StyleController = this.MineradorDLC;
+            this.LocalizacaoButtonEdit.TabIndex = 10;
+            this.LocalizacaoButtonEdit.ButtonClick += new DevExpress.XtraEditors.Controls.ButtonPressedEventHandler(this.LocalizacaoButtonEdit_ButtonClick);
             // 
             // MineradorLCG
             // 
@@ -203,7 +218,8 @@
             this.ItemForParametros,
             this.ItemForDataCriacao,
             this.ItemForAtivo,
-            this.ItemForDataAlteracao});
+            this.ItemForDataAlteracao,
+            this.emptySpaceItem1});
             this.layoutControlGroup1.Location = new System.Drawing.Point(0, 0);
             this.layoutControlGroup1.Name = "autoGeneratedGroup0";
             this.layoutControlGroup1.Size = new System.Drawing.Size(1375, 618);
@@ -231,7 +247,7 @@
             this.ItemForDataCriacao.Control = this.DataCriacaoDateEdit;
             this.ItemForDataCriacao.Location = new System.Drawing.Point(0, 85);
             this.ItemForDataCriacao.Name = "ItemForDataCriacao";
-            this.ItemForDataCriacao.Size = new System.Drawing.Size(687, 533);
+            this.ItemForDataCriacao.Size = new System.Drawing.Size(687, 30);
             this.ItemForDataCriacao.Text = "Data Criação";
             this.ItemForDataCriacao.TextSize = new System.Drawing.Size(86, 17);
             // 
@@ -250,22 +266,17 @@
             this.ItemForDataAlteracao.Control = this.DataAlteracaoDateEdit;
             this.ItemForDataAlteracao.Location = new System.Drawing.Point(687, 85);
             this.ItemForDataAlteracao.Name = "ItemForDataAlteracao";
-            this.ItemForDataAlteracao.Size = new System.Drawing.Size(688, 533);
+            this.ItemForDataAlteracao.Size = new System.Drawing.Size(688, 30);
             this.ItemForDataAlteracao.Text = "Data Alteração";
             this.ItemForDataAlteracao.TextSize = new System.Drawing.Size(86, 17);
             // 
-            // LocalizacaoButtonEdit
+            // emptySpaceItem1
             // 
-            this.LocalizacaoButtonEdit.DataBindings.Add(new System.Windows.Forms.Binding("EditValue", this.MineradorBindingSource, "Localizacao", true));
-            this.LocalizacaoButtonEdit.Location = new System.Drawing.Point(110, 12);
-            this.LocalizacaoButtonEdit.MenuManager = this.MineradorEditorRC;
-            this.LocalizacaoButtonEdit.Name = "LocalizacaoButtonEdit";
-            this.LocalizacaoButtonEdit.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
-            new DevExpress.XtraEditors.Controls.EditorButton()});
-            this.LocalizacaoButtonEdit.Size = new System.Drawing.Size(1273, 26);
-            this.LocalizacaoButtonEdit.StyleController = this.MineradorDLC;
-            this.LocalizacaoButtonEdit.TabIndex = 10;
-            this.LocalizacaoButtonEdit.ButtonClick += new DevExpress.XtraEditors.Controls.ButtonPressedEventHandler(this.LocalizacaoButtonEdit_ButtonClick);
+            this.emptySpaceItem1.AllowHotTrack = false;
+            this.emptySpaceItem1.Location = new System.Drawing.Point(0, 115);
+            this.emptySpaceItem1.Name = "emptySpaceItem1";
+            this.emptySpaceItem1.Size = new System.Drawing.Size(1375, 503);
+            this.emptySpaceItem1.TextSize = new System.Drawing.Size(0, 0);
             // 
             // MineradorEditorUserControl
             // 
@@ -279,13 +290,14 @@
             ((System.ComponentModel.ISupportInitialize)(this.MineradorEditorRC)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.MineradorDLC)).EndInit();
             this.MineradorDLC.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.MineradorBindingSource)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ParametrosTextEdit.Properties)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.MineradorBindingSource)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.AtivoCheckEdit.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.DataCriacaoDateEdit.Properties.CalendarTimeProperties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.DataCriacaoDateEdit.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.DataAlteracaoDateEdit.Properties.CalendarTimeProperties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.DataAlteracaoDateEdit.Properties)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.LocalizacaoButtonEdit.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.MineradorLCG)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ItemForLocalizacao)).EndInit();
@@ -293,7 +305,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.ItemForDataCriacao)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ItemForAtivo)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ItemForDataAlteracao)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.LocalizacaoButtonEdit.Properties)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -319,5 +331,6 @@
         private DevExpress.XtraLayout.LayoutControlItem ItemForDataCriacao;
         private DevExpress.XtraLayout.LayoutControlItem ItemForDataAlteracao;
         private DevExpress.XtraEditors.ButtonEdit LocalizacaoButtonEdit;
+        private DevExpress.XtraLayout.EmptySpaceItem emptySpaceItem1;
     }
 }

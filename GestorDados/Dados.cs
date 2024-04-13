@@ -102,6 +102,12 @@ namespace GestorDados
         }
 
         ///<inheritdoc/>
+        public async Task<T> ExecuteScalarOpenAsync<T, P>(string query, P parametros)
+        {
+            return await Conexao.ExecuteScalarAsync<T>(query, parametros, Transacao);
+        }
+
+        ///<inheritdoc/>
         public async Task<T> GetValorOpenAsync<T>(string query)
         {
             return await Conexao.QueryFirstOrDefaultAsync<T>(query, transaction: Transacao);

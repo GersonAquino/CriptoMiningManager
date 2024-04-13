@@ -10,8 +10,8 @@ namespace CryptoMiningManager.Helpers
         {
             if (tipo.IsClass)
                 return tipo.GetCustomAttribute<DescriptionAttribute>().Description;
-            else
-                throw new ArgumentException($"Não é possível obter a descrição de {tipo.Name}.");
+
+            throw new ArgumentException($"Não é possível obter a descrição de {tipo.Name}.");
         }
     }
 }

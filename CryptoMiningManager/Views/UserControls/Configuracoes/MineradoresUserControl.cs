@@ -12,15 +12,15 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes
 {
     internal partial class MineradoresUserControl : DevExpress.XtraEditors.XtraUserControl
     {
-        internal ConfiguracoesEntidadesHelper ConfiguracoesEntidadesHelper { get; }
-        internal IEntidadesHelper<Minerador> MineradorHelper { get; }
+        private ConfiguracoesEntidadesHelper ConfiguracoesEntidadesHelper { get; }
+        private IEntidadesHelper<Minerador> EntidadesHelper { get; }
 
-        public MineradoresUserControl(ConfiguracoesEntidadesHelper configuracoesEntidadesHelper, IEntidadesHelper<Minerador> mineradorHelper)
+        public MineradoresUserControl(ConfiguracoesEntidadesHelper configuracoesEntidadesHelper, IEntidadesHelper<Minerador> entidadesHelper)
         {
             InitializeComponent();
 
             ConfiguracoesEntidadesHelper = configuracoesEntidadesHelper;
-            MineradorHelper = mineradorHelper;
+            EntidadesHelper = entidadesHelper;
         }
 
         private async void MineradoresUserControl_Load(object sender, EventArgs e)
@@ -35,7 +35,7 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes
 
         private void NovoBBI_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
         {
-            ConfiguracoesEntidadesHelper.AbrirEditorUC(new Minerador(), "Novo Minerador", ActiveControl);
+            ConfiguracoesEntidadesHelper.AbrirEditorUC<Minerador>("Novo Minerador", ActiveControl);
         }
 
         private void MineradoresGV_DoubleClick(object sender, EventArgs e)
@@ -65,15 +65,18 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes
                 }
 
                 MineradoresGV.BeginUpdate();
-                if (await MineradorHelper.EliminarEntidades(idMineradores) == linhasSelecionadas.Length)
+                if (await EntidadesHelper.EliminarEntidades(idMineradores) == linhasSelecionadas.Length)
                 {
                     MineradoresGV.DeleteSelectedRows();
 
                     XtraMessageBox.Show("Mineradores eliminados com sucesso!", "Mineradores eliminados", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 else
+                {
+                    //Atualizam-se os dados todos porque não se sabe exatamente quais as entidades eliminadas
+                    await AtualizarDados();
                     XtraMessageBox.Show("Alguns mineradores não foram eliminados.", "Mineradores eliminados", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-
+                }
             }
             catch (Exception ex)
             {
@@ -94,11 +97,10 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes
             try
             {
                 MineradoresBindingSource.Clear();
-                foreach (KeyValuePair<int, Minerador> minerador in await MineradorHelper.GetEntidadesComLista(ordenacao: "mi.Id, mo.ID"))
+                foreach (KeyValuePair<int, Minerador> minerador in await EntidadesHelper.GetEntidadesComLista(ordenacao: "mi.Id, mo.Id"))
                 {
                     MineradoresBindingSource.Add(minerador.Value);
                 }
-
             }
             catch (Exception ex)
             {

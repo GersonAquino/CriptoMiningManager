@@ -13,6 +13,14 @@ namespace Modelos.Interfaces
         Task<int> EliminarEntidades(IEnumerable<int> ids);
 
         /// <summary>
+        /// Obtém todas entidades (<typeparamref name="T"/>)
+        /// </summary>
+        /// <param name="condicoes"></param>
+        /// <param name="ordenacao"></param>
+        /// <returns></returns>
+        Task<IEnumerable<T>> GetEntidades(string condicoes = null, string ordenacao = null);
+
+        /// <summary>
         /// Obtém todas entidades (<typeparamref name="T"/>) e preenche uma propriedade que seja uma <see cref="List{P}"/>
         /// </summary>
         /// <param name="condicoes"></param>
@@ -23,8 +31,15 @@ namespace Modelos.Interfaces
         /// <summary>
         /// Grava a entidade (<typeparamref name="T"/>) na base de dados
         /// </summary>
-        /// <param name="minerador"></param>
+        /// <param name="entidade"></param>
         /// <returns></returns>
-        Task<bool> GravarEntidade(T minerador);
+        Task<bool> GravarEntidade(T entidade);
+
+        /// <summary>
+        /// Grava a entidade (<typeparamref name="T"/>) na base de dados.
+        /// </summary>
+        /// <param name="entidade"></param>
+        /// <returns>Id da entidade gravada ou -1 em caso de falha</returns>
+        Task<int> GravarEntidade_GetIdGerado(T entidade);
     }
 }

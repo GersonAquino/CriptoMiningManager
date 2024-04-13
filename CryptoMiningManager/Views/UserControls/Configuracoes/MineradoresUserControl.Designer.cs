@@ -141,25 +141,27 @@
             this.colIdMinerador.MinWidth = 23;
             this.colIdMinerador.Name = "colIdMinerador";
             this.colIdMinerador.Visible = true;
-            this.colIdMinerador.VisibleIndex = 3;
+            this.colIdMinerador.VisibleIndex = 1;
             this.colIdMinerador.Width = 87;
             // 
             // colLocalizacaoMinerador
             // 
+            this.colLocalizacaoMinerador.Caption = "Localização";
             this.colLocalizacaoMinerador.FieldName = "Localizacao";
             this.colLocalizacaoMinerador.MinWidth = 23;
             this.colLocalizacaoMinerador.Name = "colLocalizacaoMinerador";
             this.colLocalizacaoMinerador.Visible = true;
-            this.colLocalizacaoMinerador.VisibleIndex = 1;
+            this.colLocalizacaoMinerador.VisibleIndex = 2;
             this.colLocalizacaoMinerador.Width = 107;
             // 
             // colParametrosMinerador
             // 
+            this.colParametrosMinerador.Caption = "Parâmetros";
             this.colParametrosMinerador.FieldName = "Parametros";
             this.colParametrosMinerador.MinWidth = 23;
             this.colParametrosMinerador.Name = "colParametrosMinerador";
             this.colParametrosMinerador.Visible = true;
-            this.colParametrosMinerador.VisibleIndex = 2;
+            this.colParametrosMinerador.VisibleIndex = 3;
             this.colParametrosMinerador.Width = 107;
             // 
             // colAtivoMinerador
@@ -173,6 +175,7 @@
             // 
             // colDataCriacaoMinerador
             // 
+            this.colDataCriacaoMinerador.Caption = "Data Criação";
             this.colDataCriacaoMinerador.FieldName = "DataCriacao";
             this.colDataCriacaoMinerador.MinWidth = 23;
             this.colDataCriacaoMinerador.Name = "colDataCriacaoMinerador";
@@ -182,6 +185,7 @@
             // 
             // colDataAlteracaoMinerador
             // 
+            this.colDataAlteracaoMinerador.Caption = "Data Alteração";
             this.colDataAlteracaoMinerador.FieldName = "DataAlteracao";
             this.colDataAlteracaoMinerador.MinWidth = 23;
             this.colDataAlteracaoMinerador.Name = "colDataAlteracaoMinerador";
