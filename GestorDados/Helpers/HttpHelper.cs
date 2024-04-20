@@ -10,9 +10,9 @@ namespace GestorDados.Helpers
 {
     public class HttpHelper : IHttpHelper
     {
-        private readonly JsonHelper jsonHelper;
+        private readonly IJsonHelper jsonHelper;
 
-        public HttpHelper(JsonHelper serializationHelper)
+        public HttpHelper(IJsonHelper serializationHelper)
         {
             jsonHelper = serializationHelper;
         }

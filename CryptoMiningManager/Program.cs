@@ -79,6 +79,9 @@ namespace CryptoMiningManager
             //Helpers
             builder.RegisterType<ConfiguracoesEntidadesHelper>().InstancePerLifetimeScope();
 
+            //Utils
+            builder.RegisterAssemblyTypes(Assembly.Load(nameof(Utils))).Where(t => t.Namespace != null).SingleInstance();
+
             return builder.Build();
         }
     }

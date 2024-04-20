@@ -28,7 +28,7 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes.Editores
         {
             try
             {
-                if (!ComandoDLC.Validate())
+                if (!BaseDLC.Validate())
                     return;
 
                 if (string.IsNullOrWhiteSpace(Entidade.Comandos))

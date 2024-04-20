@@ -114,9 +114,9 @@ namespace GestorDados
         }
 
         ///<inheritdoc/>
-        public async Task<IEnumerable<T>> QueryOpenAsync<T>(string query)
+        public async Task<IEnumerable<T>> QueryOpenAsync<T>(string query, object parametros = null)
         {
-            return await Conexao.QueryAsync<T>(query, transaction: Transacao);
+            return await Conexao.QueryAsync<T>(query, parametros, transaction: Transacao);
         }
 
         ///<inheritdoc/>

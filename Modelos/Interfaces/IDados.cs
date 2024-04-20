@@ -82,8 +82,9 @@ namespace Modelos.Interfaces
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="query"></param>
+        /// <param name="parametros"></param>
         /// <returns></returns>
-        Task<IEnumerable<T>> QueryOpenAsync<T>(string query);
+        Task<IEnumerable<T>> QueryOpenAsync<T>(string query, object parametros = null);
 
         /// <summary>
         /// Aplica todas as alterações existentes na <see cref="Transacao"/>

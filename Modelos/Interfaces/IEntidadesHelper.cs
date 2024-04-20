@@ -21,6 +21,15 @@ namespace Modelos.Interfaces
         Task<IEnumerable<T>> GetEntidades(string condicoes = null, string ordenacao = null);
 
         /// <summary>
+        /// Obtém todas entidades (<typeparamref name="T"/>) com uma query parametrizada
+        /// </summary>
+        /// <param name="parametros"></param>
+        /// <param name="condicoes"></param>
+        /// <param name="ordenacao"></param>
+        /// <returns></returns>
+        Task<IEnumerable<T>> GetEntidades(string condicoes, string ordenacao, params (string parametro, object valor)[] parametros);
+
+        /// <summary>
         /// Obtém todas entidades (<typeparamref name="T"/>) e preenche uma propriedade que seja uma <see cref="List{P}"/>
         /// </summary>
         /// <param name="condicoes"></param>

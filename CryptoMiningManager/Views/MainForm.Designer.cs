@@ -51,6 +51,7 @@
             this.ConfiguracoesACEG = new DevExpress.XtraBars.Navigation.AccordionControlElement();
             this.MineradoresACE = new DevExpress.XtraBars.Navigation.AccordionControlElement();
             this.ComandosACE = new DevExpress.XtraBars.Navigation.AccordionControlElement();
+            this.MoedasACE = new DevExpress.XtraBars.Navigation.AccordionControlElement();
             ((System.ComponentModel.ISupportInitialize)(this.MainRibbon)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.repositoryItemTextEditVersao)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.DocumentManager)).BeginInit();
@@ -72,7 +73,7 @@
             this.skinPaletteRibbonGalleryBarItem1,
             this.beiVersao});
             this.MainRibbon.Location = new System.Drawing.Point(0, 0);
-            this.MainRibbon.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.MainRibbon.Margin = new System.Windows.Forms.Padding(4);
             this.MainRibbon.MaxItemId = 5;
             this.MainRibbon.MdiMergeStyle = DevExpress.XtraBars.Ribbon.RibbonMdiMergeStyle.Always;
             this.MainRibbon.Name = "MainRibbon";
@@ -142,7 +143,7 @@
             // 
             this.ribbonStatusBar.ItemLinks.Add(this.beiVersao);
             this.ribbonStatusBar.Location = new System.Drawing.Point(0, 971);
-            this.ribbonStatusBar.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.ribbonStatusBar.Margin = new System.Windows.Forms.Padding(4);
             this.ribbonStatusBar.Name = "ribbonStatusBar";
             this.ribbonStatusBar.Ribbon = this.MainRibbon;
             this.ribbonStatusBar.Size = new System.Drawing.Size(1586, 33);
@@ -187,20 +188,20 @@
             this.FuncionalidadesDockPanel.Dock = DevExpress.XtraBars.Docking.DockingStyle.Left;
             this.FuncionalidadesDockPanel.ID = new System.Guid("e2195159-eed9-4634-ae20-2362dc2a59de");
             this.FuncionalidadesDockPanel.Location = new System.Drawing.Point(0, 182);
-            this.FuncionalidadesDockPanel.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.FuncionalidadesDockPanel.Margin = new System.Windows.Forms.Padding(4);
             this.FuncionalidadesDockPanel.Name = "FuncionalidadesDockPanel";
             this.FuncionalidadesDockPanel.Options.ShowCloseButton = false;
             this.FuncionalidadesDockPanel.OriginalSize = new System.Drawing.Size(244, 200);
-            this.FuncionalidadesDockPanel.Size = new System.Drawing.Size(285, 789);
+            this.FuncionalidadesDockPanel.Size = new System.Drawing.Size(244, 789);
             this.FuncionalidadesDockPanel.Text = "Funcionalidades";
             // 
             // dockPanel1_Container
             // 
             this.dockPanel1_Container.Controls.Add(this.FuncionalidadesAccordionControl);
             this.dockPanel1_Container.Location = new System.Drawing.Point(3, 31);
-            this.dockPanel1_Container.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.dockPanel1_Container.Margin = new System.Windows.Forms.Padding(4);
             this.dockPanel1_Container.Name = "dockPanel1_Container";
-            this.dockPanel1_Container.Size = new System.Drawing.Size(278, 755);
+            this.dockPanel1_Container.Size = new System.Drawing.Size(237, 755);
             this.dockPanel1_Container.TabIndex = 0;
             // 
             // FuncionalidadesAccordionControl
@@ -210,9 +211,9 @@
             this.FuncionalidadesACEG,
             this.ConfiguracoesACEG});
             this.FuncionalidadesAccordionControl.Location = new System.Drawing.Point(0, 0);
-            this.FuncionalidadesAccordionControl.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.FuncionalidadesAccordionControl.Margin = new System.Windows.Forms.Padding(4);
             this.FuncionalidadesAccordionControl.Name = "FuncionalidadesAccordionControl";
-            this.FuncionalidadesAccordionControl.Size = new System.Drawing.Size(278, 755);
+            this.FuncionalidadesAccordionControl.Size = new System.Drawing.Size(237, 755);
             this.FuncionalidadesAccordionControl.TabIndex = 0;
             this.FuncionalidadesAccordionControl.ViewType = DevExpress.XtraBars.Navigation.AccordionControlViewType.HamburgerMenu;
             // 
@@ -236,8 +237,9 @@
             // ConfiguracoesACEG
             // 
             this.ConfiguracoesACEG.Elements.AddRange(new DevExpress.XtraBars.Navigation.AccordionControlElement[] {
+            this.ComandosACE,
             this.MineradoresACE,
-            this.ComandosACE});
+            this.MoedasACE});
             this.ConfiguracoesACEG.Expanded = true;
             this.ConfiguracoesACEG.ImageOptions.SvgImage = ((DevExpress.Utils.Svg.SvgImage)(resources.GetObject("ConfiguracoesACEG.ImageOptions.SvgImage")));
             this.ConfiguracoesACEG.Name = "ConfiguracoesACEG";
@@ -257,6 +259,13 @@
             this.ComandosACE.Text = "Comandos";
             this.ComandosACE.Click += new System.EventHandler(this.ComandosACE_Click);
             // 
+            // MoedasACE
+            // 
+            this.MoedasACE.Name = "MoedasACE";
+            this.MoedasACE.Style = DevExpress.XtraBars.Navigation.ElementStyle.Item;
+            this.MoedasACE.Text = "Moedas";
+            this.MoedasACE.Click += new System.EventHandler(this.MoedasACE_Click);
+            // 
             // MainForm
             // 
             this.AllowFormGlass = DevExpress.Utils.DefaultBoolean.True;
@@ -266,7 +275,7 @@
             this.Controls.Add(this.FuncionalidadesDockPanel);
             this.Controls.Add(this.ribbonStatusBar);
             this.Controls.Add(this.MainRibbon);
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "MainForm";
             this.Ribbon = this.MainRibbon;
             this.StatusBar = this.ribbonStatusBar;
@@ -309,5 +318,6 @@
         private DevExpress.XtraBars.Navigation.AccordionControlElement ConfiguracoesACEG;
         private DevExpress.XtraBars.Navigation.AccordionControlElement MineradoresACE;
         private DevExpress.XtraBars.Navigation.AccordionControlElement ComandosACE;
+        private DevExpress.XtraBars.Navigation.AccordionControlElement MoedasACE;
     }
 }

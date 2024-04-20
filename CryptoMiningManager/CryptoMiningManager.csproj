@@ -60,7 +60,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Helpers\ConfiguracoesEntidadesHelper.cs" />
-    <Compile Include="Helpers\Extensoes.cs" />
     <Compile Include="Views\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -86,6 +85,12 @@
     </Compile>
     <Compile Include="Views\UserControls\Configuracoes\Editores\MineradorEditorUserControl.Designer.cs">
       <DependentUpon>MineradorEditorUserControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\UserControls\Configuracoes\MoedasUserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Views\UserControls\Configuracoes\MoedasUserControl.Designer.cs">
+      <DependentUpon>MoedasUserControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Views\UserControls\Configuracoes\MineradoresUserControl.cs">
       <SubType>UserControl</SubType>
@@ -122,6 +127,9 @@
     <EmbeddedResource Include="Views\UserControls\Configuracoes\Editores\MineradorEditorUserControl.resx">
       <DependentUpon>MineradorEditorUserControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Views\UserControls\Configuracoes\MoedasUserControl.resx">
+      <DependentUpon>MoedasUserControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Views\UserControls\Configuracoes\MineradoresUserControl.resx">
       <DependentUpon>MineradoresUserControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -131,6 +139,7 @@
     <None Include="Database\CryptoManagerDB.db" />
     <None Include="Properties\DataSources\Modelos.Classes.Comando.datasource" />
     <None Include="Properties\DataSources\Modelos.Classes.Minerador.datasource" />
+    <None Include="Properties\DataSources\Modelos.Classes.Moeda.datasource" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -152,6 +161,10 @@
     <ProjectReference Include="..\Modelos\Modelos.csproj">
       <Project>{1F31C183-DF7B-4C66-AC17-46C28459CF31}</Project>
       <Name>Modelos</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Utils\Utils.csproj">
+      <Project>{63d336cd-7885-48a5-b3aa-1ae9628dce1d}</Project>
+      <Name>Utils</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

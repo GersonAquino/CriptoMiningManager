@@ -7,7 +7,10 @@ namespace Modelos.Classes
 {
     public class Moedas
     {
-        private ListaMoedas coins { get; set; }
+        /// <summary>
+        /// Usar isto é desaconselhado, só está público para poder ser desserializado em condições. Usar <see cref="GetMoedas"/>
+        /// </summary>
+        public ListaMoedas coins { get; set; }
 
         /// <summary>
         /// Pega em todas as propriedades do tipo <see cref="Moeda"/> em <see cref="coins"/> e passa-as para um <see cref="IEnumerable{T}"/> de <see cref="Moeda"/>
@@ -15,6 +18,9 @@ namespace Modelos.Classes
         /// <returns></returns>
         public List<Moeda> GetMoedas()
         {
+            if (coins == null)
+                return null;
+
             PropertyInfo[] propriedades = coins.GetType().GetProperties();
 
             List<Moeda> moedas = new List<Moeda>(propriedades.Length);
@@ -22,7 +28,6 @@ namespace Modelos.Classes
             {
                 if (propriedade.GetValue(coins) is Moeda moeda)
                 {
-                    //"Nicehash".Equals(moeda.Tag, StringComparison.OrdinalIgnoreCase) ? $"Nicehash-{moeda.Algorithm}" : moeda.Nome = moeda.Tag;
                     moeda.Nome = propriedade.Name;
                     moedas.Add(moeda);
                 }
@@ -32,109 +37,103 @@ namespace Modelos.Classes
         }
     }
 
-    internal class ListaMoedas
+    public class ListaMoedas
     {
-        public Moeda Conflux { get; set; }
+        //public Moeda Aeternity { get; set; }
+        //public Moeda Alephium { get; set; }
+        //public Moeda Beam { get; set; }
+        //public Moeda BitcoinGold { get; set; }
+        //public Moeda BitcoinZ { get; set; }
+        //public Moeda Bitnet { get; set; }
 
-        [JsonPropertyName("Nicehash-Octopus")]
-        public Moeda NicehashOctopus { get; set; }
+        //[JsonPropertyName("Bloc.money")]
+        //public Moeda Blocmoney { get; set; }
 
-        [JsonPropertyName("Nicehash-KawPow")]
-        public Moeda NicehashKawPow { get; set; }
+        //public Moeda Callisto { get; set; }
+        //public Moeda Canxium { get; set; }
+        //public Moeda Clore { get; set; }
+        //public Moeda Conceal { get; set; }
+        //public Moeda Conflux { get; set; }
+        //public Moeda Cortex { get; set; }
+        //public Moeda Dynexcoin { get; set; }
+        //public Moeda Equilibria { get; set; }
+        //public Moeda Ergo { get; set; }
+        //public Moeda EthereumClassic { get; set; }
+        //public Moeda EthereumFair { get; set; }
+        //public Moeda EtherGem { get; set; }
+        //public Moeda EthereumPoW { get; set; }
+        //public Moeda Etho { get; set; }
+        //public Moeda Etica { get; set; }
+        //public Moeda Firo { get; set; }
+        //public Moeda Flux { get; set; }
+        //public Moeda Frencoin { get; set; }
+        //public Moeda GamePass { get; set; }
+        //public Moeda Gemlink { get; set; }
 
-        public Moeda Clore { get; set; }
-        public Moeda Neurai { get; set; }
-        public Moeda Kiirocoin { get; set; }
-        public Moeda Satoxcoin { get; set; }
-        public Moeda Ryo { get; set; }
-        public Moeda Neoxa { get; set; }
-        public Moeda Alephium { get; set; }
-        public Moeda Paprikacoin { get; set; }
-        public Moeda GamePass { get; set; }
-        public Moeda Gemlink { get; set; }
-        public Moeda BitcoinGold { get; set; }
+        //[JsonPropertyName("Grin-CT32")]
+        //public Moeda GrinCT32 { get; set; }
 
-        [JsonPropertyName("Nicehash-Zhash")]
-        public Moeda NicehashZhash { get; set; }
+        //public Moeda HavenProtocol { get; set; }
+        //public Moeda Karlsen { get; set; }
+        //public Moeda Kiirocoin { get; set; }
+        //public Moeda IronFish { get; set; }
+        //public Moeda Meowcoin { get; set; }
+        //public Moeda Neoxa { get; set; }
+        //public Moeda Nexa { get; set; }
+        //public Moeda Neurai { get; set; }
 
-        public Moeda Zano { get; set; }
-        public Moeda BitcoinZ { get; set; }
-        public Moeda Ravencoin { get; set; }
-
-        [JsonPropertyName("Nicehash-ZelHash")]
-        public Moeda NicehashZelHash { get; set; }
-
-        public Moeda Frencoin { get; set; }
-        public Moeda Flux { get; set; }
-        public Moeda Meowcoin { get; set; }
-
-        [JsonPropertyName("Nicehash-CuckooCycle")]
-        public Moeda NicehashCuckooCycle { get; set; }
-
-        public Moeda Cortex { get; set; }
-        public Moeda Equilibria { get; set; }
-        public Moeda Aeternity { get; set; }
-
-        [JsonPropertyName("Nicehash-BeamV3")]
-        public Moeda NicehashBeamV3 { get; set; }
-
-        public Moeda Firo { get; set; }
-        public Moeda Beam { get; set; }
-        public Moeda Conceal { get; set; }
-        public Moeda Canxium { get; set; }
-
-        [JsonPropertyName("Nicehash-Ethash")]
-        public Moeda NicehashEthash { get; set; }
-
-        public Moeda Ergo { get; set; }
+        [JsonPropertyName("Nicehash-Alephium")]
+        public Moeda NicehashAlephium { get; set; }
 
         [JsonPropertyName("Nicehash-Autolykos")]
         public Moeda NicehashAutolykos { get; set; }
 
-        public Moeda Radiant { get; set; }
-        public Moeda Rethereum { get; set; }
-
-        [JsonPropertyName("Bloc.money")]
-        public Moeda Blocmoney { get; set; }
-
-        public Moeda Bitnet { get; set; }
-        public Moeda PowBlocks { get; set; }
-        public Moeda OctaSpace { get; set; }
-
-        [JsonPropertyName("Grin-CT32")]
-        public Moeda GrinCT32 { get; set; }
-
-        public Moeda Vertcoin { get; set; }
-        public Moeda Sero { get; set; }
-        public Moeda EtherGem { get; set; }
-        public Moeda HavenProtocol { get; set; }
-        public Moeda EthereumFair { get; set; }
+        [JsonPropertyName("Nicehash-BeamV3")]
+        public Moeda NicehashBeamV3 { get; set; }
 
         [JsonPropertyName("Nicehash-Cuckatoo32")]
         public Moeda NicehashCuckatoo32 { get; set; }
 
-        public Moeda EthereumPoW { get; set; }
-        public Moeda Callisto { get; set; }
-        public Moeda EthereumClassic { get; set; }
+        [JsonPropertyName("Nicehash-CuckooCycle")]
+        public Moeda NicehashCuckooCycle { get; set; }
 
         [JsonPropertyName("Nicehash-Etchash")]
         public Moeda NicehashEtchash { get; set; }
 
-        public Moeda Etica { get; set; }
-        public Moeda QuarkChain { get; set; }
-        public Moeda Etho { get; set; }
-
-        [JsonPropertyName("Nicehash-NexaPow")]
-        public Moeda NicehashNexaPow { get; set; }
+        [JsonPropertyName("Nicehash-Ethash")]
+        public Moeda NicehashEthash { get; set; }
 
         [JsonPropertyName("Nicehash-IronFish")]
         public Moeda NicehashIronFish { get; set; }
 
-        public Moeda Skydoge { get; set; }
-        public Moeda IronFish { get; set; }
-        public Moeda Karlsen { get; set; }
-        public Moeda Dynexcoin { get; set; }
-        public Moeda Nexa { get; set; }
+        [JsonPropertyName("Nicehash-KawPow")]
+        public Moeda NicehashKawPow { get; set; }
+
+        [JsonPropertyName("Nicehash-NexaPow")]
+        public Moeda NicehashNexaPow { get; set; }
+
+        [JsonPropertyName("Nicehash-Octopus")]
+        public Moeda NicehashOctopus { get; set; }
+
+        [JsonPropertyName("Nicehash-ZelHash")]
+        public Moeda NicehashZelHash { get; set; }
+
+        [JsonPropertyName("Nicehash-Zhash")]
+        public Moeda NicehashZhash { get; set; }
+
+        //public Moeda OctaSpace { get; set; }
+        //public Moeda Paprikacoin { get; set; }
+        //public Moeda PowBlocks { get; set; }
+        //public Moeda QuarkChain { get; set; }
+        //public Moeda Radiant { get; set; }
+        //public Moeda Ravencoin { get; set; }
+        //public Moeda Rethereum { get; set; }
+        //public Moeda Ryo { get; set; }
+        //public Moeda Satoxcoin { get; set; }
+        //public Moeda Sero { get; set; }
+        //public Moeda Skydoge { get; set; }
+        //public Moeda Vertcoin { get; set; }
+        //public Moeda Zano { get; set; }
     }
 
     /// <summary>

@@ -12,6 +12,7 @@ using Modelos.Exceptions;
 using System;
 using System.Linq;
 using System.Windows.Forms;
+using Utils;
 
 namespace CryptoMiningManager.Helpers
 {

@@ -34,7 +34,7 @@
             this.GravarBBI = new DevExpress.XtraBars.BarButtonItem();
             this.ComandoEditorRP = new DevExpress.XtraBars.Ribbon.RibbonPage();
             this.OperacoesRPG = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
-            this.ComandoDLC = new DevExpress.XtraDataLayout.DataLayoutControl();
+            this.BaseDLC = new DevExpress.XtraDataLayout.DataLayoutControl();
             this.AtivoCheckEdit = new DevExpress.XtraEditors.CheckEdit();
             this.ComandoBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.DataCriacaoDateEdit = new DevExpress.XtraEditors.DateEdit();
@@ -42,8 +42,8 @@
             this.PreMineracaoCheckEdit = new DevExpress.XtraEditors.CheckEdit();
             this.PosMineracaoCheckEdit = new DevExpress.XtraEditors.CheckEdit();
             this.ComandosMemoEdit = new DevExpress.XtraEditors.MemoEdit();
+            this.BaseLCG = new DevExpress.XtraLayout.LayoutControlGroup();
             this.ComandoLCG = new DevExpress.XtraLayout.LayoutControlGroup();
-            this.layoutControlGroup1 = new DevExpress.XtraLayout.LayoutControlGroup();
             this.ItemForDataCriacao = new DevExpress.XtraLayout.LayoutControlItem();
             this.ItemForAtivo = new DevExpress.XtraLayout.LayoutControlItem();
             this.ItemForComandos = new DevExpress.XtraLayout.LayoutControlItem();
@@ -52,8 +52,8 @@
             this.ItemForPosMineracao = new DevExpress.XtraLayout.LayoutControlItem();
             this.ItemForDataAlteracao = new DevExpress.XtraLayout.LayoutControlItem();
             ((System.ComponentModel.ISupportInitialize)(this.ComandoEditorRC)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ComandoDLC)).BeginInit();
-            this.ComandoDLC.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.BaseDLC)).BeginInit();
+            this.BaseDLC.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.AtivoCheckEdit.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ComandoBindingSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.DataCriacaoDateEdit.Properties)).BeginInit();
@@ -63,8 +63,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.PreMineracaoCheckEdit.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.PosMineracaoCheckEdit.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ComandosMemoEdit.Properties)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.BaseLCG)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ComandoLCG)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ItemForDataCriacao)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ItemForAtivo)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ItemForComandos)).BeginInit();
@@ -112,25 +112,25 @@
             this.OperacoesRPG.Name = "OperacoesRPG";
             this.OperacoesRPG.Text = "Operações";
             // 
-            // ComandoDLC
+            // BaseDLC
             // 
-            this.ComandoDLC.Controls.Add(this.AtivoCheckEdit);
-            this.ComandoDLC.Controls.Add(this.DataCriacaoDateEdit);
-            this.ComandoDLC.Controls.Add(this.DataAlteracaoDateEdit);
-            this.ComandoDLC.Controls.Add(this.PreMineracaoCheckEdit);
-            this.ComandoDLC.Controls.Add(this.PosMineracaoCheckEdit);
-            this.ComandoDLC.Controls.Add(this.ComandosMemoEdit);
-            this.ComandoDLC.DataMember = null;
-            this.ComandoDLC.DataSource = this.ComandoBindingSource;
-            this.ComandoDLC.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ComandoDLC.Location = new System.Drawing.Point(0, 186);
-            this.ComandoDLC.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.ComandoDLC.MenuManager = this.ComandoEditorRC;
-            this.ComandoDLC.Name = "ComandoDLC";
-            this.ComandoDLC.Root = this.ComandoLCG;
-            this.ComandoDLC.Size = new System.Drawing.Size(1395, 638);
-            this.ComandoDLC.TabIndex = 1;
-            this.ComandoDLC.Text = "dataLayoutControl1";
+            this.BaseDLC.Controls.Add(this.AtivoCheckEdit);
+            this.BaseDLC.Controls.Add(this.DataCriacaoDateEdit);
+            this.BaseDLC.Controls.Add(this.DataAlteracaoDateEdit);
+            this.BaseDLC.Controls.Add(this.PreMineracaoCheckEdit);
+            this.BaseDLC.Controls.Add(this.PosMineracaoCheckEdit);
+            this.BaseDLC.Controls.Add(this.ComandosMemoEdit);
+            this.BaseDLC.DataMember = null;
+            this.BaseDLC.DataSource = this.ComandoBindingSource;
+            this.BaseDLC.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.BaseDLC.Location = new System.Drawing.Point(0, 186);
+            this.BaseDLC.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.BaseDLC.MenuManager = this.ComandoEditorRC;
+            this.BaseDLC.Name = "BaseDLC";
+            this.BaseDLC.Root = this.BaseLCG;
+            this.BaseDLC.Size = new System.Drawing.Size(1395, 638);
+            this.BaseDLC.TabIndex = 1;
+            this.BaseDLC.Text = "dataLayoutControl1";
             // 
             // AtivoCheckEdit
             // 
@@ -142,7 +142,7 @@
             this.AtivoCheckEdit.Properties.GlyphAlignment = DevExpress.Utils.HorzAlignment.Default;
             this.AtivoCheckEdit.Properties.NullStyle = DevExpress.XtraEditors.Controls.StyleIndeterminate.Unchecked;
             this.AtivoCheckEdit.Size = new System.Drawing.Size(1371, 21);
-            this.AtivoCheckEdit.StyleController = this.ComandoDLC;
+            this.AtivoCheckEdit.StyleController = this.BaseDLC;
             this.AtivoCheckEdit.TabIndex = 7;
             // 
             // ComandoBindingSource
@@ -162,7 +162,7 @@
             new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
             this.DataCriacaoDateEdit.Properties.ReadOnly = true;
             this.DataCriacaoDateEdit.Size = new System.Drawing.Size(585, 26);
-            this.DataCriacaoDateEdit.StyleController = this.ComandoDLC;
+            this.DataCriacaoDateEdit.StyleController = this.BaseDLC;
             this.DataCriacaoDateEdit.TabIndex = 8;
             // 
             // DataAlteracaoDateEdit
@@ -178,7 +178,7 @@
             new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)});
             this.DataAlteracaoDateEdit.Properties.ReadOnly = true;
             this.DataAlteracaoDateEdit.Size = new System.Drawing.Size(586, 26);
-            this.DataAlteracaoDateEdit.StyleController = this.ComandoDLC;
+            this.DataAlteracaoDateEdit.StyleController = this.BaseDLC;
             this.DataAlteracaoDateEdit.TabIndex = 9;
             // 
             // PreMineracaoCheckEdit
@@ -190,7 +190,7 @@
             this.PreMineracaoCheckEdit.Properties.Caption = "Pré Mineração";
             this.PreMineracaoCheckEdit.Properties.GlyphAlignment = DevExpress.Utils.HorzAlignment.Default;
             this.PreMineracaoCheckEdit.Size = new System.Drawing.Size(1371, 21);
-            this.PreMineracaoCheckEdit.StyleController = this.ComandoDLC;
+            this.PreMineracaoCheckEdit.StyleController = this.BaseDLC;
             this.PreMineracaoCheckEdit.TabIndex = 12;
             // 
             // PosMineracaoCheckEdit
@@ -202,7 +202,7 @@
             this.PosMineracaoCheckEdit.Properties.Caption = "Pós Mineração";
             this.PosMineracaoCheckEdit.Properties.GlyphAlignment = DevExpress.Utils.HorzAlignment.Default;
             this.PosMineracaoCheckEdit.Size = new System.Drawing.Size(1371, 21);
-            this.PosMineracaoCheckEdit.StyleController = this.ComandoDLC;
+            this.PosMineracaoCheckEdit.StyleController = this.BaseDLC;
             this.PosMineracaoCheckEdit.TabIndex = 13;
             // 
             // ComandosMemoEdit
@@ -213,24 +213,24 @@
             this.ComandosMemoEdit.Name = "ComandosMemoEdit";
             this.ComandosMemoEdit.Properties.LinesCount = 4;
             this.ComandosMemoEdit.Size = new System.Drawing.Size(1371, 78);
-            this.ComandosMemoEdit.StyleController = this.ComandoDLC;
+            this.ComandosMemoEdit.StyleController = this.BaseDLC;
             this.ComandosMemoEdit.TabIndex = 14;
+            // 
+            // BaseLCG
+            // 
+            this.BaseLCG.EnableIndentsWithoutBorders = DevExpress.Utils.DefaultBoolean.True;
+            this.BaseLCG.GroupBordersVisible = false;
+            this.BaseLCG.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
+            this.ComandoLCG});
+            this.BaseLCG.Name = "BaseLCG";
+            this.BaseLCG.Size = new System.Drawing.Size(1395, 638);
+            this.BaseLCG.TextVisible = false;
             // 
             // ComandoLCG
             // 
-            this.ComandoLCG.EnableIndentsWithoutBorders = DevExpress.Utils.DefaultBoolean.True;
+            this.ComandoLCG.AllowDrawBackground = false;
             this.ComandoLCG.GroupBordersVisible = false;
             this.ComandoLCG.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
-            this.layoutControlGroup1});
-            this.ComandoLCG.Name = "ComandoLCG";
-            this.ComandoLCG.Size = new System.Drawing.Size(1395, 638);
-            this.ComandoLCG.TextVisible = false;
-            // 
-            // layoutControlGroup1
-            // 
-            this.layoutControlGroup1.AllowDrawBackground = false;
-            this.layoutControlGroup1.GroupBordersVisible = false;
-            this.layoutControlGroup1.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
             this.ItemForDataCriacao,
             this.ItemForAtivo,
             this.ItemForComandos,
@@ -238,9 +238,9 @@
             this.ItemForPreMineracao,
             this.ItemForPosMineracao,
             this.ItemForDataAlteracao});
-            this.layoutControlGroup1.Location = new System.Drawing.Point(0, 0);
-            this.layoutControlGroup1.Name = "autoGeneratedGroup0";
-            this.layoutControlGroup1.Size = new System.Drawing.Size(1375, 618);
+            this.ComandoLCG.Location = new System.Drawing.Point(0, 0);
+            this.ComandoLCG.Name = "ComandoLCG";
+            this.ComandoLCG.Size = new System.Drawing.Size(1375, 618);
             // 
             // ItemForDataCriacao
             // 
@@ -312,14 +312,14 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.ComandoDLC);
+            this.Controls.Add(this.BaseDLC);
             this.Controls.Add(this.ComandoEditorRC);
             this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "ComandoEditorUserControl";
             this.Size = new System.Drawing.Size(1395, 824);
             ((System.ComponentModel.ISupportInitialize)(this.ComandoEditorRC)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ComandoDLC)).EndInit();
-            this.ComandoDLC.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.BaseDLC)).EndInit();
+            this.BaseDLC.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.AtivoCheckEdit.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ComandoBindingSource)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.DataCriacaoDateEdit.Properties.CalendarTimeProperties)).EndInit();
@@ -329,8 +329,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.PreMineracaoCheckEdit.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.PosMineracaoCheckEdit.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ComandosMemoEdit.Properties)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.BaseLCG)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ComandoLCG)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ItemForDataCriacao)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ItemForAtivo)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ItemForComandos)).EndInit();
@@ -348,14 +348,14 @@
         private DevExpress.XtraBars.Ribbon.RibbonControl ComandoEditorRC;
         private DevExpress.XtraBars.Ribbon.RibbonPage ComandoEditorRP;
         private DevExpress.XtraBars.Ribbon.RibbonPageGroup OperacoesRPG;
-        private DevExpress.XtraDataLayout.DataLayoutControl ComandoDLC;
-        private DevExpress.XtraLayout.LayoutControlGroup ComandoLCG;
+        private DevExpress.XtraDataLayout.DataLayoutControl BaseDLC;
+        private DevExpress.XtraLayout.LayoutControlGroup BaseLCG;
         private DevExpress.XtraBars.BarButtonItem GravarBBI;
         private System.Windows.Forms.BindingSource ComandoBindingSource;
         private DevExpress.XtraEditors.CheckEdit AtivoCheckEdit;
         private DevExpress.XtraEditors.DateEdit DataCriacaoDateEdit;
         private DevExpress.XtraEditors.DateEdit DataAlteracaoDateEdit;
-        private DevExpress.XtraLayout.LayoutControlGroup layoutControlGroup1;
+        private DevExpress.XtraLayout.LayoutControlGroup ComandoLCG;
         private DevExpress.XtraLayout.LayoutControlItem ItemForAtivo;
         private DevExpress.XtraLayout.LayoutControlItem ItemForDataCriacao;
         private DevExpress.XtraLayout.LayoutControlItem ItemForDataAlteracao;

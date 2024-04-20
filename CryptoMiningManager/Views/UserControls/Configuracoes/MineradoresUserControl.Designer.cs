@@ -50,6 +50,7 @@
             this.EliminarBBI = new DevExpress.XtraBars.BarButtonItem();
             this.MineradoresRP = new DevExpress.XtraBars.Ribbon.RibbonPage();
             this.OperacoesRPG = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
+            this.colNomeMinerador = new DevExpress.XtraGrid.Columns.GridColumn();
             ((System.ComponentModel.ISupportInitialize)(this.MoedasGV)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.MineradoresGC)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.MineradoresBindingSource)).BeginInit();
@@ -112,6 +113,7 @@
             // 
             this.MineradoresGV.Columns.AddRange(new DevExpress.XtraGrid.Columns.GridColumn[] {
             this.colIdMinerador,
+            this.colNomeMinerador,
             this.colLocalizacaoMinerador,
             this.colParametrosMinerador,
             this.colAtivoMinerador,
@@ -190,7 +192,7 @@
             this.colDataAlteracaoMinerador.MinWidth = 23;
             this.colDataAlteracaoMinerador.Name = "colDataAlteracaoMinerador";
             this.colDataAlteracaoMinerador.Visible = true;
-            this.colDataAlteracaoMinerador.VisibleIndex = 6;
+            this.colDataAlteracaoMinerador.VisibleIndex = 7;
             this.colDataAlteracaoMinerador.Width = 126;
             // 
             // MineradoresRC
@@ -261,6 +263,13 @@
             this.OperacoesRPG.Name = "OperacoesRPG";
             this.OperacoesRPG.Text = "Operações";
             // 
+            // colNomeMinerador
+            // 
+            this.colNomeMinerador.FieldName = "Nome";
+            this.colNomeMinerador.Name = "colNomeMinerador";
+            this.colNomeMinerador.Visible = true;
+            this.colNomeMinerador.VisibleIndex = 6;
+            // 
             // MineradoresUserControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
@@ -302,5 +311,6 @@
         private DevExpress.XtraGrid.Views.Grid.GridView MoedasGV;
         private DevExpress.XtraGrid.Columns.GridColumn colIdMoeda;
         private DevExpress.XtraGrid.Columns.GridColumn colNome;
+        private DevExpress.XtraGrid.Columns.GridColumn colNomeMinerador;
     }
 }

@@ -49,6 +49,8 @@
             this.ItemForAtivo = new DevExpress.XtraLayout.LayoutControlItem();
             this.ItemForDataAlteracao = new DevExpress.XtraLayout.LayoutControlItem();
             this.emptySpaceItem1 = new DevExpress.XtraLayout.EmptySpaceItem();
+            this.NomeTextEdit = new DevExpress.XtraEditors.TextEdit();
+            this.ItemForNome = new DevExpress.XtraLayout.LayoutControlItem();
             ((System.ComponentModel.ISupportInitialize)(this.MineradorEditorRC)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.MineradorDLC)).BeginInit();
             this.MineradorDLC.SuspendLayout();
@@ -68,6 +70,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.ItemForAtivo)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ItemForDataAlteracao)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.NomeTextEdit.Properties)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ItemForNome)).BeginInit();
             this.SuspendLayout();
             // 
             // MineradorEditorRC
@@ -115,6 +119,7 @@
             this.MineradorDLC.Controls.Add(this.DataCriacaoDateEdit);
             this.MineradorDLC.Controls.Add(this.DataAlteracaoDateEdit);
             this.MineradorDLC.Controls.Add(this.LocalizacaoButtonEdit);
+            this.MineradorDLC.Controls.Add(this.NomeTextEdit);
             this.MineradorDLC.DataMember = null;
             this.MineradorDLC.DataSource = this.MineradorBindingSource;
             this.MineradorDLC.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -130,7 +135,7 @@
             // ParametrosTextEdit
             // 
             this.ParametrosTextEdit.DataBindings.Add(new System.Windows.Forms.Binding("EditValue", this.MineradorBindingSource, "Parametros", true));
-            this.ParametrosTextEdit.Location = new System.Drawing.Point(110, 42);
+            this.ParametrosTextEdit.Location = new System.Drawing.Point(110, 72);
             this.ParametrosTextEdit.MenuManager = this.MineradorEditorRC;
             this.ParametrosTextEdit.Name = "ParametrosTextEdit";
             this.ParametrosTextEdit.Size = new System.Drawing.Size(1273, 26);
@@ -144,7 +149,7 @@
             // AtivoCheckEdit
             // 
             this.AtivoCheckEdit.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.MineradorBindingSource, "Ativo", true));
-            this.AtivoCheckEdit.Location = new System.Drawing.Point(12, 72);
+            this.AtivoCheckEdit.Location = new System.Drawing.Point(12, 102);
             this.AtivoCheckEdit.MenuManager = this.MineradorEditorRC;
             this.AtivoCheckEdit.Name = "AtivoCheckEdit";
             this.AtivoCheckEdit.Properties.Caption = "Ativo";
@@ -158,7 +163,7 @@
             // 
             this.DataCriacaoDateEdit.DataBindings.Add(new System.Windows.Forms.Binding("EditValue", this.MineradorBindingSource, "DataCriacao", true));
             this.DataCriacaoDateEdit.EditValue = null;
-            this.DataCriacaoDateEdit.Location = new System.Drawing.Point(110, 97);
+            this.DataCriacaoDateEdit.Location = new System.Drawing.Point(110, 127);
             this.DataCriacaoDateEdit.MenuManager = this.MineradorEditorRC;
             this.DataCriacaoDateEdit.Name = "DataCriacaoDateEdit";
             this.DataCriacaoDateEdit.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
@@ -174,7 +179,7 @@
             // 
             this.DataAlteracaoDateEdit.DataBindings.Add(new System.Windows.Forms.Binding("EditValue", this.MineradorBindingSource, "DataAlteracao", true));
             this.DataAlteracaoDateEdit.EditValue = null;
-            this.DataAlteracaoDateEdit.Location = new System.Drawing.Point(797, 97);
+            this.DataAlteracaoDateEdit.Location = new System.Drawing.Point(797, 127);
             this.DataAlteracaoDateEdit.MenuManager = this.MineradorEditorRC;
             this.DataAlteracaoDateEdit.Name = "DataAlteracaoDateEdit";
             this.DataAlteracaoDateEdit.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
@@ -189,7 +194,7 @@
             // LocalizacaoButtonEdit
             // 
             this.LocalizacaoButtonEdit.DataBindings.Add(new System.Windows.Forms.Binding("EditValue", this.MineradorBindingSource, "Localizacao", true));
-            this.LocalizacaoButtonEdit.Location = new System.Drawing.Point(110, 12);
+            this.LocalizacaoButtonEdit.Location = new System.Drawing.Point(110, 42);
             this.LocalizacaoButtonEdit.MenuManager = this.MineradorEditorRC;
             this.LocalizacaoButtonEdit.Name = "LocalizacaoButtonEdit";
             this.LocalizacaoButtonEdit.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
@@ -219,7 +224,8 @@
             this.ItemForDataCriacao,
             this.ItemForAtivo,
             this.ItemForDataAlteracao,
-            this.emptySpaceItem1});
+            this.emptySpaceItem1,
+            this.ItemForNome});
             this.layoutControlGroup1.Location = new System.Drawing.Point(0, 0);
             this.layoutControlGroup1.Name = "autoGeneratedGroup0";
             this.layoutControlGroup1.Size = new System.Drawing.Size(1375, 618);
@@ -227,7 +233,7 @@
             // ItemForLocalizacao
             // 
             this.ItemForLocalizacao.Control = this.LocalizacaoButtonEdit;
-            this.ItemForLocalizacao.Location = new System.Drawing.Point(0, 0);
+            this.ItemForLocalizacao.Location = new System.Drawing.Point(0, 30);
             this.ItemForLocalizacao.Name = "ItemForLocalizacao";
             this.ItemForLocalizacao.Size = new System.Drawing.Size(1375, 30);
             this.ItemForLocalizacao.Text = "Localização";
@@ -236,7 +242,7 @@
             // ItemForParametros
             // 
             this.ItemForParametros.Control = this.ParametrosTextEdit;
-            this.ItemForParametros.Location = new System.Drawing.Point(0, 30);
+            this.ItemForParametros.Location = new System.Drawing.Point(0, 60);
             this.ItemForParametros.Name = "ItemForParametros";
             this.ItemForParametros.Size = new System.Drawing.Size(1375, 30);
             this.ItemForParametros.Text = "Parâmetros";
@@ -245,7 +251,7 @@
             // ItemForDataCriacao
             // 
             this.ItemForDataCriacao.Control = this.DataCriacaoDateEdit;
-            this.ItemForDataCriacao.Location = new System.Drawing.Point(0, 85);
+            this.ItemForDataCriacao.Location = new System.Drawing.Point(0, 115);
             this.ItemForDataCriacao.Name = "ItemForDataCriacao";
             this.ItemForDataCriacao.Size = new System.Drawing.Size(687, 30);
             this.ItemForDataCriacao.Text = "Data Criação";
@@ -254,7 +260,7 @@
             // ItemForAtivo
             // 
             this.ItemForAtivo.Control = this.AtivoCheckEdit;
-            this.ItemForAtivo.Location = new System.Drawing.Point(0, 60);
+            this.ItemForAtivo.Location = new System.Drawing.Point(0, 90);
             this.ItemForAtivo.Name = "ItemForAtivo";
             this.ItemForAtivo.Size = new System.Drawing.Size(1375, 25);
             this.ItemForAtivo.Text = "Ativo";
@@ -264,7 +270,7 @@
             // ItemForDataAlteracao
             // 
             this.ItemForDataAlteracao.Control = this.DataAlteracaoDateEdit;
-            this.ItemForDataAlteracao.Location = new System.Drawing.Point(687, 85);
+            this.ItemForDataAlteracao.Location = new System.Drawing.Point(687, 115);
             this.ItemForDataAlteracao.Name = "ItemForDataAlteracao";
             this.ItemForDataAlteracao.Size = new System.Drawing.Size(688, 30);
             this.ItemForDataAlteracao.Text = "Data Alteração";
@@ -273,10 +279,29 @@
             // emptySpaceItem1
             // 
             this.emptySpaceItem1.AllowHotTrack = false;
-            this.emptySpaceItem1.Location = new System.Drawing.Point(0, 115);
+            this.emptySpaceItem1.Location = new System.Drawing.Point(0, 145);
             this.emptySpaceItem1.Name = "emptySpaceItem1";
-            this.emptySpaceItem1.Size = new System.Drawing.Size(1375, 503);
+            this.emptySpaceItem1.Size = new System.Drawing.Size(1375, 473);
             this.emptySpaceItem1.TextSize = new System.Drawing.Size(0, 0);
+            // 
+            // NomeTextEdit
+            // 
+            this.NomeTextEdit.DataBindings.Add(new System.Windows.Forms.Binding("EditValue", this.MineradorBindingSource, "Nome", true));
+            this.NomeTextEdit.Location = new System.Drawing.Point(110, 12);
+            this.NomeTextEdit.MenuManager = this.MineradorEditorRC;
+            this.NomeTextEdit.Name = "NomeTextEdit";
+            this.NomeTextEdit.Size = new System.Drawing.Size(1273, 26);
+            this.NomeTextEdit.StyleController = this.MineradorDLC;
+            this.NomeTextEdit.TabIndex = 11;
+            // 
+            // ItemForNome
+            // 
+            this.ItemForNome.Control = this.NomeTextEdit;
+            this.ItemForNome.Location = new System.Drawing.Point(0, 0);
+            this.ItemForNome.Name = "ItemForNome";
+            this.ItemForNome.Size = new System.Drawing.Size(1375, 30);
+            this.ItemForNome.Text = "Nome";
+            this.ItemForNome.TextSize = new System.Drawing.Size(86, 17);
             // 
             // MineradorEditorUserControl
             // 
@@ -306,6 +331,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.ItemForAtivo)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ItemForDataAlteracao)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.emptySpaceItem1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.NomeTextEdit.Properties)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ItemForNome)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -332,5 +359,7 @@
         private DevExpress.XtraLayout.LayoutControlItem ItemForDataAlteracao;
         private DevExpress.XtraEditors.ButtonEdit LocalizacaoButtonEdit;
         private DevExpress.XtraLayout.EmptySpaceItem emptySpaceItem1;
+        private DevExpress.XtraEditors.TextEdit NomeTextEdit;
+        private DevExpress.XtraLayout.LayoutControlItem ItemForNome;
     }
 }

@@ -1,7 +1,10 @@
 ﻿using DevExpress.XtraEditors;
-using GestorDados.Helpers;
+using DevExpress.XtraSplashScreen;
 using Modelos.Classes;
+using Modelos.Enums;
+using Modelos.Interfaces;
 using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Linq;
@@ -16,18 +19,37 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
 
         private readonly string URLRentabilidade;
 
-        private readonly HttpHelper Http;
+        private readonly IHttpHelper Http;
 
         private bool HaAlteracaoNaRentabilidade = false;
+        private int TempoEntreVerificacoes;
         private Thread RentabilidadeThread = null;
 
         private Moeda MoedaMaisRentavel;
 
-        public GestaoAutomaticaMineracaoUserControl()
+        private readonly IEntidadesHelper<Minerador> MineradoresHelper;
+
+        public GestaoAutomaticaMineracaoUserControl(IHttpHelper httpHelper, IEntidadesHelper<Minerador> mineradoresHelper)
         {
             InitializeComponent();
-            Http = new HttpHelper(new JsonHelper());
+            Http = httpHelper;
+            MineradoresHelper = mineradoresHelper;
+
             URLRentabilidade = ConfigurationManager.AppSettings["URLRentabilidade"];
+
+            //Este método aparentemente vai buscar o DescriptionAttribute sozinho, então já fica com uma Caption decente
+            AlgoritmoRIDG.Items.AddEnum<Algoritmo>();
+        }
+
+        private async void GestaoAutomaticaMineracaoUserControl_Load(object sender, EventArgs e)
+        {
+            await AtualizarMineradores();
+        }
+
+        #region Operações
+        private async void AtualizarBBI_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
+        {
+            await AtualizarMineradores();
         }
 
         private void IniciarBBI_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
@@ -49,20 +71,80 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
             }
         }
 
+        private void PararBBI_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
+        {
+            try
+            {
+                RentabilidadeThread?.Abort();
+            }
+            catch (Exception ex)
+            {
+                XtraMessageBox.Show("Erro ao parar minerador: " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+        #endregion
+
+        private void IntervaloVerificacaoRentabilidadeBEI_EditValueChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                decimal intervaloVerificacaoRentabilidade = (decimal)IntervaloVerificacaoRentabilidadeBEI.EditValue;
+
+                TempoEntreVerificacoes = decimal.ToInt32(intervaloVerificacaoRentabilidade) * 60000; //*1000 por serem milisegundos e *60 para passar a minutos
+            }
+            catch (Exception ex)
+            {
+                XtraMessageBox.Show("Erro ao alterar intervalo de verificação de rentabilidade: " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        //MÉTODOS AUXILIARES
+        private async Task AtualizarMineradores()
+        {
+            IOverlaySplashScreenHandle splashScreenHandler = SplashScreenManager.ShowOverlayForm(MineradoresGC);
+            try
+            {
+                MineradoresGV.BeginDataUpdate();
+
+                MineradorBindingSource.Clear();
+                foreach (KeyValuePair<int, Minerador> registo in await MineradoresHelper.GetEntidadesComLista("mi.Ativo = 1", "mi.Nome ASC"))
+                {
+                    MineradorBindingSource.Add(registo.Value);
+                }
+            }
+            catch (Exception ex)
+            {
+                XtraMessageBox.Show("Erro ao atualizar lista de mineradores: " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                MineradoresGV.EndDataUpdate();
+                splashScreenHandler.Dispose();
+            }
+        }
+
         private async Task VerificaRentabilidade()
         {
-
-            while (true)
+            try
             {
-                Moedas classe = await Http.PedidoGETHttpSingle<Moedas>(URLRentabilidade);
+                while (true)
+                {
+                    Moedas classe = await Http.PedidoGETHttpSingle<Moedas>(URLRentabilidade);
 
-                var moedasOrdenadasPorRentabilidade = classe.GetMoedas().OrderByDescending(m => m.Btc_revenue).ToList();
+                    var moedasOrdenadasPorRentabilidade = classe.GetMoedas().OrderByDescending(m => m.Btc_revenue).ToList();
 
-                var moedaMaisRentavelAtualmente = moedasOrdenadasPorRentabilidade.First();
+                    var moedaMaisRentavelAtualmente = moedasOrdenadasPorRentabilidade.First();
 
-                HaAlteracaoNaRentabilidade = MoedaMaisRentavel.Id != moedaMaisRentavelAtualmente.Id;
+                    HaAlteracaoNaRentabilidade = MoedaMaisRentavel.Id != moedaMaisRentavelAtualmente.Id;
 
-                Thread.Sleep(TimeSpan.FromSeconds(5));
+                    UltimaVerificacaoRentabilidadeDE.DateTime = DateTime.Now;
+
+                    Thread.Sleep(TempoEntreVerificacoes);
+                }
+            }
+            catch (Exception ex)
+            {
+                XtraMessageBox.Show("Erro ao verificar rentabilidade: " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }

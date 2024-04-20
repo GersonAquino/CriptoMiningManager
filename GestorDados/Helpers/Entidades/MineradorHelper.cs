@@ -52,7 +52,8 @@ namespace GestorDados.Helpers.Entidades
                     mineradores.Add(mineradorExistente.Id, mineradorExistente);
                 }
 
-                mineradorExistente.Moedas.Add(moeda);
+                if (moeda != null)
+                    mineradorExistente.Moedas.Add(moeda);
 
                 //O return aqui é o que vai ser devolvido para o IEnumerable<Minerador> que o Dapper está a criar
                 //Como não vai ser usado, mais vale que fique cheio de nulls
@@ -92,11 +93,11 @@ namespace GestorDados.Helpers.Entidades
             //Inserir caso Id seja um valor inválido mas esperado
             if (minerador.Id == -1)
             {
-                query = QueryHelper.InsertParametrizado(Tabela, "Localizacao", "Parametros", "Ativo");
+                query = QueryHelper.InsertParametrizado(Tabela, "Nome", "Localizacao", "Parametros", "Ativo");
             }
             else //Atualizar caso tenha Id válido
             {
-                query = QueryHelper.UpdateParametrizado(Tabela, "Id = @Id", "Localizacao", "Parametros", "Ativo", "DataAlteracao");
+                query = QueryHelper.UpdateParametrizado(Tabela, "Id = @Id", "Nome", "Localizacao", "Parametros", "Ativo", "DataAlteracao");
 
                 minerador.DataAlteracao = DateTime.Now;
             }

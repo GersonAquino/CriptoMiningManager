@@ -82,6 +82,11 @@ namespace CryptoMiningManager.Views
         {
             CallUserControlTab<MineradoresUserControl>(sender);
         }
+
+        private void MoedasACE_Click(object sender, EventArgs e)
+        {
+            CallUserControlTab<MoedasUserControl>(sender);
+        }
         #endregion
 
         private void DocumentManager_DocumentActivate(object sender, DocumentEventArgs e)
