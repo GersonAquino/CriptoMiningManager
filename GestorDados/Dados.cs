@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SQLite;
 using System.Threading.Tasks;
+using Z.Dapper.Plus;
 
 namespace GestorDados
 {
@@ -123,6 +124,12 @@ namespace GestorDados
         public async Task<IEnumerable<T>> QueryOpenAsync<Entidade1, Entidade2, T>(string query, Func<Entidade1, Entidade2, T> mapeamento, string splitOn = "Id")
         {
             return await Conexao.QueryAsync(query, mapeamento, transaction: Transacao, splitOn: splitOn);
+        }
+
+        ///<inheritdoc/>
+        public async Task BulkMerge<T>(params T[] parametros)
+        {
+            await Conexao.BulkMergeAsync(parametros);
         }
 
         ///<inheritdoc/>

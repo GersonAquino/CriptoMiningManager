@@ -1,5 +1,6 @@
 ﻿using Modelos.JsonConverters;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Reflection;
 using System.Text.Json.Serialization;
 
@@ -28,7 +29,7 @@ namespace Modelos.Classes
             {
                 if (propriedade.GetValue(coins) is Moeda moeda)
                 {
-                    moeda.Nome = propriedade.Name;
+                    moeda.NomeExterno = propriedade.Name;
                     moedas.Add(moeda);
                 }
             }
@@ -139,7 +140,7 @@ namespace Modelos.Classes
     /// <summary>
     /// Classe genérica com propriedades desnecessárias comentadas para evitar stresses e simplificar a leitura do JSON
     /// </summary>
-    [System.ComponentModel.Description("Moeda")]
+    [System.ComponentModel.Description("Moeda"), Table("Moedas")]
     public class Moeda
     {
         /// <summary>
@@ -147,14 +148,15 @@ namespace Modelos.Classes
         /// </summary>
         [JsonIgnore(Condition = JsonIgnoreCondition.Always)]
         public int Id { get; set; }
-        public int? IdMinerador { get; set; }
         public string Nome { get; set; }
+        public string NomeExterno { get; set; }
 
         //Propriedades vindas da API
         [JsonPropertyName("Id")]
         [JsonConverter(typeof(IntConverter))]
         public int IdExterno { get; set; }
         public string Tag { get; set; }
+
         public string Algorithm { get; set; }
         //public object block_time { get; set; } //Às vezes é string, outras é um int
         //public decimal block_reward { get; set; }
@@ -197,6 +199,9 @@ namespace Modelos.Classes
         [JsonConverter(typeof(IntConverter))]
         public int Timestamp { get; set; }
 
-        public Moeda() { }
+        public Moeda()
+        {
+            Id = -1;
+        }
     }
 }

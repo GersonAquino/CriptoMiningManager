@@ -1,8 +1,9 @@
 ﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Modelos.Classes
 {
-    [Description("Comando")]
+    [Description("Comando"), Table("Comandos")]
     public class Comando : Configuracao
     {
         public string Comandos { get; set; }

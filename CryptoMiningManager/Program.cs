@@ -35,8 +35,6 @@ namespace CryptoMiningManager
 
             LogHelper.StartLogger(ConfigurationManager.ConnectionStrings["CriptoManager"].ConnectionString.Split('=')[1]);
 
-            LogHelper.EscreveLog(Modelos.Enums.LogLevel.Information, "Logger a funcionar com sucesso: {propMan}", true);
-
             try
             {
                 using (IContainer container = ContainerConfig())

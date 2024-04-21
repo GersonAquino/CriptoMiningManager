@@ -36,13 +36,13 @@
             this.MoedasGV = new DevExpress.XtraGrid.Views.Grid.GridView();
             this.colId = new DevExpress.XtraGrid.Columns.GridColumn();
             this.colIdExterno = new DevExpress.XtraGrid.Columns.GridColumn();
-            this.colIdMinerador = new DevExpress.XtraGrid.Columns.GridColumn();
             this.colNome = new DevExpress.XtraGrid.Columns.GridColumn();
+            this.colBtc_revenue = new DevExpress.XtraGrid.Columns.GridColumn();
             this.MoedasRC = new DevExpress.XtraBars.Ribbon.RibbonControl();
             this.AtualizarBBI = new DevExpress.XtraBars.BarButtonItem();
             this.MoedasRP = new DevExpress.XtraBars.Ribbon.RibbonPage();
             this.OperacoesRPG = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
-            this.colBtc_revenue = new DevExpress.XtraGrid.Columns.GridColumn();
+            this.colNomeExterno = new DevExpress.XtraGrid.Columns.GridColumn();
             ((System.ComponentModel.ISupportInitialize)(this.MoedasGC)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.MoedasBindingSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.MoedasGV)).BeginInit();
@@ -81,14 +81,12 @@
             this.MoedasGV.Columns.AddRange(new DevExpress.XtraGrid.Columns.GridColumn[] {
             this.colId,
             this.colIdExterno,
-            this.colIdMinerador,
             this.colNome,
+            this.colNomeExterno,
             this.colBtc_revenue});
             this.MoedasGV.DetailHeight = 458;
             this.MoedasGV.GridControl = this.MoedasGC;
             this.MoedasGV.Name = "MoedasGV";
-            this.MoedasGV.OptionsBehavior.Editable = false;
-            this.MoedasGV.OptionsBehavior.ReadOnly = true;
             this.MoedasGV.OptionsEditForm.PopupEditFormWidth = 933;
             this.MoedasGV.OptionsImageLoad.AnimationType = DevExpress.Utils.ImageContentAnimationType.Push;
             this.MoedasGV.OptionsMenu.ShowConditionalFormattingItem = true;
@@ -103,6 +101,7 @@
             // 
             this.colId.FieldName = "Id";
             this.colId.Name = "colId";
+            this.colId.OptionsColumn.ReadOnly = true;
             this.colId.Visible = true;
             this.colId.VisibleIndex = 0;
             // 
@@ -110,23 +109,25 @@
             // 
             this.colIdExterno.FieldName = "IdExterno";
             this.colIdExterno.Name = "colIdExterno";
+            this.colIdExterno.OptionsColumn.ReadOnly = true;
             this.colIdExterno.Visible = true;
             this.colIdExterno.VisibleIndex = 1;
-            // 
-            // colIdMinerador
-            // 
-            this.colIdMinerador.Caption = "Minerador";
-            this.colIdMinerador.FieldName = "IdMinerador";
-            this.colIdMinerador.Name = "colIdMinerador";
-            this.colIdMinerador.Visible = true;
-            this.colIdMinerador.VisibleIndex = 2;
             // 
             // colNome
             // 
             this.colNome.FieldName = "Nome";
             this.colNome.Name = "colNome";
             this.colNome.Visible = true;
-            this.colNome.VisibleIndex = 3;
+            this.colNome.VisibleIndex = 2;
+            // 
+            // colBtc_revenue
+            // 
+            this.colBtc_revenue.Caption = "Receita BTC";
+            this.colBtc_revenue.FieldName = "Btc_revenue";
+            this.colBtc_revenue.Name = "colBtc_revenue";
+            this.colBtc_revenue.OptionsColumn.ReadOnly = true;
+            this.colBtc_revenue.Visible = true;
+            this.colBtc_revenue.VisibleIndex = 4;
             // 
             // MoedasRC
             // 
@@ -166,13 +167,13 @@
             this.OperacoesRPG.Name = "OperacoesRPG";
             this.OperacoesRPG.Text = "Operações";
             // 
-            // colBtc_revenue
+            // colNomeExterno
             // 
-            this.colBtc_revenue.Caption = "Receita BTC";
-            this.colBtc_revenue.FieldName = "Btc_revenue";
-            this.colBtc_revenue.Name = "colBtc_revenue";
-            this.colBtc_revenue.Visible = true;
-            this.colBtc_revenue.VisibleIndex = 4;
+            this.colNomeExterno.FieldName = "NomeExterno";
+            this.colNomeExterno.Name = "colNomeExterno";
+            this.colNomeExterno.OptionsColumn.ReadOnly = true;
+            this.colNomeExterno.Visible = true;
+            this.colNomeExterno.VisibleIndex = 3;
             // 
             // MoedasUserControl
             // 
@@ -205,8 +206,8 @@
         private DevExpress.XtraGrid.Columns.GridColumn colIdMoeda;
         private DevExpress.XtraGrid.Columns.GridColumn colId;
         private DevExpress.XtraGrid.Columns.GridColumn colIdExterno;
-        private DevExpress.XtraGrid.Columns.GridColumn colIdMinerador;
         private DevExpress.XtraGrid.Columns.GridColumn colNome;
         private DevExpress.XtraGrid.Columns.GridColumn colBtc_revenue;
+        private DevExpress.XtraGrid.Columns.GridColumn colNomeExterno;
     }
 }

@@ -1,11 +1,14 @@
 ﻿CREATE TABLE Mineradores (
 	Id INTEGER PRIMARY KEY AUTOINCREMENT,
+	IdMoeda INTEGER NULL,
 	Nome NVARCHAR (200) NULL,
 	Localizacao NVARCHAR (4000) NOT NULL,
 	Parametros NVARCHAR (4000) NULL,
 	Ativo BIT NOT NULL DEFAULT 0,
 	DataCriacao DateTime NOT NULL DEFAULT DATETIME('now'),
-	DataAlteracao DateTime NOT NULL DEFAULT DATETIME('now')
+	DataAlteracao DateTime NOT NULL DEFAULT DATETIME('now'),
+	
+	FOREIGN KEY (IdMoeda) REFERENCES Moedas(Id)
 );
 
 CREATE TABLE Comandos (
@@ -21,10 +24,8 @@ CREATE TABLE Comandos (
 CREATE TABLE Moedas (
 	Id INTEGER PRIMARY KEY AUTOINCREMENT,
 	IdExterno INT NULL,
-	IdMinerador INTEGER NULL,
 	Nome NVARCHAR (500) NULL,
-	
-	FOREIGN KEY (IdMinerador) REFERENCES Mineradores(Id)
+	NomeExterno NVARCHAR (500) NULL
 );
 
 --CREATE TABLE Mineradores_Moedas (
@@ -35,8 +36,3 @@ CREATE TABLE Moedas (
 --	FOREIGN KEY (IdMinerador) REFERENCES Mineradores(Id),
 --	FOREIGN KEY (IdMoeda) REFERENCES Moedas(Id)
 --);
-
-CREATE TABLE Logs (
-	Id INT PRIMARY KEY AUTOINCREMENT,
-	
-);

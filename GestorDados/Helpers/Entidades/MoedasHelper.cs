@@ -76,11 +76,11 @@ namespace GestorDados.Helpers.Entidades
             //Inserir caso Id seja um valor inválido mas esperado
             if (moeda.Id == -1)
             {
-                query = QueryHelper.InsertParametrizado(Tabela, "IdExterno", "Nome");
+                query = QueryHelper.InsertParametrizado(Tabela, "IdExterno", "Nome", "NomeExterno");
             }
             else //Atualizar caso tenha Id válido
             {
-                query = QueryHelper.UpdateParametrizado(Tabela, "Id = @Id", "IdExterno", "Nome");
+                query = QueryHelper.UpdateParametrizado(Tabela, "Id = @Id", "IdExterno", "Nome", "NomeExterno");
 
                 //moeda.DataAlteracao = DateTime.Now;
             }

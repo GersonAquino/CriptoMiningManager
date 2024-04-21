@@ -6,6 +6,7 @@ using Modelos.Enums;
 using Modelos.Exceptions;
 using Modelos.Interfaces;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 
@@ -14,17 +15,35 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes.Editores
     public partial class MineradorEditorUserControl : XtraUserControl
     {
         private IEntidadesHelper<Minerador> EntidadesHelper { get; }
+        private IEntidadesHelper<Moeda> MoedasHelper { get; }
 
         private Minerador Entidade { get; set; }
 
-        public MineradorEditorUserControl(Minerador entidade, IEntidadesHelper<Minerador> entidadesHelper)
+        public MineradorEditorUserControl(Minerador entidade, IEntidadesHelper<Minerador> entidadesHelper, IEntidadesHelper<Moeda> moedasHelper)
         {
             InitializeComponent();
 
             Entidade = entidade;
             EntidadesHelper = entidadesHelper;
+            MoedasHelper = moedasHelper;
 
             MineradorBindingSource.Add(Entidade);
+        }
+
+        private async void MineradorEditorUserControl_Load(object sender, EventArgs e)
+        {
+            try
+            {
+                foreach (Moeda moeda in await MoedasHelper.GetEntidades(ordenacao: "Nome DESC"))
+                {
+                    MoedasBindingSource.Add(moeda);
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro");
+                XtraMessageBox.Show("Erro ao carregar editor de minerador!", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private async void GravarBBI_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)

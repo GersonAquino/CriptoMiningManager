@@ -50,10 +50,10 @@ namespace GestorDados.Helpers.Entidades
         ///<inheritdoc/>
         public async Task<Dictionary<int, Minerador>> GetEntidadesComLista(string condicoes = null, string ordenacao = null)
         {
-            string query = QueryHelper.Select("mi.*, mo.Id, mo.Nome",
+            string query = QueryHelper.Select("mi.*, mo.*",
                 @"Mineradores mi
                             LEFT JOIN Moedas mo
-                                ON mi.Id = mo.IdMinerador", condicoes, ordenacao);
+                                ON mo.Id = mi.IdMoeda", condicoes, ordenacao);
 
             Dictionary<int, Minerador> mineradores = new Dictionary<int, Minerador>();
 
@@ -63,12 +63,11 @@ namespace GestorDados.Helpers.Entidades
                 if (!mineradores.TryGetValue(minerador.Id, out Minerador mineradorExistente))
                 {
                     mineradorExistente = minerador;
-                    mineradorExistente.Moedas = new List<Moeda>();
                     mineradores.Add(mineradorExistente.Id, mineradorExistente);
                 }
 
                 if (moeda != null)
-                    mineradorExistente.Moedas.Add(moeda);
+                    mineradorExistente.Moeda = moeda;
 
                 //O return aqui é o que vai ser devolvido para o IEnumerable<Minerador> que o Dapper está a criar
                 //Como não vai ser usado, mais vale que fique cheio de nulls

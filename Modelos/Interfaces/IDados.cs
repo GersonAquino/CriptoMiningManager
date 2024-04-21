@@ -12,6 +12,14 @@ namespace Modelos.Interfaces
         void DesfazTransacao();
 
         /// <summary>
+        /// Faz um merge de vários <typeparamref name="T"/> ao mesmo tempo
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="parametros"></param>
+        /// <returns></returns>
+        Task BulkMerge<T>(params T[] parametros);
+
+        /// <summary>
         /// Executa um comando SQL e devolve o número de linhas afetadas
         /// </summary>
         /// <param name="query"></param>

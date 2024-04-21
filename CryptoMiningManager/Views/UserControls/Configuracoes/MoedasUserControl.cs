@@ -17,13 +17,15 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes
     {
         private readonly string URLRentabilidade;
 
+        private readonly IDados Dados;
         private readonly IHttpHelper HttpHelper;
         private readonly IEntidadesHelper<Moeda> EntidadesHelper;
 
-        public MoedasUserControl(IHttpHelper httpHelper, IEntidadesHelper<Moeda> entidadesHelper)
+        public MoedasUserControl(IHttpHelper httpHelper, IEntidadesHelper<Moeda> entidadesHelper, IDados dados)
         {
             InitializeComponent();
 
+            Dados = dados;
             EntidadesHelper = entidadesHelper;
             HttpHelper = httpHelper;
 
@@ -49,25 +51,35 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes
             {
                 MoedasBindingSource.Clear();
 
-                var teste = await HttpHelper.PedidoGETHttpSingle<Moedas>(URLRentabilidade);
-
                 List<Moeda> moedasAPI = (await HttpHelper.PedidoGETHttpSingle<Moedas>(URLRentabilidade)).GetMoedas();
-                List<Moeda> moedas = (await EntidadesHelper.GetEntidades("IdExterno IN @Ids", null, ("Ids", moedasAPI.Select(m => m.IdExterno)))).ToList();
+                Dictionary<int, Moeda> moedasExistentes = (await EntidadesHelper.GetEntidades("IdExterno IN @IdsExternos", null, ("IdsExternos", moedasAPI.Select(m => m.IdExterno)))).ToDictionary(m => m.IdExterno);
 
-                //TODO: Ler os dados novos das moedas existentes e gravar as moedas novas, no fim atribuir todas as moedas ao BindingSource
-                //ALSO: Remover a coluna IdMinerador da Moeda e meter um IdMoeda no Minerador, é o que faz sentido, ou talvez fazer uma relação many to many, mas isso talvez já seja complicar desnecessariamente
-
-                for (int i = 0; i < moedasAPI.Count; i++)
+                moedasAPI.ForEach(moeda =>
                 {
+                    if (moedasExistentes.TryGetValue(moeda.IdExterno, out Moeda moedaExistente))
+                    {
+                        moeda.Id = moedaExistente.Id;
+                        moeda.Nome = moedaExistente.Nome;
+                    }
+                    else
+                    {
+                        moeda.Id = -1;
+                        moeda.Nome = null;
+                    }
 
-                }
-
-                foreach (Moeda moeda in moedas)
-                {
+                    //Faz-se antes do Merge só para evitar mais um loop à lista de moedas inteira, em caso de erro depois limpa-se o data source
                     MoedasBindingSource.Add(moeda);
+                });
+
+                try
+                {
+                    await Dados.BulkMerge(moedasAPI.ToArray());
                 }
-
-
+                catch
+                {
+                    MoedasBindingSource.Clear();
+                    throw;
+                }
             }
             catch (Exception ex)
             {
