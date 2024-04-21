@@ -43,14 +43,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Dados.cs" />
-    <Compile Include="Enums\SerilogLevel.cs" />
     <Compile Include="Helpers\Entidades\ComandoHelper.cs" />
     <Compile Include="Helpers\Entidades\MineradorHelper.cs" />
     <Compile Include="Helpers\Entidades\MoedasHelper.cs" />
     <Compile Include="Helpers\QueryHelper.cs" />
     <Compile Include="Helpers\HttpHelper.cs" />
     <Compile Include="Helpers\JsonHelper.cs" />
-    <Compile Include="Helpers\SerilogHelper.cs" />
+    <Compile Include="Helpers\LogHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -72,6 +71,9 @@
       <Project>{1f31c183-df7b-4c66-ac17-46c28459cf31}</Project>
       <Name>Modelos</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Enums\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,6 +1,6 @@
-﻿namespace GestorDados.Enums
+﻿namespace Modelos.Enums
 {
-    public enum SerilogLevel
+    public enum LogLevel
     {
         Debug,
         Information,

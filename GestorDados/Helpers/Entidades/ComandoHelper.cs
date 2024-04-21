@@ -1,4 +1,5 @@
-﻿using Modelos.Classes;
+﻿using Dapper;
+using Modelos.Classes;
 using Modelos.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -29,9 +30,23 @@ namespace GestorDados.Helpers.Entidades
         ///<inheritdoc/>
         public async Task<IEnumerable<Comando>> GetEntidades(string condicoes = null, string ordenacao = null)
         {
-            string query = QueryHelper.Select("c.*", "Comandos c", condicoes, ordenacao);
+            string query = QueryHelper.Select("*", Tabela, condicoes, ordenacao);
 
             return await Dados.QueryOpenAsync<Comando>(query);
+        }
+
+        ///<inheritdoc/>
+        public async Task<IEnumerable<Comando>> GetEntidades(string condicoes, string ordenacao, params (string parametro, object valor)[] parametros)
+        {
+            string query = QueryHelper.Select("*", Tabela, condicoes, ordenacao);
+
+            DynamicParameters parametrosDapper = new DynamicParameters();
+            for (int i = 0; i < parametros.Length; i++)
+            {
+                parametrosDapper.Add(parametros[i].parametro, parametros[i].valor);
+            }
+
+            return await Dados.QueryOpenAsync<Comando>(query, parametrosDapper);
         }
 
         ///<inheritdoc/>

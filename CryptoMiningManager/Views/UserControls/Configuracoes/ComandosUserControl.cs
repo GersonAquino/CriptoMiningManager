@@ -1,7 +1,9 @@
 ﻿using CryptoMiningManager.Helpers;
 using DevExpress.XtraEditors;
 using DevExpress.XtraSplashScreen;
+using GestorDados.Helpers;
 using Modelos.Classes;
+using Modelos.Enums;
 using Modelos.Interfaces;
 using System;
 using System.Threading.Tasks;
@@ -79,6 +81,7 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes
             }
             catch (Exception ex)
             {
+                LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro ao eliminar os comandos selecionados.");
                 XtraMessageBox.Show($"Erro ao eliminar os comandos selecionados.{Environment.NewLine}{ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
@@ -103,6 +106,7 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes
             }
             catch (Exception ex)
             {
+                LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro ao carregar dados.");
                 XtraMessageBox.Show(ex.Message, "Erro ao carregar dados", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally

@@ -5,6 +5,8 @@ using DevExpress.XtraBars.Docking2010.Views;
 using DevExpress.XtraBars.Navigation;
 using DevExpress.XtraEditors;
 using DevExpress.XtraSplashScreen;
+using GestorDados.Helpers;
+using Modelos.Enums;
 using System;
 using System.Windows.Forms;
 
@@ -141,7 +143,7 @@ namespace CryptoMiningManager.Views
             }
             catch (Exception ex)
             {
-                //SerilogHelper.EscreveLogException(SerilogLevel.Error, ex, "Erro ao abrir menu {menuText}", controlElement.Text);
+                LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro ao abrir menu {menuText}", controlElement.Text);
                 XtraMessageBox.Show(ex.GetBaseException().Message, $"Não foi possível abrir o menu {controlElement.Text}",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }

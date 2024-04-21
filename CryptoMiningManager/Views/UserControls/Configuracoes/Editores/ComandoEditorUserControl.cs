@@ -1,6 +1,8 @@
 ﻿using DevExpress.XtraBars.Docking2010;
 using DevExpress.XtraEditors;
+using GestorDados.Helpers;
 using Modelos.Classes;
+using Modelos.Enums;
 using Modelos.Exceptions;
 using Modelos.Interfaces;
 using System;
@@ -71,6 +73,7 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes.Editores
             }
             catch (Exception ex)
             {
+                LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro ao gravar dados.");
                 XtraMessageBox.Show($"Erro ao gravar dados!{Environment.NewLine}{ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }

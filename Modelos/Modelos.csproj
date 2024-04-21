@@ -47,6 +47,7 @@
     <Compile Include="Classes\Minerador.cs" />
     <Compile Include="Classes\Moeda.cs" />
     <Compile Include="Enums\Algoritmo.cs" />
+    <Compile Include="Enums\LogLevel.cs" />
     <Compile Include="Exceptions\CustomException.cs" />
     <Compile Include="Interfaces\IDados.cs" />
     <Compile Include="Interfaces\IEntidadesHelper.cs" />

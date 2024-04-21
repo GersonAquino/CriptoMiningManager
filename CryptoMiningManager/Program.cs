@@ -5,6 +5,7 @@ using DevExpress.XtraEditors;
 using GestorDados;
 using GestorDados.Helpers;
 using Modelos.Interfaces;
+using Serilog;
 using System;
 using System.Configuration;
 using System.IO;
@@ -32,14 +33,21 @@ namespace CryptoMiningManager
             ProfileOptimization.StartProfile(assembly.GetName().Name);
             #endregion JIT Improve
 
-            //SerilogHelper.StartLogger(ConfigurationManager.ConnectionStrings["CriptoManager"].ConnectionString);
+            LogHelper.StartLogger(ConfigurationManager.ConnectionStrings["CriptoManager"].ConnectionString.Split('=')[1]);
 
-            //SerilogHelper.EscreveLog(GestorDados.Enums.SerilogLevel.Information, "TESTE");
+            LogHelper.EscreveLog(Modelos.Enums.LogLevel.Information, "Logger a funcionar com sucesso: {propMan}", true);
 
-            using (IContainer container = ContainerConfig())
-            using (ILifetimeScope scope = container.BeginLifetimeScope())
+            try
             {
-                Application.Run(scope.Resolve<MainForm>());
+                using (IContainer container = ContainerConfig())
+                using (ILifetimeScope scope = container.BeginLifetimeScope())
+                {
+                    Application.Run(scope.Resolve<MainForm>());
+                }
+            }
+            finally
+            {
+                LogHelper.StopLogger();
             }
         }
 

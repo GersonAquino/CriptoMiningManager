@@ -1,5 +1,6 @@
 ﻿using DevExpress.XtraEditors;
 using DevExpress.XtraSplashScreen;
+using GestorDados.Helpers;
 using Modelos.Classes;
 using Modelos.Enums;
 using Modelos.Interfaces;
@@ -67,6 +68,7 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
             }
             catch (Exception ex)
             {
+                LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro a ler dados.");
                 XtraMessageBox.Show("Erro a ler dados: " + ex.Message, "Erro a tentar ler dados", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -79,6 +81,7 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
             }
             catch (Exception ex)
             {
+                LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro ao parar minerador.");
                 XtraMessageBox.Show("Erro ao parar minerador: " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -94,6 +97,7 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
             }
             catch (Exception ex)
             {
+                LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro ao alterar intervalo de verificação de rentabilidade.");
                 XtraMessageBox.Show("Erro ao alterar intervalo de verificação de rentabilidade: " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -114,6 +118,7 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
             }
             catch (Exception ex)
             {
+                LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro ao atualizar lista de mineradores.");
                 XtraMessageBox.Show("Erro ao atualizar lista de mineradores: " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
@@ -144,6 +149,7 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
             }
             catch (Exception ex)
             {
+                LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro ao verificar rentabilidade.");
                 XtraMessageBox.Show("Erro ao verificar rentabilidade: " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }

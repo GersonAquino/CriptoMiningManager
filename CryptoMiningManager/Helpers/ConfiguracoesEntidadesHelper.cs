@@ -7,7 +7,9 @@ using DevExpress.XtraEditors;
 using DevExpress.XtraGrid.Views.Grid;
 using DevExpress.XtraGrid.Views.Grid.ViewInfo;
 using DevExpress.XtraSplashScreen;
+using GestorDados.Helpers;
 using Modelos.Classes;
+using Modelos.Enums;
 using Modelos.Exceptions;
 using System;
 using System.Linq;
@@ -58,7 +60,7 @@ namespace CryptoMiningManager.Helpers
             }
             catch (Exception ex)
             {
-                //SerilogHelper.EscreveLogException(SerilogLevel.Error, ex, "Erro ao abrir menu {menuCaption}", caption);
+                LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro ao abrir menu {menuCaption}", caption);
                 XtraMessageBox.Show(ex.GetBaseException().Message, $"Não foi possível abrir o menu {caption}", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
@@ -87,6 +89,7 @@ namespace CryptoMiningManager.Helpers
             }
             catch (Exception ex)
             {
+                LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro ao tratar duplo clique.");
                 XtraMessageBox.Show($"Erro ao tratar duplo clique!{Environment.NewLine}{ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -123,6 +126,7 @@ namespace CryptoMiningManager.Helpers
             }
             catch (Exception ex)
             {
+                LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro ao abrir editor da(s) linha(s) selecionada(s).");
                 XtraMessageBox.Show($"Erro ao abrir editor da(s) linha(s) selecionada(s).{Environment.NewLine}{ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
