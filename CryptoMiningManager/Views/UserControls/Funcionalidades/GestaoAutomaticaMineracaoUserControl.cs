@@ -91,9 +91,9 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
         {
             try
             {
-                decimal intervaloVerificacaoRentabilidade = (decimal)IntervaloVerificacaoRentabilidadeBEI.EditValue;
+                int intervaloVerificacaoRentabilidade = decimal.ToInt32((decimal)IntervaloVerificacaoRentabilidadeBEI.EditValue);
 
-                TempoEntreVerificacoes = decimal.ToInt32(intervaloVerificacaoRentabilidade) * 60000; //*1000 por serem milisegundos e *60 para passar a minutos
+                TempoEntreVerificacoes = intervaloVerificacaoRentabilidade * 60000; //*1000 por serem milisegundos e *60 para passar a minutos
             }
             catch (Exception ex)
             {
