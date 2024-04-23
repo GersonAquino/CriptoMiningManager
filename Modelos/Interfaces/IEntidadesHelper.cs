@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Modelos.Classes;
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Modelos.Interfaces
@@ -50,5 +52,7 @@ namespace Modelos.Interfaces
         /// <param name="entidade"></param>
         /// <returns>Id da entidade gravada ou -1 em caso de falha</returns>
         Task<int> GravarEntidade_GetIdGerado(T entidade);
+
+        Task<List<T>> GravarEntidades(IEnumerable<T> entidades = null);
     }
 }

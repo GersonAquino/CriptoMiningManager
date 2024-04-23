@@ -138,7 +138,6 @@ namespace CryptoMiningManager.Views
 
                     BaseDocument doc = this.TabbedView.AddOrActivateDocument(s => s.Caption == controlElement.Text, () => userControl);
                     doc.Caption = controlElement.Text;
-
                 }
             }
             catch (Exception ex)

@@ -13,10 +13,12 @@ namespace GestorDados.Helpers.Entidades
         private const string Tabela = "Moedas";
 
         private IDados Dados { get; set; }
+        private IHttpHelper HttpHelper { get; set; }
 
-        public MoedasHelper(IDados dados)
+        public MoedasHelper(IDados dados, IHttpHelper httpHelper)
         {
             Dados = dados;
+            HttpHelper = httpHelper;
         }
 
         public async Task<int> EliminarEntidades(IEnumerable<int> ids)
@@ -63,6 +65,31 @@ namespace GestorDados.Helpers.Entidades
             }
 
             return await GravarEntidade(moeda) ? moeda.Id : -1;
+        }
+
+        public async Task<List<Moeda>> GravarEntidades(IEnumerable<Moeda> entidades = null)
+        {
+            List<Moeda> moedasAPI = (await HttpHelper.PedidoGETHttpSingle<Moedas>(null)).GetMoedas();
+            Dictionary<int, Moeda> moedasExistentes = (await GetEntidades("IdExterno IN @IdsExternos", null,
+                ("IdsExternos", moedasAPI.Select(m => m.IdExterno)))).ToDictionary(m => m.IdExterno);
+
+            moedasAPI.ForEach(moeda =>
+            {
+                if (moedasExistentes.TryGetValue(moeda.IdExterno, out Moeda moedaExistente))
+                {
+                    moeda.Id = moedaExistente.Id;
+                    moeda.Nome = moedaExistente.Nome;
+                }
+                else
+                {
+                    moeda.Id = -1;
+                    moeda.Nome = null;
+                }
+            });
+
+            await Dados.BulkMerge(moedasAPI.ToArray());
+
+            return moedasAPI;
         }
 
         //FUNÇÕES AUXILIARES

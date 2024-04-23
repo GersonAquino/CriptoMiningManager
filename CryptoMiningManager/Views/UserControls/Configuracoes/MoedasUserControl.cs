@@ -1,4 +1,5 @@
-﻿using DevExpress.XtraEditors;
+﻿using Autofac;
+using DevExpress.XtraEditors;
 using DevExpress.XtraSplashScreen;
 using GestorDados.Helpers;
 using Modelos.Classes;
@@ -21,15 +22,13 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes
         private readonly IHttpHelper HttpHelper;
         private readonly IEntidadesHelper<Moeda> EntidadesHelper;
 
-        public MoedasUserControl(IHttpHelper httpHelper, IEntidadesHelper<Moeda> entidadesHelper, IDados dados)
+        public MoedasUserControl(IDados dados, IEntidadesHelper<Moeda> entidadesHelper, IHttpHelper httpHelper)
         {
             InitializeComponent();
 
             Dados = dados;
             EntidadesHelper = entidadesHelper;
             HttpHelper = httpHelper;
-
-            URLRentabilidade = ConfigurationManager.AppSettings["URLRentabilidade"];
         }
 
         private async void MineradoresUserControl_Load(object sender, EventArgs e)
@@ -51,6 +50,9 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes
             {
                 MoedasBindingSource.Clear();
 
+                (await EntidadesHelper.GravarEntidades()).ForEach(m => MoedasBindingSource.Add(m));
+
+                return;
                 List<Moeda> moedasAPI = (await HttpHelper.PedidoGETHttpSingle<Moedas>(URLRentabilidade)).GetMoedas();
                 Dictionary<int, Moeda> moedasExistentes = (await EntidadesHelper.GetEntidades("IdExterno IN @IdsExternos", null, ("IdsExternos", moedasAPI.Select(m => m.IdExterno)))).ToDictionary(m => m.IdExterno);
 

@@ -54,6 +54,7 @@ namespace CryptoMiningManager
             ContainerBuilder builder = new ContainerBuilder();
 
             string connectionString = ConfigurationManager.ConnectionStrings["CriptoManager"].ConnectionString;
+            string urlBase = ConfigurationManager.AppSettings["URLRentabilidade"];
 
             //Modelos
             builder.RegisterAssemblyTypes(Assembly.Load(nameof(Modelos))).Where(t => t.Namespace != null).InstancePerDependency();
@@ -65,8 +66,8 @@ namespace CryptoMiningManager
                 .AsImplementedInterfaces().InstancePerLifetimeScope();
 
             // Base Helpers
-            builder.RegisterType<HttpHelper>().As<IHttpHelper>().InstancePerDependency();
             builder.RegisterType<JsonHelper>().As<IJsonHelper>().SingleInstance();
+            builder.Register(c => new HttpHelper(c.Resolve<IJsonHelper>(), urlBase)).As<IHttpHelper>().InstancePerLifetimeScope();
 
             // Forms e UserControls
             builder.RegisterType<MainForm>().SingleInstance();

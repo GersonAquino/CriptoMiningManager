@@ -92,7 +92,6 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
             try
             {
                 int intervaloVerificacaoRentabilidade = decimal.ToInt32((decimal)IntervaloVerificacaoRentabilidadeBEI.EditValue);
-
                 TempoEntreVerificacoes = intervaloVerificacaoRentabilidade * 60000; //*1000 por serem milisegundos e *60 para passar a minutos
             }
             catch (Exception ex)
@@ -136,7 +135,7 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
                 {
                     Moedas classe = await Http.PedidoGETHttpSingle<Moedas>(URLRentabilidade);
 
-                    var moedasOrdenadasPorRentabilidade = classe.GetMoedas().OrderByDescending(m => m.Btc_revenue).ToList();
+                    var moedasOrdenadasPorRentabilidade = classe.GetMoedas().OrderByDescending(m => m.BtcPorDia).ToList();
 
                     var moedaMaisRentavelAtualmente = moedasOrdenadasPorRentabilidade.First();
 

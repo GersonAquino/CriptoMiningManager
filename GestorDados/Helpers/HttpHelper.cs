@@ -12,9 +12,12 @@ namespace GestorDados.Helpers
     {
         private readonly IJsonHelper jsonHelper;
 
-        public HttpHelper(IJsonHelper serializationHelper)
+        public string URLBase { get; }
+
+        public HttpHelper(IJsonHelper serializationHelper, string urlBase)
         {
             jsonHelper = serializationHelper;
+            URLBase = urlBase;
         }
 
         /// <summary>
@@ -30,6 +33,9 @@ namespace GestorDados.Helpers
         /// <exception cref="HttpRequestException"></exception>
         public async Task<List<T>> PedidoGETHttp<T>(string uri, params (string Header, string Valor)[] headers) where T : class
         {
+            if (string.IsNullOrWhiteSpace(uri))
+                uri = URLBase;
+
             using (HttpClient client = new HttpClient())
             {
                 DefinirHeaders(client, headers);
@@ -44,6 +50,9 @@ namespace GestorDados.Helpers
 
         public async Task<T> PedidoGETHttpSingle<T>(string uri, params (string Header, string Valor)[] headers) where T : class
         {
+            if (string.IsNullOrWhiteSpace(uri))
+                uri = URLBase;
+
             using (HttpClient client = new HttpClient())
             {
                 DefinirHeaders(client, headers);
@@ -59,6 +68,9 @@ namespace GestorDados.Helpers
         //Descrição na interface
         public async Task<T> PedidoPOSTHttp<T>(string uri, string body, string contentTypeHeader, params (string Header, string Valor)[] requestHeaders) where T : class
         {
+            if (string.IsNullOrWhiteSpace(uri))
+                uri = URLBase;
+
             string contentType = !string.IsNullOrWhiteSpace(contentTypeHeader) ? contentTypeHeader : "text/plain";
             using (HttpContent content = new StringContent(body, Encoding.UTF8, contentType))
             {
@@ -69,6 +81,9 @@ namespace GestorDados.Helpers
         //Descrição na interface
         public async Task<T> PedidoPOSTHttp<T>(string uri, Dictionary<string, string> parameters, params (string Header, string Valor)[] requestHeaders) where T : class
         {
+            if (string.IsNullOrWhiteSpace(uri))
+                uri = URLBase;
+
             using (HttpContent content = new FormUrlEncodedContent(parameters))
             {
                 return await PedidoPOSTHttpBase<T>(uri, content, requestHeaders);

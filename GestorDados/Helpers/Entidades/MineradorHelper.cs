@@ -117,5 +117,10 @@ namespace GestorDados.Helpers.Entidades
             }
             return query;
         }
+
+        public Task<List<Minerador>> GravarEntidades(IEnumerable<Minerador> entidades = null)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

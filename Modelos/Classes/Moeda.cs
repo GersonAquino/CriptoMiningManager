@@ -152,8 +152,7 @@ namespace Modelos.Classes
         public string NomeExterno { get; set; }
 
         //Propriedades vindas da API
-        [JsonPropertyName("Id")]
-        [JsonConverter(typeof(IntConverter))]
+        [JsonPropertyName("Id"), JsonConverter(typeof(IntConverter))]
         public int IdExterno { get; set; }
         public string Tag { get; set; }
 
@@ -183,8 +182,11 @@ namespace Modelos.Classes
         [JsonConverter(typeof(DecimalConverter))]
         public decimal Estimated_rewards24 { get; set; }
 
-        [JsonConverter(typeof(DecimalConverter))]
-        public decimal Btc_revenue { get; set; }
+        /// <summary>
+        /// Quantidade de BTC ganha por dia
+        /// </summary>
+        [JsonPropertyName("Btc_revenue"), JsonConverter(typeof(DecimalConverter))]
+        public decimal BtcPorDia { get; set; }
 
         [JsonConverter(typeof(DecimalConverter))]
         public decimal Btc_revenue24 { get; set; }

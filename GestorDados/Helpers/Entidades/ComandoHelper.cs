@@ -95,5 +95,10 @@ namespace GestorDados.Helpers.Entidades
 
             return query;
         }
+
+        public Task<List<Comando>> GravarEntidades(IEnumerable<Comando> entidades = null)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
