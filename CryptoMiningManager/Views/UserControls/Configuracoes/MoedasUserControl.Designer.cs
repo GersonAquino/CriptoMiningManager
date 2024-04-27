@@ -28,174 +28,188 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
+            components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MoedasUserControl));
-            this.colIdMoeda = new DevExpress.XtraGrid.Columns.GridColumn();
-            this.MoedasGC = new DevExpress.XtraGrid.GridControl();
-            this.MoedasBindingSource = new System.Windows.Forms.BindingSource(this.components);
-            this.MoedasGV = new DevExpress.XtraGrid.Views.Grid.GridView();
-            this.colId = new DevExpress.XtraGrid.Columns.GridColumn();
-            this.colIdExterno = new DevExpress.XtraGrid.Columns.GridColumn();
-            this.colNome = new DevExpress.XtraGrid.Columns.GridColumn();
-            this.colNomeExterno = new DevExpress.XtraGrid.Columns.GridColumn();
-            this.colBtcPorDia = new DevExpress.XtraGrid.Columns.GridColumn();
-            this.MoedasRC = new DevExpress.XtraBars.Ribbon.RibbonControl();
-            this.AtualizarBBI = new DevExpress.XtraBars.BarButtonItem();
-            this.MoedasRP = new DevExpress.XtraBars.Ribbon.RibbonPage();
-            this.OperacoesRPG = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
-            ((System.ComponentModel.ISupportInitialize)(this.MoedasGC)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.MoedasBindingSource)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.MoedasGV)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.MoedasRC)).BeginInit();
-            this.SuspendLayout();
+            colIdMoeda = new DevExpress.XtraGrid.Columns.GridColumn();
+            MoedasGC = new DevExpress.XtraGrid.GridControl();
+            MoedasBindingSource = new System.Windows.Forms.BindingSource(components);
+            MoedasGV = new DevExpress.XtraGrid.Views.Grid.GridView();
+            colId = new DevExpress.XtraGrid.Columns.GridColumn();
+            colIdExterno = new DevExpress.XtraGrid.Columns.GridColumn();
+            colNome = new DevExpress.XtraGrid.Columns.GridColumn();
+            NomeRITE = new DevExpress.XtraEditors.Repository.RepositoryItemTextEdit();
+            colNomeExterno = new DevExpress.XtraGrid.Columns.GridColumn();
+            colBtcPorDia = new DevExpress.XtraGrid.Columns.GridColumn();
+            MoedasRC = new DevExpress.XtraBars.Ribbon.RibbonControl();
+            AtualizarBBI = new DevExpress.XtraBars.BarButtonItem();
+            GravarBBI = new DevExpress.XtraBars.BarButtonItem();
+            MoedasRP = new DevExpress.XtraBars.Ribbon.RibbonPage();
+            OperacoesRPG = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
+            behaviorManager1 = new DevExpress.Utils.Behaviors.BehaviorManager(components);
+            ((System.ComponentModel.ISupportInitialize)MoedasGC).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)MoedasBindingSource).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)MoedasGV).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)NomeRITE).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)MoedasRC).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)behaviorManager1).BeginInit();
+            SuspendLayout();
             // 
             // colIdMoeda
             // 
-            this.colIdMoeda.FieldName = "Id";
-            this.colIdMoeda.MinWidth = 23;
-            this.colIdMoeda.Name = "colIdMoeda";
-            this.colIdMoeda.Visible = true;
-            this.colIdMoeda.VisibleIndex = 0;
-            this.colIdMoeda.Width = 87;
+            colIdMoeda.FieldName = "Id";
+            colIdMoeda.MinWidth = 23;
+            colIdMoeda.Name = "colIdMoeda";
+            colIdMoeda.Visible = true;
+            colIdMoeda.VisibleIndex = 0;
+            colIdMoeda.Width = 87;
             // 
             // MoedasGC
             // 
-            this.MoedasGC.DataSource = this.MoedasBindingSource;
-            this.MoedasGC.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.MoedasGC.EmbeddedNavigator.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.MoedasGC.Location = new System.Drawing.Point(0, 186);
-            this.MoedasGC.MainView = this.MoedasGV;
-            this.MoedasGC.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.MoedasGC.Name = "MoedasGC";
-            this.MoedasGC.Size = new System.Drawing.Size(1440, 591);
-            this.MoedasGC.TabIndex = 1;
-            this.MoedasGC.ViewCollection.AddRange(new DevExpress.XtraGrid.Views.Base.BaseView[] {
-            this.MoedasGV});
+            MoedasGC.DataSource = MoedasBindingSource;
+            MoedasGC.Dock = System.Windows.Forms.DockStyle.Fill;
+            MoedasGC.EmbeddedNavigator.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            MoedasGC.Location = new System.Drawing.Point(0, 186);
+            MoedasGC.MainView = MoedasGV;
+            MoedasGC.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            MoedasGC.Name = "MoedasGC";
+            MoedasGC.RepositoryItems.AddRange(new DevExpress.XtraEditors.Repository.RepositoryItem[] { NomeRITE });
+            MoedasGC.Size = new System.Drawing.Size(1440, 591);
+            MoedasGC.TabIndex = 1;
+            MoedasGC.ViewCollection.AddRange(new DevExpress.XtraGrid.Views.Base.BaseView[] { MoedasGV });
             // 
             // MoedasBindingSource
             // 
-            this.MoedasBindingSource.DataSource = typeof(Modelos.Classes.Moeda);
+            MoedasBindingSource.DataSource = typeof(Modelos.Classes.Moeda);
             // 
             // MoedasGV
             // 
-            this.MoedasGV.Columns.AddRange(new DevExpress.XtraGrid.Columns.GridColumn[] {
-            this.colId,
-            this.colIdExterno,
-            this.colNome,
-            this.colNomeExterno,
-            this.colBtcPorDia});
-            this.MoedasGV.DetailHeight = 458;
-            this.MoedasGV.GridControl = this.MoedasGC;
-            this.MoedasGV.Name = "MoedasGV";
-            this.MoedasGV.OptionsEditForm.PopupEditFormWidth = 933;
-            this.MoedasGV.OptionsImageLoad.AnimationType = DevExpress.Utils.ImageContentAnimationType.Push;
-            this.MoedasGV.OptionsMenu.ShowConditionalFormattingItem = true;
-            this.MoedasGV.OptionsMenu.ShowGroupSummaryEditorItem = true;
-            this.MoedasGV.OptionsMenu.ShowSummaryItemMode = DevExpress.Utils.DefaultBoolean.True;
-            this.MoedasGV.OptionsView.AnimationType = DevExpress.XtraGrid.Views.Base.GridAnimationType.AnimateAllContent;
-            this.MoedasGV.OptionsView.BestFitMode = DevExpress.XtraGrid.Views.Grid.GridBestFitMode.Full;
-            this.MoedasGV.OptionsView.FilterCriteriaDisplayStyle = DevExpress.XtraEditors.FilterCriteriaDisplayStyle.Visual;
-            this.MoedasGV.OptionsView.ShowFooter = true;
+            MoedasGV.Columns.AddRange(new DevExpress.XtraGrid.Columns.GridColumn[] { colId, colIdExterno, colNome, colNomeExterno, colBtcPorDia });
+            MoedasGV.DetailHeight = 458;
+            MoedasGV.GridControl = MoedasGC;
+            MoedasGV.Name = "MoedasGV";
+            MoedasGV.OptionsEditForm.PopupEditFormWidth = 933;
+            MoedasGV.OptionsImageLoad.AnimationType = DevExpress.Utils.ImageContentAnimationType.Push;
+            MoedasGV.OptionsMenu.ShowConditionalFormattingItem = true;
+            MoedasGV.OptionsMenu.ShowGroupSummaryEditorItem = true;
+            MoedasGV.OptionsMenu.ShowSummaryItemMode = DevExpress.Utils.DefaultBoolean.True;
+            MoedasGV.OptionsView.AnimationType = DevExpress.XtraGrid.Views.Base.GridAnimationType.AnimateAllContent;
+            MoedasGV.OptionsView.BestFitMode = DevExpress.XtraGrid.Views.Grid.GridBestFitMode.Full;
+            MoedasGV.OptionsView.FilterCriteriaDisplayStyle = DevExpress.XtraEditors.FilterCriteriaDisplayStyle.Visual;
+            MoedasGV.OptionsView.ShowFooter = true;
             // 
             // colId
             // 
-            this.colId.FieldName = "Id";
-            this.colId.Name = "colId";
-            this.colId.OptionsColumn.ReadOnly = true;
-            this.colId.Visible = true;
-            this.colId.VisibleIndex = 0;
+            colId.FieldName = "Id";
+            colId.Name = "colId";
+            colId.OptionsColumn.ReadOnly = true;
+            colId.Visible = true;
+            colId.VisibleIndex = 0;
             // 
             // colIdExterno
             // 
-            this.colIdExterno.FieldName = "IdExterno";
-            this.colIdExterno.Name = "colIdExterno";
-            this.colIdExterno.OptionsColumn.ReadOnly = true;
-            this.colIdExterno.Visible = true;
-            this.colIdExterno.VisibleIndex = 1;
-            this.colIdExterno.Width = 99;
+            colIdExterno.FieldName = "IdExterno";
+            colIdExterno.Name = "colIdExterno";
+            colIdExterno.OptionsColumn.ReadOnly = true;
+            colIdExterno.Visible = true;
+            colIdExterno.VisibleIndex = 1;
+            colIdExterno.Width = 99;
             // 
             // colNome
             // 
-            this.colNome.FieldName = "Nome";
-            this.colNome.Name = "colNome";
-            this.colNome.Visible = true;
-            this.colNome.VisibleIndex = 2;
-            this.colNome.Width = 76;
+            colNome.ColumnEdit = NomeRITE;
+            colNome.FieldName = "Nome";
+            colNome.Name = "colNome";
+            colNome.Visible = true;
+            colNome.VisibleIndex = 2;
+            colNome.Width = 76;
+            // 
+            // NomeRITE
+            // 
+            NomeRITE.AllowNullInput = DevExpress.Utils.DefaultBoolean.True;
+            NomeRITE.AutoHeight = false;
+            NomeRITE.MaxLength = 500;
+            NomeRITE.Name = "NomeRITE";
             // 
             // colNomeExterno
             // 
-            this.colNomeExterno.FieldName = "NomeExterno";
-            this.colNomeExterno.Name = "colNomeExterno";
-            this.colNomeExterno.OptionsColumn.ReadOnly = true;
-            this.colNomeExterno.Visible = true;
-            this.colNomeExterno.VisibleIndex = 3;
-            this.colNomeExterno.Width = 124;
+            colNomeExterno.FieldName = "NomeExterno";
+            colNomeExterno.Name = "colNomeExterno";
+            colNomeExterno.OptionsColumn.ReadOnly = true;
+            colNomeExterno.Visible = true;
+            colNomeExterno.VisibleIndex = 3;
+            colNomeExterno.Width = 124;
             // 
             // colBtcPorDia
             // 
-            this.colBtcPorDia.Caption = "BTC/dia";
-            this.colBtcPorDia.FieldName = "BtcPorDia";
-            this.colBtcPorDia.Name = "colBtcPorDia";
-            this.colBtcPorDia.OptionsColumn.ReadOnly = true;
-            this.colBtcPorDia.Visible = true;
-            this.colBtcPorDia.VisibleIndex = 4;
-            this.colBtcPorDia.Width = 108;
+            colBtcPorDia.Caption = "BTC/dia";
+            colBtcPorDia.FieldName = "BtcPorDia";
+            colBtcPorDia.Name = "colBtcPorDia";
+            colBtcPorDia.OptionsColumn.ReadOnly = true;
+            colBtcPorDia.Visible = true;
+            colBtcPorDia.VisibleIndex = 4;
+            colBtcPorDia.Width = 108;
             // 
             // MoedasRC
             // 
-            this.MoedasRC.EmptyAreaImageOptions.ImagePadding = new System.Windows.Forms.Padding(35, 40, 35, 40);
-            this.MoedasRC.ExpandCollapseItem.Id = 0;
-            this.MoedasRC.Items.AddRange(new DevExpress.XtraBars.BarItem[] {
-            this.MoedasRC.ExpandCollapseItem,
-            this.AtualizarBBI});
-            this.MoedasRC.Location = new System.Drawing.Point(0, 0);
-            this.MoedasRC.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.MoedasRC.MaxItemId = 5;
-            this.MoedasRC.Name = "MoedasRC";
-            this.MoedasRC.OptionsMenuMinWidth = 385;
-            this.MoedasRC.Pages.AddRange(new DevExpress.XtraBars.Ribbon.RibbonPage[] {
-            this.MoedasRP});
-            this.MoedasRC.RibbonStyle = DevExpress.XtraBars.Ribbon.RibbonControlStyle.Office2019;
-            this.MoedasRC.Size = new System.Drawing.Size(1440, 186);
+            MoedasRC.EmptyAreaImageOptions.ImagePadding = new System.Windows.Forms.Padding(35, 40, 35, 40);
+            MoedasRC.ExpandCollapseItem.Id = 0;
+            MoedasRC.Items.AddRange(new DevExpress.XtraBars.BarItem[] { MoedasRC.ExpandCollapseItem, AtualizarBBI, GravarBBI });
+            MoedasRC.Location = new System.Drawing.Point(0, 0);
+            MoedasRC.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            MoedasRC.MaxItemId = 6;
+            MoedasRC.Name = "MoedasRC";
+            MoedasRC.OptionsMenuMinWidth = 385;
+            MoedasRC.Pages.AddRange(new DevExpress.XtraBars.Ribbon.RibbonPage[] { MoedasRP });
+            MoedasRC.RibbonStyle = DevExpress.XtraBars.Ribbon.RibbonControlStyle.Office2019;
+            MoedasRC.Size = new System.Drawing.Size(1440, 186);
             // 
             // AtualizarBBI
             // 
-            this.AtualizarBBI.Caption = "Atualizar";
-            this.AtualizarBBI.Id = 1;
-            this.AtualizarBBI.ImageOptions.SvgImage = ((DevExpress.Utils.Svg.SvgImage)(resources.GetObject("AtualizarBBI.ImageOptions.SvgImage")));
-            this.AtualizarBBI.Name = "AtualizarBBI";
-            this.AtualizarBBI.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.AtualizarBBI_ItemClick);
+            AtualizarBBI.Caption = "Atualizar";
+            AtualizarBBI.Id = 1;
+            AtualizarBBI.ImageOptions.SvgImage = (DevExpress.Utils.Svg.SvgImage)resources.GetObject("AtualizarBBI.ImageOptions.SvgImage");
+            AtualizarBBI.Name = "AtualizarBBI";
+            AtualizarBBI.ItemClick += AtualizarBBI_ItemClick;
+            // 
+            // GravarBBI
+            // 
+            GravarBBI.Caption = "Gravar";
+            GravarBBI.Id = 5;
+            GravarBBI.ImageOptions.SvgImage = (DevExpress.Utils.Svg.SvgImage)resources.GetObject("GravarBBI.ImageOptions.SvgImage");
+            GravarBBI.Name = "GravarBBI";
+            GravarBBI.ItemClick += GravarBBI_ItemClick;
             // 
             // MoedasRP
             // 
-            this.MoedasRP.Groups.AddRange(new DevExpress.XtraBars.Ribbon.RibbonPageGroup[] {
-            this.OperacoesRPG});
-            this.MoedasRP.Name = "MoedasRP";
-            this.MoedasRP.Text = "Moedas";
+            MoedasRP.Groups.AddRange(new DevExpress.XtraBars.Ribbon.RibbonPageGroup[] { OperacoesRPG });
+            MoedasRP.Name = "MoedasRP";
+            MoedasRP.Text = "Moedas";
             // 
             // OperacoesRPG
             // 
-            this.OperacoesRPG.ItemLinks.Add(this.AtualizarBBI);
-            this.OperacoesRPG.Name = "OperacoesRPG";
-            this.OperacoesRPG.Text = "Operações";
+            OperacoesRPG.ItemLinks.Add(AtualizarBBI);
+            OperacoesRPG.ItemLinks.Add(GravarBBI);
+            OperacoesRPG.Name = "OperacoesRPG";
+            OperacoesRPG.Text = "Operações";
             // 
             // MoedasUserControl
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.MoedasGC);
-            this.Controls.Add(this.MoedasRC);
-            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.Name = "MoedasUserControl";
-            this.Size = new System.Drawing.Size(1440, 777);
-            this.Load += new System.EventHandler(this.MineradoresUserControl_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.MoedasGC)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.MoedasBindingSource)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.MoedasGV)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.MoedasRC)).EndInit();
-            this.ResumeLayout(false);
-            this.PerformLayout();
-
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            Controls.Add(MoedasGC);
+            Controls.Add(MoedasRC);
+            Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            Name = "MoedasUserControl";
+            Size = new System.Drawing.Size(1440, 777);
+            Load += MineradoresUserControl_Load;
+            ((System.ComponentModel.ISupportInitialize)MoedasGC).EndInit();
+            ((System.ComponentModel.ISupportInitialize)MoedasBindingSource).EndInit();
+            ((System.ComponentModel.ISupportInitialize)MoedasGV).EndInit();
+            ((System.ComponentModel.ISupportInitialize)NomeRITE).EndInit();
+            ((System.ComponentModel.ISupportInitialize)MoedasRC).EndInit();
+            ((System.ComponentModel.ISupportInitialize)behaviorManager1).EndInit();
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -213,5 +227,8 @@
         private DevExpress.XtraGrid.Columns.GridColumn colNome;
         private DevExpress.XtraGrid.Columns.GridColumn colBtcPorDia;
         private DevExpress.XtraGrid.Columns.GridColumn colNomeExterno;
+        private DevExpress.XtraBars.BarButtonItem GravarBBI;
+        private DevExpress.XtraEditors.Repository.RepositoryItemTextEdit NomeRITE;
+        private DevExpress.Utils.Behaviors.BehaviorManager behaviorManager1;
     }
 }

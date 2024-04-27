@@ -29,15 +29,13 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            DevExpress.XtraGrid.GridLevelNode gridLevelNode1 = new DevExpress.XtraGrid.GridLevelNode();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MineradoresUserControl));
-            this.MoedasGV = new DevExpress.XtraGrid.Views.Grid.GridView();
-            this.colIdMoeda = new DevExpress.XtraGrid.Columns.GridColumn();
-            this.colNome = new DevExpress.XtraGrid.Columns.GridColumn();
             this.MineradoresGC = new DevExpress.XtraGrid.GridControl();
             this.MineradoresBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.MineradoresGV = new DevExpress.XtraGrid.Views.Grid.GridView();
             this.colIdMinerador = new DevExpress.XtraGrid.Columns.GridColumn();
+            this.colNomeMinerador = new DevExpress.XtraGrid.Columns.GridColumn();
+            this.colMoeda = new DevExpress.XtraGrid.Columns.GridColumn();
             this.colLocalizacaoMinerador = new DevExpress.XtraGrid.Columns.GridColumn();
             this.colParametrosMinerador = new DevExpress.XtraGrid.Columns.GridColumn();
             this.colAtivoMinerador = new DevExpress.XtraGrid.Columns.GridColumn();
@@ -50,51 +48,17 @@
             this.EliminarBBI = new DevExpress.XtraBars.BarButtonItem();
             this.MineradoresRP = new DevExpress.XtraBars.Ribbon.RibbonPage();
             this.OperacoesRPG = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
-            this.colNomeMinerador = new DevExpress.XtraGrid.Columns.GridColumn();
-            ((System.ComponentModel.ISupportInitialize)(this.MoedasGV)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.MineradoresGC)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.MineradoresBindingSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.MineradoresGV)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.MineradoresRC)).BeginInit();
             this.SuspendLayout();
             // 
-            // MoedasGV
-            // 
-            this.MoedasGV.Columns.AddRange(new DevExpress.XtraGrid.Columns.GridColumn[] {
-            this.colIdMoeda,
-            this.colNome});
-            this.MoedasGV.DetailHeight = 458;
-            this.MoedasGV.GridControl = this.MineradoresGC;
-            this.MoedasGV.Name = "MoedasGV";
-            this.MoedasGV.OptionsEditForm.PopupEditFormWidth = 933;
-            // 
-            // colIdMoeda
-            // 
-            this.colIdMoeda.FieldName = "Id";
-            this.colIdMoeda.MinWidth = 23;
-            this.colIdMoeda.Name = "colIdMoeda";
-            this.colIdMoeda.Visible = true;
-            this.colIdMoeda.VisibleIndex = 0;
-            this.colIdMoeda.Width = 87;
-            // 
-            // colNome
-            // 
-            this.colNome.FieldName = "Nome";
-            this.colNome.MinWidth = 23;
-            this.colNome.Name = "colNome";
-            this.colNome.Visible = true;
-            this.colNome.VisibleIndex = 1;
-            this.colNome.Width = 87;
-            // 
             // MineradoresGC
             // 
             this.MineradoresGC.DataSource = this.MineradoresBindingSource;
             this.MineradoresGC.Dock = System.Windows.Forms.DockStyle.Fill;
             this.MineradoresGC.EmbeddedNavigator.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            gridLevelNode1.LevelTemplate = this.MoedasGV;
-            gridLevelNode1.RelationName = "Moedas";
-            this.MineradoresGC.LevelTree.Nodes.AddRange(new DevExpress.XtraGrid.GridLevelNode[] {
-            gridLevelNode1});
             this.MineradoresGC.Location = new System.Drawing.Point(0, 186);
             this.MineradoresGC.MainView = this.MineradoresGV;
             this.MineradoresGC.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
@@ -102,8 +66,7 @@
             this.MineradoresGC.Size = new System.Drawing.Size(1695, 918);
             this.MineradoresGC.TabIndex = 1;
             this.MineradoresGC.ViewCollection.AddRange(new DevExpress.XtraGrid.Views.Base.BaseView[] {
-            this.MineradoresGV,
-            this.MoedasGV});
+            this.MineradoresGV});
             // 
             // MineradoresBindingSource
             // 
@@ -114,6 +77,7 @@
             this.MineradoresGV.Columns.AddRange(new DevExpress.XtraGrid.Columns.GridColumn[] {
             this.colIdMinerador,
             this.colNomeMinerador,
+            this.colMoeda,
             this.colLocalizacaoMinerador,
             this.colParametrosMinerador,
             this.colAtivoMinerador,
@@ -146,6 +110,22 @@
             this.colIdMinerador.VisibleIndex = 1;
             this.colIdMinerador.Width = 87;
             // 
+            // colNomeMinerador
+            // 
+            this.colNomeMinerador.FieldName = "Nome";
+            this.colNomeMinerador.Name = "colNomeMinerador";
+            this.colNomeMinerador.Visible = true;
+            this.colNomeMinerador.VisibleIndex = 2;
+            // 
+            // colMoeda
+            // 
+            this.colMoeda.Caption = "Moeda";
+            this.colMoeda.Name = "colMoeda";
+            this.colMoeda.UnboundDataType = typeof(string);
+            this.colMoeda.UnboundExpression = "[Moeda][Id] + \' - \' + [Moeda][Nome]";
+            this.colMoeda.Visible = true;
+            this.colMoeda.VisibleIndex = 3;
+            // 
             // colLocalizacaoMinerador
             // 
             this.colLocalizacaoMinerador.Caption = "Localização";
@@ -153,7 +133,7 @@
             this.colLocalizacaoMinerador.MinWidth = 23;
             this.colLocalizacaoMinerador.Name = "colLocalizacaoMinerador";
             this.colLocalizacaoMinerador.Visible = true;
-            this.colLocalizacaoMinerador.VisibleIndex = 2;
+            this.colLocalizacaoMinerador.VisibleIndex = 4;
             this.colLocalizacaoMinerador.Width = 107;
             // 
             // colParametrosMinerador
@@ -163,7 +143,7 @@
             this.colParametrosMinerador.MinWidth = 23;
             this.colParametrosMinerador.Name = "colParametrosMinerador";
             this.colParametrosMinerador.Visible = true;
-            this.colParametrosMinerador.VisibleIndex = 3;
+            this.colParametrosMinerador.VisibleIndex = 5;
             this.colParametrosMinerador.Width = 107;
             // 
             // colAtivoMinerador
@@ -172,7 +152,7 @@
             this.colAtivoMinerador.MinWidth = 23;
             this.colAtivoMinerador.Name = "colAtivoMinerador";
             this.colAtivoMinerador.Visible = true;
-            this.colAtivoMinerador.VisibleIndex = 4;
+            this.colAtivoMinerador.VisibleIndex = 6;
             this.colAtivoMinerador.Width = 87;
             // 
             // colDataCriacaoMinerador
@@ -182,7 +162,7 @@
             this.colDataCriacaoMinerador.MinWidth = 23;
             this.colDataCriacaoMinerador.Name = "colDataCriacaoMinerador";
             this.colDataCriacaoMinerador.Visible = true;
-            this.colDataCriacaoMinerador.VisibleIndex = 5;
+            this.colDataCriacaoMinerador.VisibleIndex = 7;
             this.colDataCriacaoMinerador.Width = 115;
             // 
             // colDataAlteracaoMinerador
@@ -192,7 +172,7 @@
             this.colDataAlteracaoMinerador.MinWidth = 23;
             this.colDataAlteracaoMinerador.Name = "colDataAlteracaoMinerador";
             this.colDataAlteracaoMinerador.Visible = true;
-            this.colDataAlteracaoMinerador.VisibleIndex = 7;
+            this.colDataAlteracaoMinerador.VisibleIndex = 8;
             this.colDataAlteracaoMinerador.Width = 126;
             // 
             // MineradoresRC
@@ -263,13 +243,6 @@
             this.OperacoesRPG.Name = "OperacoesRPG";
             this.OperacoesRPG.Text = "Operações";
             // 
-            // colNomeMinerador
-            // 
-            this.colNomeMinerador.FieldName = "Nome";
-            this.colNomeMinerador.Name = "colNomeMinerador";
-            this.colNomeMinerador.Visible = true;
-            this.colNomeMinerador.VisibleIndex = 6;
-            // 
             // MineradoresUserControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
@@ -280,7 +253,6 @@
             this.Name = "MineradoresUserControl";
             this.Size = new System.Drawing.Size(1695, 1104);
             this.Load += new System.EventHandler(this.MineradoresUserControl_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.MoedasGV)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.MineradoresGC)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.MineradoresBindingSource)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.MineradoresGV)).EndInit();
@@ -308,9 +280,7 @@
         private DevExpress.XtraGrid.Columns.GridColumn colAtivoMinerador;
         private DevExpress.XtraGrid.Columns.GridColumn colDataCriacaoMinerador;
         private DevExpress.XtraGrid.Columns.GridColumn colDataAlteracaoMinerador;
-        private DevExpress.XtraGrid.Views.Grid.GridView MoedasGV;
-        private DevExpress.XtraGrid.Columns.GridColumn colIdMoeda;
-        private DevExpress.XtraGrid.Columns.GridColumn colNome;
         private DevExpress.XtraGrid.Columns.GridColumn colNomeMinerador;
+        private DevExpress.XtraGrid.Columns.GridColumn colMoeda;
     }
 }

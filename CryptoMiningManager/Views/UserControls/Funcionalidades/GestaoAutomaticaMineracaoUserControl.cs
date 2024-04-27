@@ -6,8 +6,7 @@ using Modelos.Enums;
 using Modelos.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,25 +17,25 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
     public partial class GestaoAutomaticaMineracaoUserControl : DevExpress.XtraEditors.XtraUserControl
     {
 
-        private readonly string URLRentabilidade;
+        //private readonly string URLRentabilidade;
 
-        private readonly IHttpHelper Http;
-
-        private bool HaAlteracaoNaRentabilidade = false;
         private int TempoEntreVerificacoes;
+
+        private CancellationTokenSource CancelarThread = null;
+        private Minerador MineradorAtivo = null;
+        private Moeda MoedaMaisRentavel;
         private Thread RentabilidadeThread = null;
 
-        private Moeda MoedaMaisRentavel;
-
         private readonly IEntidadesHelper<Minerador> MineradoresHelper;
+        private readonly IEntidadesHelper<Moeda> MoedasHelper;
 
-        public GestaoAutomaticaMineracaoUserControl(IHttpHelper httpHelper, IEntidadesHelper<Minerador> mineradoresHelper)
+        public GestaoAutomaticaMineracaoUserControl(IEntidadesHelper<Minerador> mineradoresHelper, IEntidadesHelper<Moeda> moedasHelper)
         {
             InitializeComponent();
-            Http = httpHelper;
             MineradoresHelper = mineradoresHelper;
+            MoedasHelper = moedasHelper;
 
-            URLRentabilidade = ConfigurationManager.AppSettings["URLRentabilidade"];
+            //URLRentabilidade = ConfigurationManager.AppSettings["URLRentabilidade"];
 
             //Este método aparentemente vai buscar o DescriptionAttribute sozinho, então já fica com uma Caption decente
             AlgoritmoRIDG.Items.AddEnum<Algoritmo>();
@@ -59,7 +58,8 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
             {
                 if (RentabilidadeThread == null)
                 {
-                    RentabilidadeThread = new Thread(async () => await VerificaRentabilidade()) { IsBackground = true };
+                    CancelarThread = new CancellationTokenSource();
+                    RentabilidadeThread = new Thread(async () => await VerificaRentabilidade(CancelarThread.Token)) { IsBackground = true };
                     RentabilidadeThread.Start();
                 }
 
@@ -77,7 +77,22 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
         {
             try
             {
-                RentabilidadeThread?.Abort();
+                if (CancelarThread != null)
+                {
+                    using (IOverlaySplashScreenHandle splashScreenHandler = SplashScreenManager.ShowOverlayForm(this))
+                    {
+                        if (RentabilidadeThread.ThreadState == ThreadState.WaitSleepJoin)
+                            RentabilidadeThread.Interrupt();
+                        else
+                            CancelarThread.Cancel();
+
+                        if (!RentabilidadeThread.Join(10000))
+                            XtraMessageBox.Show("O processo está a levar mais tempo para parar do que o esperado.", "Possível falha", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                        CancelarThread.Dispose();
+                        CancelarThread = null;
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -112,7 +127,8 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
                 MineradorBindingSource.Clear();
                 foreach (KeyValuePair<int, Minerador> registo in await MineradoresHelper.GetEntidadesComLista("mi.Ativo = 1", "mi.Nome ASC"))
                 {
-                    MineradorBindingSource.Add(registo.Value);
+                    if (registo.Value.Moeda != null)
+                        MineradorBindingSource.Add(registo.Value);
                 }
             }
             catch (Exception ex)
@@ -127,30 +143,53 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
             }
         }
 
-        private async Task VerificaRentabilidade()
+        private async Task VerificaRentabilidade(CancellationToken cancelar)
         {
             try
             {
-                while (true)
+                while (!cancelar.IsCancellationRequested)
                 {
-                    Moedas classe = await Http.PedidoGETHttpSingle<Moedas>(URLRentabilidade);
+                    List<Moeda> moedas = await MoedasHelper.GravarEntidades();
+                    Minerador minerador = GetMineradorMaisRentavel(moedas);
 
-                    var moedasOrdenadasPorRentabilidade = classe.GetMoedas().OrderByDescending(m => m.BtcPorDia).ToList();
-
-                    var moedaMaisRentavelAtualmente = moedasOrdenadasPorRentabilidade.First();
-
-                    HaAlteracaoNaRentabilidade = MoedaMaisRentavel.Id != moedaMaisRentavelAtualmente.Id;
+                    if (minerador != null && MineradorAtivo != null && MineradorAtivo.Id != minerador.Id)
+                    {
+                        MineradorAtivo = minerador;
+                    }
 
                     UltimaVerificacaoRentabilidadeDE.DateTime = DateTime.Now;
-
                     Thread.Sleep(TempoEntreVerificacoes);
                 }
             }
+            catch (ThreadInterruptedException) { }
             catch (Exception ex)
             {
                 LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro ao verificar rentabilidade.");
                 XtraMessageBox.Show("Erro ao verificar rentabilidade: " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private Minerador GetMineradorMaisRentavel(List<Moeda> moedas)
+        {
+            moedas.Sort(Moedas.MaiorRentabilidade_Descendente);
+
+            Func<Moeda, bool> IsMoedaAtual = MineradorAtivo != null ? m => false :
+                m => m.Id == MineradorAtivo.Moeda.Id;
+
+            Dictionary<int, Minerador> mineradoresPorMoeda = ((BindingList<Minerador>)MineradorBindingSource.List).ToDictionary(m => m.Moeda.Id);
+
+            foreach (Moeda moeda in moedas)
+            {
+                //Se se chegar à moeda do MineradorAtual, então não vale a pena continuar a procurar.
+                //Já estamos a minerar a moeda mais rentável para a qual foi configurado um minerador.
+                if (IsMoedaAtual(moeda))
+                    return MineradorAtivo;
+
+                if (mineradoresPorMoeda.TryGetValue(moeda.Id, out Minerador minerador))
+                    return minerador;
+            }
+
+            return null;
         }
     }
 }

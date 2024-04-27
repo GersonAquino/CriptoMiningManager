@@ -22,6 +22,8 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes
         private readonly IHttpHelper HttpHelper;
         private readonly IEntidadesHelper<Moeda> EntidadesHelper;
 
+        private Dictionary<int, Moeda> MoedasOriginais;
+
         public MoedasUserControl(IDados dados, IEntidadesHelper<Moeda> entidadesHelper, IHttpHelper httpHelper)
         {
             InitializeComponent();
@@ -41,6 +43,32 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes
             await AtualizarDados();
         }
 
+        private void GravarBBI_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
+        {
+            try
+            {
+                using (IOverlaySplashScreenHandle splashScreenHandler = SplashScreenManager.ShowOverlayForm(MoedasGC))
+                {
+                    List<Moeda> moedasAlterar = new();
+                    foreach (Moeda moeda in MoedasBindingSource.List)
+                    {
+                        if (MoedasOriginais[moeda.Id].Nome != moeda.Nome)
+                            moedasAlterar.Add(moeda);
+                    }
+
+                    if (moedasAlterar.Count != 0)
+                        EntidadesHelper.GravarEntidades(moedasAlterar);
+
+                    XtraMessageBox.Show("Alterações gravadas com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro");
+                XtraMessageBox.Show("Erro ao validar alterações!", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
         //FUNÇÕES AUXILIARES
         private async Task AtualizarDados()
         {
@@ -48,9 +76,16 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes
             MoedasGV.BeginDataUpdate();
             try
             {
-                MoedasBindingSource.Clear();
+                List<Moeda> moedas = await EntidadesHelper.GravarEntidades();
 
-                (await EntidadesHelper.GravarEntidades()).ForEach(m => MoedasBindingSource.Add(m));
+                MoedasBindingSource.Clear();
+                MoedasOriginais = new Dictionary<int, Moeda>(moedas.Count);
+
+                moedas.ForEach(m =>
+                {
+                    MoedasBindingSource.Add(m);
+                    MoedasOriginais.Add(m.Id, m);
+                });
 
                 return;
                 List<Moeda> moedasAPI = (await HttpHelper.PedidoGETHttpSingle<Moedas>(URLRentabilidade)).GetMoedas();

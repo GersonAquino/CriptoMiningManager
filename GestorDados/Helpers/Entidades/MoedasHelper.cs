@@ -23,7 +23,9 @@ namespace GestorDados.Helpers.Entidades
 
         public async Task<int> EliminarEntidades(IEnumerable<int> ids)
         {
-            throw new NotImplementedException();
+            string query = QueryHelper.Delete(Tabela, "Id IN @Ids");
+
+            return await Dados.ExecuteOpenAsync(query, new { Ids = ids });
         }
 
         public async Task<IEnumerable<Moeda>> GetEntidades(string condicoes = null, string ordenacao = null)
@@ -69,31 +71,38 @@ namespace GestorDados.Helpers.Entidades
 
         public async Task<List<Moeda>> GravarEntidades(IEnumerable<Moeda> entidades = null)
         {
-            List<Moeda> moedasAPI = (await HttpHelper.PedidoGETHttpSingle<Moedas>(null)).GetMoedas();
-            Dictionary<int, Moeda> moedasExistentes = (await GetEntidades("IdExterno IN @IdsExternos", null,
-                ("IdsExternos", moedasAPI.Select(m => m.IdExterno)))).ToDictionary(m => m.IdExterno);
-
-            moedasAPI.ForEach(moeda =>
+            if (entidades != null)
             {
-                if (moedasExistentes.TryGetValue(moeda.IdExterno, out Moeda moedaExistente))
-                {
-                    moeda.Id = moedaExistente.Id;
-                    moeda.Nome = moedaExistente.Nome;
-                }
-                else
-                {
-                    moeda.Id = -1;
-                    moeda.Nome = null;
-                }
-            });
+                List<Moeda> moedasAPI = (await HttpHelper.PedidoGETHttpSingle<Moedas>(null)).GetMoedas();
+                Dictionary<int, Moeda> moedasExistentes = (await GetEntidades("IdExterno IN @IdsExternos", null,
+                    ("IdsExternos", moedasAPI.Select(m => m.IdExterno)))).ToDictionary(m => m.IdExterno);
 
-            await Dados.BulkMerge(moedasAPI.ToArray());
+                moedasAPI.ForEach(moeda =>
+                {
+                    if (moedasExistentes.TryGetValue(moeda.IdExterno, out Moeda moedaExistente))
+                    {
+                        moeda.Id = moedaExistente.Id;
+                        moeda.Nome = moedaExistente.Nome;
+                    }
+                    else
+                    {
+                        moeda.Id = -1;
+                        moeda.Nome = null;
+                    }
+                });
 
-            return moedasAPI;
+                await Dados.BulkMerge(moedasAPI.ToArray());
+
+                return moedasAPI;
+            }
+
+            await Dados.BulkMerge(entidades.ToArray());
+
+            return null;
         }
 
         //FUNÇÕES AUXILIARES
-        private string GravarEntidade_Base(Moeda moeda)
+        private static string GravarEntidade_Base(Moeda moeda)
         {
             if (moeda.Id < -1)
                 throw new ArgumentException($"Moeda tem Id inválido ({moeda.Id}).");

@@ -1,4 +1,5 @@
 ﻿using Modelos.JsonConverters;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Reflection;
@@ -8,6 +9,8 @@ namespace Modelos.Classes
 {
     public class Moedas
     {
+        public static Comparison<Moeda> MaiorRentabilidade_Descendente = new((m1, m2) => -m1.BtcPorDia.CompareTo(m2.BtcPorDia));
+
         /// <summary>
         /// Usar isto é desaconselhado, só está público para poder ser desserializado em condições. Usar <see cref="GetMoedas"/>
         /// </summary>
