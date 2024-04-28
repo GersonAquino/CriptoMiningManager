@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -142,18 +143,38 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
 
         private void ProcessoAtivo_ErrorDataReceived(object sender, DataReceivedEventArgs e)
         {
-            //Provavelmente é o Kill()
-            if (e.Data == null)
+            if (e.Data == null) //Terminou o processo
+            {
+                LogHelper.EscreveLog(LogLevel.Information, $"A terminar o minerador {MineradorAtivo}");
                 return;
+            }
 
             ExecucaoME.AppendLine("ERRO: " + RemoveEscapeSequences(e.Data));
-            LogHelper.EscreveLog(LogLevel.Warning, $"Erro no minerador {MineradorAtivo.Id} - {MineradorAtivo.Nome}: {e.Data}");
+            LogHelper.EscreveLog(LogLevel.Warning, $"Erro no minerador {MineradorAtivo}: {e.Data}");
 
             ScrollFim();
         }
 
-        private void ProcessoAtivo_OutputDataReceived(object sender, DataReceivedEventArgs e)
+        private async void ProcessoAtivo_OutputDataReceived(object sender, DataReceivedEventArgs e)
         {
+            //Prevenir textos infinitos e excesso de utilização de memória com strings infinitas
+            if (ExecucaoME.Text.Length > 10000)
+            {
+                using (StreamWriter streamWriter = new("LogsMineração.txt", true))
+                {
+                    try
+                    {
+                        await streamWriter.WriteLineAsync(ExecucaoME.Text);
+                        await streamWriter.FlushAsync();
+                    }
+                    catch (Exception ex)
+                    {
+                        LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro ao guardar logs de mineração.");
+                    }
+                }
+                ExecucaoME.Text = string.Empty;
+            }
+
             ExecucaoME.AppendLine(RemoveEscapeSequences(e.Data));
             ScrollFim();
         }

@@ -15,5 +15,10 @@ namespace Modelos.Classes
         public Moeda Moeda { get; set; }
 
         public Minerador() { }
+
+        public override string ToString()
+        {
+            return $"{Id} - {Nome}";
+        }
     }
 }
