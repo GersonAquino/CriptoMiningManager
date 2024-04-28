@@ -37,7 +37,7 @@
             colNomeMoedas = new DevExpress.XtraGrid.Columns.GridColumn();
             colBtc_revenueMoedas = new DevExpress.XtraGrid.Columns.GridColumn();
             MineradoresGC = new DevExpress.XtraGrid.GridControl();
-            MineradorBindingSource = new System.Windows.Forms.BindingSource(components);
+            MineradoresBindingSource = new System.Windows.Forms.BindingSource(components);
             MineradoresGV = new DevExpress.XtraGrid.Views.Grid.GridView();
             colId = new DevExpress.XtraGrid.Columns.GridColumn();
             colNome = new DevExpress.XtraGrid.Columns.GridColumn();
@@ -62,17 +62,24 @@
             UltimaVerificacaoRentabilidadeDE = new DevExpress.XtraEditors.DateEdit();
             UltimaAlteracaoMineradorDE = new DevExpress.XtraEditors.DateEdit();
             MoedaAtualTE = new DevExpress.XtraEditors.TextEdit();
+            MoedaMaisRentavelTE = new DevExpress.XtraEditors.TextEdit();
             LateralDireitaLCG = new DevExpress.XtraLayout.LayoutControlGroup();
             UltimaVerificacaoRentabilidadeLCI = new DevExpress.XtraLayout.LayoutControlItem();
             UltimaAlteracaoMineradorLCI = new DevExpress.XtraLayout.LayoutControlItem();
-            MoedaAtualLCI = new DevExpress.XtraLayout.LayoutControlItem();
             MineradorAtivoLCI = new DevExpress.XtraLayout.LayoutControlItem();
             emptySpaceItem1 = new DevExpress.XtraLayout.EmptySpaceItem();
+            MoedaMaisRentavelLCI = new DevExpress.XtraLayout.LayoutControlItem();
+            MoedaAtualLCI = new DevExpress.XtraLayout.LayoutControlItem();
             gridColumn1 = new DevExpress.XtraGrid.Columns.GridColumn();
             gridColumn2 = new DevExpress.XtraGrid.Columns.GridColumn();
+            RootLC = new DevExpress.XtraLayout.LayoutControl();
+            ExecucaoME = new DevExpress.XtraEditors.MemoEdit();
+            RootLCG = new DevExpress.XtraLayout.LayoutControlGroup();
+            MineradoresLCI = new DevExpress.XtraLayout.LayoutControlItem();
+            ExecucaoLCI = new DevExpress.XtraLayout.LayoutControlItem();
             ((System.ComponentModel.ISupportInitialize)MoedasGV).BeginInit();
             ((System.ComponentModel.ISupportInitialize)MineradoresGC).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)MineradorBindingSource).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)MineradoresBindingSource).BeginInit();
             ((System.ComponentModel.ISupportInitialize)MineradoresGV).BeginInit();
             ((System.ComponentModel.ISupportInitialize)GestaoAutomaticaMineracaoRC).BeginInit();
             ((System.ComponentModel.ISupportInitialize)AlgoritmoRIDG).BeginInit();
@@ -85,12 +92,20 @@
             ((System.ComponentModel.ISupportInitialize)UltimaAlteracaoMineradorDE.Properties).BeginInit();
             ((System.ComponentModel.ISupportInitialize)UltimaAlteracaoMineradorDE.Properties.CalendarTimeProperties).BeginInit();
             ((System.ComponentModel.ISupportInitialize)MoedaAtualTE.Properties).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)MoedaMaisRentavelTE.Properties).BeginInit();
             ((System.ComponentModel.ISupportInitialize)LateralDireitaLCG).BeginInit();
             ((System.ComponentModel.ISupportInitialize)UltimaVerificacaoRentabilidadeLCI).BeginInit();
             ((System.ComponentModel.ISupportInitialize)UltimaAlteracaoMineradorLCI).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)MoedaAtualLCI).BeginInit();
             ((System.ComponentModel.ISupportInitialize)MineradorAtivoLCI).BeginInit();
             ((System.ComponentModel.ISupportInitialize)emptySpaceItem1).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)MoedaMaisRentavelLCI).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)MoedaAtualLCI).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)RootLC).BeginInit();
+            RootLC.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)ExecucaoME.Properties).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)RootLCG).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)MineradoresLCI).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)ExecucaoLCI).BeginInit();
             SuspendLayout();
             // 
             // MoedasGV
@@ -129,19 +144,22 @@
             // 
             // MineradoresGC
             // 
-            MineradoresGC.DataSource = MineradorBindingSource;
-            MineradoresGC.Dock = System.Windows.Forms.DockStyle.Fill;
+            MineradoresGC.DataSource = MineradoresBindingSource;
             MineradoresGC.EmbeddedNavigator.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             gridLevelNode1.LevelTemplate = MoedasGV;
             gridLevelNode1.RelationName = "Moedas";
             MineradoresGC.LevelTree.Nodes.AddRange(new DevExpress.XtraGrid.GridLevelNode[] { gridLevelNode1 });
-            MineradoresGC.Location = new System.Drawing.Point(0, 186);
+            MineradoresGC.Location = new System.Drawing.Point(12, 12);
             MineradoresGC.MainView = MineradoresGV;
             MineradoresGC.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             MineradoresGC.Name = "MineradoresGC";
-            MineradoresGC.Size = new System.Drawing.Size(986, 588);
+            MineradoresGC.Size = new System.Drawing.Size(962, 307);
             MineradoresGC.TabIndex = 4;
             MineradoresGC.ViewCollection.AddRange(new DevExpress.XtraGrid.Views.Base.BaseView[] { MineradoresGV, MoedasGV });
+            // 
+            // MineradoresBindingSource
+            // 
+            MineradoresBindingSource.DataSource = typeof(Modelos.Classes.Minerador);
             // 
             // MineradoresGV
             // 
@@ -293,6 +311,7 @@
             LateralDireitaLC.Controls.Add(UltimaVerificacaoRentabilidadeDE);
             LateralDireitaLC.Controls.Add(UltimaAlteracaoMineradorDE);
             LateralDireitaLC.Controls.Add(MoedaAtualTE);
+            LateralDireitaLC.Controls.Add(MoedaMaisRentavelTE);
             LateralDireitaLC.Dock = System.Windows.Forms.DockStyle.Right;
             LateralDireitaLC.Location = new System.Drawing.Point(986, 186);
             LateralDireitaLC.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
@@ -304,13 +323,14 @@
             // 
             // MineradorAtivoTE
             // 
-            MineradorAtivoTE.Location = new System.Drawing.Point(227, 102);
+            MineradorAtivoTE.Location = new System.Drawing.Point(227, 72);
+            MineradorAtivoTE.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             MineradorAtivoTE.MenuManager = GestaoAutomaticaMineracaoRC;
             MineradorAtivoTE.Name = "MineradorAtivoTE";
             MineradorAtivoTE.Properties.ReadOnly = true;
             MineradorAtivoTE.Size = new System.Drawing.Size(216, 26);
             MineradorAtivoTE.StyleController = LateralDireitaLC;
-            MineradorAtivoTE.TabIndex = 7;
+            MineradorAtivoTE.TabIndex = 3;
             // 
             // UltimaVerificacaoRentabilidadeDE
             // 
@@ -327,7 +347,7 @@
             UltimaVerificacaoRentabilidadeDE.Properties.ReadOnly = true;
             UltimaVerificacaoRentabilidadeDE.Size = new System.Drawing.Size(216, 26);
             UltimaVerificacaoRentabilidadeDE.StyleController = LateralDireitaLC;
-            UltimaVerificacaoRentabilidadeDE.TabIndex = 4;
+            UltimaVerificacaoRentabilidadeDE.TabIndex = 0;
             // 
             // UltimaAlteracaoMineradorDE
             // 
@@ -344,25 +364,37 @@
             UltimaAlteracaoMineradorDE.Properties.ReadOnly = true;
             UltimaAlteracaoMineradorDE.Size = new System.Drawing.Size(216, 26);
             UltimaAlteracaoMineradorDE.StyleController = LateralDireitaLC;
-            UltimaAlteracaoMineradorDE.TabIndex = 5;
+            UltimaAlteracaoMineradorDE.TabIndex = 2;
             // 
             // MoedaAtualTE
             // 
-            MoedaAtualTE.Location = new System.Drawing.Point(227, 72);
+            MoedaAtualTE.Location = new System.Drawing.Point(227, 102);
             MoedaAtualTE.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             MoedaAtualTE.MenuManager = GestaoAutomaticaMineracaoRC;
             MoedaAtualTE.Name = "MoedaAtualTE";
             MoedaAtualTE.Properties.ReadOnly = true;
             MoedaAtualTE.Size = new System.Drawing.Size(216, 26);
             MoedaAtualTE.StyleController = LateralDireitaLC;
-            MoedaAtualTE.TabIndex = 6;
+            MoedaAtualTE.TabIndex = 4;
+            // 
+            // MoedaMaisRentavelTE
+            // 
+            MoedaMaisRentavelTE.Location = new System.Drawing.Point(227, 132);
+            MoedaMaisRentavelTE.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            MoedaMaisRentavelTE.MenuManager = GestaoAutomaticaMineracaoRC;
+            MoedaMaisRentavelTE.Name = "MoedaMaisRentavelTE";
+            MoedaMaisRentavelTE.Properties.ReadOnly = true;
+            MoedaMaisRentavelTE.Size = new System.Drawing.Size(216, 26);
+            MoedaMaisRentavelTE.StyleController = LateralDireitaLC;
+            MoedaMaisRentavelTE.TabIndex = 5;
             // 
             // LateralDireitaLCG
             // 
             LateralDireitaLCG.AppearanceGroup.BackColor = System.Drawing.Color.White;
+            LateralDireitaLCG.AppearanceGroup.Options.UseBackColor = true;
             LateralDireitaLCG.EnableIndentsWithoutBorders = DevExpress.Utils.DefaultBoolean.True;
             LateralDireitaLCG.GroupBordersVisible = false;
-            LateralDireitaLCG.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] { UltimaVerificacaoRentabilidadeLCI, UltimaAlteracaoMineradorLCI, MoedaAtualLCI, MineradorAtivoLCI, emptySpaceItem1 });
+            LateralDireitaLCG.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] { UltimaVerificacaoRentabilidadeLCI, UltimaAlteracaoMineradorLCI, MineradorAtivoLCI, emptySpaceItem1, MoedaMaisRentavelLCI, MoedaAtualLCI });
             LateralDireitaLCG.Name = "LateralDireitaLCG";
             LateralDireitaLCG.Size = new System.Drawing.Size(455, 588);
             LateralDireitaLCG.TextVisible = false;
@@ -385,19 +417,10 @@
             UltimaAlteracaoMineradorLCI.Text = "Última alteração de minerador";
             UltimaAlteracaoMineradorLCI.TextSize = new System.Drawing.Size(203, 17);
             // 
-            // MoedaAtualLCI
-            // 
-            MoedaAtualLCI.Control = MoedaAtualTE;
-            MoedaAtualLCI.Location = new System.Drawing.Point(0, 60);
-            MoedaAtualLCI.Name = "MoedaAtualLCI";
-            MoedaAtualLCI.Size = new System.Drawing.Size(435, 30);
-            MoedaAtualLCI.Text = "Moeda atual";
-            MoedaAtualLCI.TextSize = new System.Drawing.Size(203, 17);
-            // 
             // MineradorAtivoLCI
             // 
             MineradorAtivoLCI.Control = MineradorAtivoTE;
-            MineradorAtivoLCI.Location = new System.Drawing.Point(0, 90);
+            MineradorAtivoLCI.Location = new System.Drawing.Point(0, 60);
             MineradorAtivoLCI.Name = "MineradorAtivoLCI";
             MineradorAtivoLCI.Size = new System.Drawing.Size(435, 30);
             MineradorAtivoLCI.Text = "Minerador ativo";
@@ -406,10 +429,28 @@
             // emptySpaceItem1
             // 
             emptySpaceItem1.AllowHotTrack = false;
-            emptySpaceItem1.Location = new System.Drawing.Point(0, 120);
+            emptySpaceItem1.Location = new System.Drawing.Point(0, 150);
             emptySpaceItem1.Name = "emptySpaceItem1";
-            emptySpaceItem1.Size = new System.Drawing.Size(435, 448);
+            emptySpaceItem1.Size = new System.Drawing.Size(435, 418);
             emptySpaceItem1.TextSize = new System.Drawing.Size(0, 0);
+            // 
+            // MoedaMaisRentavelLCI
+            // 
+            MoedaMaisRentavelLCI.Control = MoedaMaisRentavelTE;
+            MoedaMaisRentavelLCI.Location = new System.Drawing.Point(0, 120);
+            MoedaMaisRentavelLCI.Name = "MoedaMaisRentavelLCI";
+            MoedaMaisRentavelLCI.Size = new System.Drawing.Size(435, 30);
+            MoedaMaisRentavelLCI.Text = "Moeda mais rentável";
+            MoedaMaisRentavelLCI.TextSize = new System.Drawing.Size(203, 17);
+            // 
+            // MoedaAtualLCI
+            // 
+            MoedaAtualLCI.Control = MoedaAtualTE;
+            MoedaAtualLCI.Location = new System.Drawing.Point(0, 90);
+            MoedaAtualLCI.Name = "MoedaAtualLCI";
+            MoedaAtualLCI.Size = new System.Drawing.Size(435, 30);
+            MoedaAtualLCI.Text = "Moeda atual";
+            MoedaAtualLCI.TextSize = new System.Drawing.Size(203, 17);
             // 
             // gridColumn1
             // 
@@ -425,11 +466,68 @@
             gridColumn2.Visible = true;
             gridColumn2.VisibleIndex = 1;
             // 
+            // RootLC
+            // 
+            RootLC.Controls.Add(MineradoresGC);
+            RootLC.Controls.Add(ExecucaoME);
+            RootLC.Dock = System.Windows.Forms.DockStyle.Fill;
+            RootLC.Location = new System.Drawing.Point(0, 186);
+            RootLC.Margin = new System.Windows.Forms.Padding(4);
+            RootLC.Name = "RootLC";
+            RootLC.Root = RootLCG;
+            RootLC.Size = new System.Drawing.Size(986, 588);
+            RootLC.TabIndex = 6;
+            RootLC.Text = "layoutControl1";
+            // 
+            // ExecucaoME
+            // 
+            ExecucaoME.Location = new System.Drawing.Point(12, 344);
+            ExecucaoME.MenuManager = GestaoAutomaticaMineracaoRC;
+            ExecucaoME.Name = "ExecucaoME";
+            ExecucaoME.Properties.Appearance.BackColor = System.Drawing.Color.Black;
+            ExecucaoME.Properties.Appearance.ForeColor = System.Drawing.Color.White;
+            ExecucaoME.Properties.Appearance.Options.UseBackColor = true;
+            ExecucaoME.Properties.Appearance.Options.UseForeColor = true;
+            ExecucaoME.Properties.ReadOnly = true;
+            ExecucaoME.Size = new System.Drawing.Size(962, 232);
+            ExecucaoME.StyleController = RootLC;
+            ExecucaoME.TabIndex = 5;
+            // 
+            // RootLCG
+            // 
+            RootLCG.EnableIndentsWithoutBorders = DevExpress.Utils.DefaultBoolean.True;
+            RootLCG.GroupBordersVisible = false;
+            RootLCG.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] { MineradoresLCI, ExecucaoLCI });
+            RootLCG.Name = "RootLCG";
+            RootLCG.Size = new System.Drawing.Size(986, 588);
+            RootLCG.TextVisible = false;
+            // 
+            // MineradoresLCI
+            // 
+            MineradoresLCI.Control = MineradoresGC;
+            MineradoresLCI.Location = new System.Drawing.Point(0, 0);
+            MineradoresLCI.Name = "MineradoresLCI";
+            MineradoresLCI.Size = new System.Drawing.Size(966, 311);
+            MineradoresLCI.TextSize = new System.Drawing.Size(0, 0);
+            MineradoresLCI.TextVisible = false;
+            // 
+            // ExecucaoLCI
+            // 
+            ExecucaoLCI.Control = ExecucaoME;
+            ExecucaoLCI.Location = new System.Drawing.Point(0, 311);
+            ExecucaoLCI.Name = "ExecucaoLCI";
+            ExecucaoLCI.Size = new System.Drawing.Size(966, 257);
+            ExecucaoLCI.Text = "Execução";
+            ExecucaoLCI.TextLocation = DevExpress.Utils.Locations.Top;
+            ExecucaoLCI.TextSize = new System.Drawing.Size(54, 17);
+            // 
             // GestaoAutomaticaMineracaoUserControl
             // 
+            Appearance.BackColor = System.Drawing.Color.White;
+            Appearance.Options.UseBackColor = true;
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            Controls.Add(MineradoresGC);
+            Controls.Add(RootLC);
             Controls.Add(LateralDireitaLC);
             Controls.Add(GestaoAutomaticaMineracaoRC);
             Margin = new System.Windows.Forms.Padding(4);
@@ -438,7 +536,7 @@
             Load += GestaoAutomaticaMineracaoUserControl_Load;
             ((System.ComponentModel.ISupportInitialize)MoedasGV).EndInit();
             ((System.ComponentModel.ISupportInitialize)MineradoresGC).EndInit();
-            ((System.ComponentModel.ISupportInitialize)MineradorBindingSource).EndInit();
+            ((System.ComponentModel.ISupportInitialize)MineradoresBindingSource).EndInit();
             ((System.ComponentModel.ISupportInitialize)MineradoresGV).EndInit();
             ((System.ComponentModel.ISupportInitialize)GestaoAutomaticaMineracaoRC).EndInit();
             ((System.ComponentModel.ISupportInitialize)AlgoritmoRIDG).EndInit();
@@ -451,12 +549,20 @@
             ((System.ComponentModel.ISupportInitialize)UltimaAlteracaoMineradorDE.Properties.CalendarTimeProperties).EndInit();
             ((System.ComponentModel.ISupportInitialize)UltimaAlteracaoMineradorDE.Properties).EndInit();
             ((System.ComponentModel.ISupportInitialize)MoedaAtualTE.Properties).EndInit();
+            ((System.ComponentModel.ISupportInitialize)MoedaMaisRentavelTE.Properties).EndInit();
             ((System.ComponentModel.ISupportInitialize)LateralDireitaLCG).EndInit();
             ((System.ComponentModel.ISupportInitialize)UltimaVerificacaoRentabilidadeLCI).EndInit();
             ((System.ComponentModel.ISupportInitialize)UltimaAlteracaoMineradorLCI).EndInit();
-            ((System.ComponentModel.ISupportInitialize)MoedaAtualLCI).EndInit();
             ((System.ComponentModel.ISupportInitialize)MineradorAtivoLCI).EndInit();
             ((System.ComponentModel.ISupportInitialize)emptySpaceItem1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)MoedaMaisRentavelLCI).EndInit();
+            ((System.ComponentModel.ISupportInitialize)MoedaAtualLCI).EndInit();
+            ((System.ComponentModel.ISupportInitialize)RootLC).EndInit();
+            RootLC.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)ExecucaoME.Properties).EndInit();
+            ((System.ComponentModel.ISupportInitialize)RootLCG).EndInit();
+            ((System.ComponentModel.ISupportInitialize)MineradoresLCI).EndInit();
+            ((System.ComponentModel.ISupportInitialize)ExecucaoLCI).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -484,7 +590,7 @@
         private DevExpress.XtraLayout.LayoutControlItem MoedaAtualLCI;
         private DevExpress.XtraGrid.GridControl MineradoresGC;
         private DevExpress.XtraGrid.Views.Grid.GridView MineradoresGV;
-        private System.Windows.Forms.BindingSource MineradorBindingSource;
+        private System.Windows.Forms.BindingSource MineradoresBindingSource;
         private DevExpress.XtraGrid.Columns.GridColumn colLocalizacao;
         private DevExpress.XtraGrid.Columns.GridColumn colParametros;
         private DevExpress.XtraGrid.Columns.GridColumn colId;
@@ -502,5 +608,12 @@
         private DevExpress.XtraGrid.Columns.GridColumn colBtc_revenueMoedas;
         private DevExpress.XtraEditors.TextEdit MineradorAtivoTE;
         private DevExpress.XtraLayout.LayoutControlItem MineradorAtivoLCI;
+        private DevExpress.XtraEditors.TextEdit MoedaMaisRentavelTE;
+        private DevExpress.XtraLayout.LayoutControlItem MoedaMaisRentavelLCI;
+        private DevExpress.XtraLayout.LayoutControl RootLC;
+        private DevExpress.XtraEditors.MemoEdit ExecucaoME;
+        private DevExpress.XtraLayout.LayoutControlGroup RootLCG;
+        private DevExpress.XtraLayout.LayoutControlItem MineradoresLCI;
+        private DevExpress.XtraLayout.LayoutControlItem ExecucaoLCI;
     }
 }

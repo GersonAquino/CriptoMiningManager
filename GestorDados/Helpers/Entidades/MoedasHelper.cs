@@ -71,7 +71,7 @@ namespace GestorDados.Helpers.Entidades
 
         public async Task<List<Moeda>> GravarEntidades(IEnumerable<Moeda> entidades = null)
         {
-            if (entidades != null)
+            if (entidades == null)
             {
                 List<Moeda> moedasAPI = (await HttpHelper.PedidoGETHttpSingle<Moedas>(null)).GetMoedas();
                 Dictionary<int, Moeda> moedasExistentes = (await GetEntidades("IdExterno IN @IdsExternos", null,

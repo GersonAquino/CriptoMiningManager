@@ -112,7 +112,7 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes
             finally
             {
                 MineradoresGV.EndDataUpdate();
-                MineradoresGV.BestFitColumns(true);
+                //MineradoresGV.BestFitColumns(true);
                 splashScreenHandler.Dispose();
             }
         }

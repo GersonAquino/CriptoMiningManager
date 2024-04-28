@@ -10,6 +10,8 @@ namespace Modelos.Classes
         public string Localizacao { get; set; }
         public string Parametros { get; set; }
 
+        public int? IdMoeda { get => Moeda?.Id; }
+
         public Moeda Moeda { get; set; }
 
         public Minerador() { }

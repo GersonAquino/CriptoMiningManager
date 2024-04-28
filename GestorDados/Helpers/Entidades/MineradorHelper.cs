@@ -107,11 +107,11 @@ namespace GestorDados.Helpers.Entidades
             //Inserir caso Id seja um valor inválido mas esperado
             if (minerador.Id == -1)
             {
-                query = QueryHelper.InsertParametrizado(Tabela, "Nome", "Localizacao", "Parametros", "Ativo");
+                query = QueryHelper.InsertParametrizado(Tabela, "Ativo", "IdMoeda", "Localizacao", "Nome", "Parametros");
             }
             else //Atualizar caso tenha Id válido
             {
-                query = QueryHelper.UpdateParametrizado(Tabela, "Id = @Id", "Nome", "Localizacao", "Parametros", "Ativo", "DataAlteracao");
+                query = QueryHelper.UpdateParametrizado(Tabela, "Id = @Id", "Ativo", "IdMoeda", "Localizacao", "Nome", "Parametros");
 
                 minerador.DataAlteracao = DateTime.Now;
             }

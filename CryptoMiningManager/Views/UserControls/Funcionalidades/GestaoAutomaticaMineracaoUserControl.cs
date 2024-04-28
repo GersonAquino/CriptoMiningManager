@@ -3,14 +3,18 @@ using DevExpress.XtraSplashScreen;
 using GestorDados.Helpers;
 using Modelos.Classes;
 using Modelos.Enums;
+using Modelos.Exceptions;
 using Modelos.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using ThreadState = System.Threading.ThreadState;
 
 namespace CryptoMiningManager.Views.UserControls.Funcionalidades
 {
@@ -24,7 +28,10 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
         private CancellationTokenSource CancelarThread = null;
         private Minerador MineradorAtivo = null;
         private Moeda MoedaMaisRentavel;
+        private Process ProcessoAtivo = null;
         private Thread RentabilidadeThread = null;
+
+        private readonly Regex EscapedSequences = new(@"\x1B\[[0-9;]*[mGKH]", RegexOptions.Compiled);
 
         private readonly IEntidadesHelper<Minerador> MineradoresHelper;
         private readonly IEntidadesHelper<Moeda> MoedasHelper;
@@ -39,6 +46,9 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
 
             //Este método aparentemente vai buscar o DescriptionAttribute sozinho, então já fica com uma Caption decente
             AlgoritmoRIDG.Items.AddEnum<Algoritmo>();
+            AlgoritmoBEI.EditValue = Algoritmo.MaisRentavel;
+
+            TempoEntreVerificacoes = 60000; //10 minutos
         }
 
         private async void GestaoAutomaticaMineracaoUserControl_Load(object sender, EventArgs e)
@@ -56,15 +66,39 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
         {
             try
             {
-                if (RentabilidadeThread == null)
+                using (IOverlaySplashScreenHandle splashScreenHandler = SplashScreenManager.ShowOverlayForm(this))
                 {
-                    CancelarThread = new CancellationTokenSource();
-                    RentabilidadeThread = new Thread(async () => await VerificaRentabilidade(CancelarThread.Token)) { IsBackground = true };
-                    RentabilidadeThread.Start();
+                    PararProcessoAtivo();
+                    PararThreadRentabilidade();
+
+                    Minerador minerador;
+                    switch ((Algoritmo)AlgoritmoBEI.EditValue)
+                    {
+                        case Algoritmo.Moeda:
+
+                            break;
+                        case Algoritmo.MaisRentavel:
+                            CancelarThread = new CancellationTokenSource();
+                            RentabilidadeThread = new Thread(async () => await MinerarPorRentabilidade(CancelarThread.Token)) { IsBackground = true };
+                            RentabilidadeThread.Start();
+
+                            break;
+                        case Algoritmo.Selecionado:
+                            if (MineradoresGV.IsDataRow(MineradoresGV.FocusedRowHandle) && MineradoresGV.FocusedRowObject is Minerador mineradorAux)
+                                minerador = mineradorAux;
+                            else
+                                throw new CustomException("Não há nenhum minerador selecionado!");
+
+                            IniciarMinerador(minerador);
+                            break;
+                        default:
+                            throw new ArgumentException("Algoritmo inválido!");
+                    }
                 }
-
-                //Moedas classe = await http.PedidoGETHttpSingle<Moedas>("https://whattomine.com/coins.json?eth=true&factor%5Beth_hr%5D=98.0&factor%5Beth_p%5D=260.0&e4g=true&factor%5Be4g_hr%5D=98.0&factor%5Be4g_p%5D=260.0&zh=true&factor%5Bzh_hr%5D=134.0&factor%5Bzh_p%5D=250.0&cnh=true&factor%5Bcnh_hr%5D=2400.0&factor%5Bcnh_p%5D=250.0&cng=true&factor%5Bcng_hr%5D=3700.0&factor%5Bcng_p%5D=250.0&s5r=true&factor%5Bs5r_hr%5D=1.0&factor%5Bs5r_p%5D=130.0&cx=true&factor%5Bcx_hr%5D=4.4&factor%5Bcx_p%5D=230.0&ds=true&factor%5Bds_hr%5D=0.0&factor%5Bds_p%5D=0.0&cc=true&factor%5Bcc_hr%5D=14.2&factor%5Bcc_p%5D=250.0&cr29=true&factor%5Bcr29_hr%5D=14.3&factor%5Bcr29_p%5D=250.0&sd=true&factor%5Bsd_hr%5D=0.0&factor%5Bsd_p%5D=0.0&ct32=true&factor%5Bct32_hr%5D=0.9&factor%5Bct32_p%5D=250.0&eqb=true&factor%5Beqb_hr%5D=46.5&factor%5Beqb_p%5D=250.0&b3=true&factor%5Bb3_hr%5D=2.1&factor%5Bb3_p%5D=270.0&ks=true&factor%5Bks_hr%5D=0.0&factor%5Bks_p%5D=0.0&al=true&factor%5Bal_hr%5D=202.0&factor%5Bal_p%5D=170.0&ops=true&factor%5Bops_hr%5D=77.0&factor%5Bops_p%5D=250.0&ir=true&factor%5Bir_hr%5D=0.0&factor%5Bir_p%5D=0.0&zlh=true&factor%5Bzlh_hr%5D=96.0&factor%5Bzlh_p%5D=260.0&kpw=true&factor%5Bkpw_hr%5D=46.0&factor%5Bkpw_p%5D=269.0&ppw=true&factor%5Bppw_hr%5D=38.9&factor%5Bppw_p%5D=250.0&nx=true&factor%5Bnx_hr%5D=0.0&factor%5Bnx_p%5D=0.0&fpw=true&factor%5Bfpw_hr%5D=41.0&factor%5Bfpw_p%5D=250.0&vh=true&factor%5Bvh_hr%5D=1.45&factor%5Bvh_p%5D=240.0&factor%5Bcost%5D=0.1&factor%5Bcost_currency%5D=EUR&sort=Profitability24&volume=0&revenue=24h&factor%5Bexchanges%5D%5B%5D=&factor%5Bexchanges%5D%5B%5D=binance&factor%5Bexchanges%5D%5B%5D=bitfinex&factor%5Bexchanges%5D%5B%5D=bitforex&factor%5Bexchanges%5D%5B%5D=bittrex&factor%5Bexchanges%5D%5B%5D=coinex&factor%5Bexchanges%5D%5B%5D=exmo&factor%5Bexchanges%5D%5B%5D=gate&factor%5Bexchanges%5D%5B%5D=graviex&factor%5Bexchanges%5D%5B%5D=hitbtc&factor%5Bexchanges%5D%5B%5D=ogre&factor%5Bexchanges%5D%5B%5D=poloniex&factor%5Bexchanges%5D%5B%5D=xeggex&dataset=Main");
-
+            }
+            catch (CustomException ce)
+            {
+                XtraMessageBox.Show(ce.Message, ce.Detalhes ?? "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
             catch (Exception ex)
             {
@@ -77,21 +111,11 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
         {
             try
             {
-                if (CancelarThread != null)
+                using (IOverlaySplashScreenHandle splashScreenHandler = SplashScreenManager.ShowOverlayForm(this))
                 {
-                    using (IOverlaySplashScreenHandle splashScreenHandler = SplashScreenManager.ShowOverlayForm(this))
-                    {
-                        if (RentabilidadeThread.ThreadState == ThreadState.WaitSleepJoin)
-                            RentabilidadeThread.Interrupt();
-                        else
-                            CancelarThread.Cancel();
-
-                        if (!RentabilidadeThread.Join(10000))
-                            XtraMessageBox.Show("O processo está a levar mais tempo para parar do que o esperado.", "Possível falha", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-
-                        CancelarThread.Dispose();
-                        CancelarThread = null;
-                    }
+                    PararProcessoAtivo();
+                    PararThreadRentabilidade();
+                    ExecucaoME.Text = string.Empty;
                 }
             }
             catch (Exception ex)
@@ -116,6 +140,24 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
             }
         }
 
+        private void ProcessoAtivo_ErrorDataReceived(object sender, DataReceivedEventArgs e)
+        {
+            //Provavelmente é o Kill()
+            if (e.Data == null)
+                return;
+
+            ExecucaoME.AppendLine("ERRO: " + RemoveEscapeSequences(e.Data));
+            LogHelper.EscreveLog(LogLevel.Warning, $"Erro no minerador {MineradorAtivo.Id} - {MineradorAtivo.Nome}: {e.Data}");
+
+            ScrollFim();
+        }
+
+        private void ProcessoAtivo_OutputDataReceived(object sender, DataReceivedEventArgs e)
+        {
+            ExecucaoME.AppendLine(RemoveEscapeSequences(e.Data));
+            ScrollFim();
+        }
+
         //MÉTODOS AUXILIARES
         private async Task AtualizarMineradores()
         {
@@ -124,11 +166,13 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
             {
                 MineradoresGV.BeginDataUpdate();
 
-                MineradorBindingSource.Clear();
+                await MoedasHelper.GravarEntidades();
+
+                MineradoresBindingSource.Clear();
                 foreach (KeyValuePair<int, Minerador> registo in await MineradoresHelper.GetEntidadesComLista("mi.Ativo = 1", "mi.Nome ASC"))
                 {
                     if (registo.Value.Moeda != null)
-                        MineradorBindingSource.Add(registo.Value);
+                        MineradoresBindingSource.Add(registo.Value);
                 }
             }
             catch (Exception ex)
@@ -143,40 +187,16 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
             }
         }
 
-        private async Task VerificaRentabilidade(CancellationToken cancelar)
-        {
-            try
-            {
-                while (!cancelar.IsCancellationRequested)
-                {
-                    List<Moeda> moedas = await MoedasHelper.GravarEntidades();
-                    Minerador minerador = GetMineradorMaisRentavel(moedas);
-
-                    if (minerador != null && MineradorAtivo != null && MineradorAtivo.Id != minerador.Id)
-                    {
-                        MineradorAtivo = minerador;
-                    }
-
-                    UltimaVerificacaoRentabilidadeDE.DateTime = DateTime.Now;
-                    Thread.Sleep(TempoEntreVerificacoes);
-                }
-            }
-            catch (ThreadInterruptedException) { }
-            catch (Exception ex)
-            {
-                LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro ao verificar rentabilidade.");
-                XtraMessageBox.Show("Erro ao verificar rentabilidade: " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
         private Minerador GetMineradorMaisRentavel(List<Moeda> moedas)
         {
             moedas.Sort(Moedas.MaiorRentabilidade_Descendente);
 
-            Func<Moeda, bool> IsMoedaAtual = MineradorAtivo != null ? m => false :
+            Invoke(() => MoedaMaisRentavelTE.Text = string.IsNullOrWhiteSpace(moedas[0].Nome) ? moedas[0].NomeExterno : moedas[0].Nome);
+
+            Func<Moeda, bool> IsMoedaAtual = MineradorAtivo == null ? m => false :
                 m => m.Id == MineradorAtivo.Moeda.Id;
 
-            Dictionary<int, Minerador> mineradoresPorMoeda = ((BindingList<Minerador>)MineradorBindingSource.List).ToDictionary(m => m.Moeda.Id);
+            Dictionary<int, Minerador> mineradoresPorMoeda = ((BindingList<Minerador>)MineradoresBindingSource.List).ToDictionary(m => m.Moeda.Id);
 
             foreach (Moeda moeda in moedas)
             {
@@ -190,6 +210,108 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
             }
 
             return null;
+        }
+
+        private void IniciarMinerador(Minerador minerador)
+        {
+            PararProcessoAtivo();
+
+            ProcessoAtivo = new();
+
+            ProcessoAtivo.StartInfo = new(minerador.Localizacao, minerador.Parametros)
+            {
+                CreateNoWindow = true,
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true
+            };
+
+            ProcessoAtivo.Start();
+
+            ProcessoAtivo.ErrorDataReceived += ProcessoAtivo_ErrorDataReceived;
+            ProcessoAtivo.OutputDataReceived += ProcessoAtivo_OutputDataReceived;
+
+            ProcessoAtivo.BeginErrorReadLine();
+            ProcessoAtivo.BeginOutputReadLine();
+
+            if (MineradorAtivo?.Id != minerador.Id)
+            {
+                MineradorAtivo = minerador;
+                Invoke(() =>
+                {
+                    UltimaAlteracaoMineradorDE.DateTime = DateTime.Now;
+                    MineradorAtivoTE.Text = MineradorAtivo.Nome;
+                    MoedaAtualTE.Text = MineradorAtivo.Moeda.Nome;
+                });
+            }
+        }
+
+        private async Task MinerarPorRentabilidade(CancellationToken cancelar)
+        {
+            try
+            {
+                while (!cancelar.IsCancellationRequested)
+                {
+                    List<Moeda> moedas = await MoedasHelper.GravarEntidades();
+
+                    Minerador minerador = GetMineradorMaisRentavel(moedas);
+
+                    if (minerador != null && MineradorAtivo?.Id != minerador.Id)
+                        IniciarMinerador(minerador);
+
+                    Invoke(() => UltimaVerificacaoRentabilidadeDE.DateTime = DateTime.Now);
+                    Thread.Sleep(TempoEntreVerificacoes);
+                }
+            }
+            catch (ThreadInterruptedException) { }
+            catch (Exception ex)
+            {
+                LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro ao verificar rentabilidade.");
+                XtraMessageBox.Show("Erro ao verificar rentabilidade: " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void PararProcessoAtivo()
+        {
+            if (ProcessoAtivo == null)
+                return;
+
+            ProcessoAtivo.Kill(true);
+            ProcessoAtivo.Dispose();
+            ProcessoAtivo = null;
+        }
+
+        private void PararThreadRentabilidade()
+        {
+            if (RentabilidadeThread == null)
+                return;
+
+            if (RentabilidadeThread.ThreadState == ThreadState.WaitSleepJoin)
+                RentabilidadeThread.Interrupt();
+            else
+                CancelarThread.Cancel();
+
+            if (!RentabilidadeThread.Join(10000))
+                XtraMessageBox.Show("O processo está a levar mais tempo para parar do que o esperado.", "Possível falha", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+            CancelarThread.Dispose();
+            CancelarThread = null;
+            RentabilidadeThread = null;
+        }
+
+        private string RemoveEscapeSequences(string str)
+        {
+            return EscapedSequences.Replace(str, "");
+        }
+
+        private void ScrollFim()
+        {
+            Invoke(() =>
+            {
+                ExecucaoME.SelectionStart = ExecucaoME.Text.Length;
+                ExecucaoME.SelectionLength = 0;
+                ExecucaoME.ScrollToCaret();
+            });
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using DeepCopy;
 using DevExpress.XtraEditors;
 using DevExpress.XtraSplashScreen;
 using GestorDados.Helpers;
@@ -84,7 +85,8 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes
                 moedas.ForEach(m =>
                 {
                     MoedasBindingSource.Add(m);
-                    MoedasOriginais.Add(m.Id, m);
+                    Moeda copia = DeepCopier.Copy(m);
+                    MoedasOriginais.Add(copia.Id, copia);
                 });
 
                 return;
