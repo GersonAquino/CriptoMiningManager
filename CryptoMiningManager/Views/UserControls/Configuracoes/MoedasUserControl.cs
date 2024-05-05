@@ -90,35 +90,6 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes
                 });
 
                 return;
-                List<Moeda> moedasAPI = (await HttpHelper.PedidoGETHttpSingle<Moedas>(URLRentabilidade)).GetMoedas();
-                Dictionary<int, Moeda> moedasExistentes = (await EntidadesHelper.GetEntidades("IdExterno IN @IdsExternos", null, ("IdsExternos", moedasAPI.Select(m => m.IdExterno)))).ToDictionary(m => m.IdExterno);
-
-                moedasAPI.ForEach(moeda =>
-                {
-                    if (moedasExistentes.TryGetValue(moeda.IdExterno, out Moeda moedaExistente))
-                    {
-                        moeda.Id = moedaExistente.Id;
-                        moeda.Nome = moedaExistente.Nome;
-                    }
-                    else
-                    {
-                        moeda.Id = -1;
-                        moeda.Nome = null;
-                    }
-
-                    //Faz-se antes do Merge só para evitar mais um loop à lista de moedas inteira, em caso de erro depois limpa-se o data source
-                    MoedasBindingSource.Add(moeda);
-                });
-
-                try
-                {
-                    await Dados.BulkMerge(moedasAPI.ToArray());
-                }
-                catch
-                {
-                    MoedasBindingSource.Clear();
-                    throw;
-                }
             }
             catch (Exception ex)
             {

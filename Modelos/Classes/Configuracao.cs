@@ -1,6 +1,7 @@
 ﻿using PropertyChanged;
 using System;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace Modelos.Classes
 {
@@ -8,6 +9,7 @@ namespace Modelos.Classes
     [Description("Configuração"), AddINotifyPropertyChangedInterface]
     public class Configuracao
     {
+        [Key]
         public int Id { get; set; } = -1;
         public bool Ativo { get; set; }
         public DateTime DataCriacao { get; set; } = DateTime.Now;

@@ -16,8 +16,8 @@ namespace Modelos.Interfaces
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="parametros"></param>
-        /// <returns></returns>
-        Task BulkMerge<T>(params T[] parametros);
+        /// <returns>Número de linhas afetadas</returns>
+        Task<int> BulkMerge<T>(params T[] parametros) where T : class, new();
 
         /// <summary>
         /// Executa um comando SQL e devolve o número de linhas afetadas

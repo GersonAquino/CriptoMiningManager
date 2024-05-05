@@ -30,6 +30,7 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
         private Minerador MineradorAtivo = null;
         private Moeda MoedaMaisRentavel;
         private Process ProcessoAtivo = null;
+        private Semaphore SemaforoLogsMineracao = new(1, 1);
         private Thread RentabilidadeThread = null;
 
         private readonly Regex EscapedSequences = new(@"\x1B\[[0-9;]*[mGKH]", RegexOptions.Compiled);
@@ -160,19 +161,23 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
             //Prevenir textos infinitos e excesso de utilização de memória com strings infinitas
             if (ExecucaoME.Text.Length > 10000)
             {
-                using (StreamWriter streamWriter = new("LogsMineração.txt", true))
+                try
                 {
-                    try
+                    SemaforoLogsMineracao.WaitOne();
+                    using (StreamWriter streamWriter = new("LogsMineração.txt", true))
                     {
-                        await streamWriter.WriteLineAsync(ExecucaoME.Text);
+                        await streamWriter.WriteLineAsync($"{DateTime.Now:dd/MM/yyyy HH:mm:ss}{Environment.NewLine}{ExecucaoME.Text}");
                         await streamWriter.FlushAsync();
+                        streamWriter.Close();
                     }
-                    catch (Exception ex)
-                    {
-                        LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro ao guardar logs de mineração.");
-                    }
+
+                    SemaforoLogsMineracao.Release();
+                    Invoke(() => ExecucaoME.Clear());
                 }
-                ExecucaoME.Text = string.Empty;
+                catch (Exception ex)
+                {
+                    LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro ao guardar logs de mineração.");
+                }
             }
 
             ExecucaoME.AppendLine(RemoveEscapeSequences(e.Data));
@@ -254,6 +259,10 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
 
             ProcessoAtivo.BeginErrorReadLine();
             ProcessoAtivo.BeginOutputReadLine();
+
+            if (MineradorAtivo != null)
+                LogHelper.EscreveLog(LogLevel.Information, $"A mudar do minerador {MineradorAtivo} para o minerador {minerador}." +
+                    $"Moedas: Antes: {MineradorAtivo.Moeda} | Depois: {minerador.Moeda}");
 
             if (MineradorAtivo?.Id != minerador.Id)
             {

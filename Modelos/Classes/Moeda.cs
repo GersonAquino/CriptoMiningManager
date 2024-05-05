@@ -1,6 +1,7 @@
 ﻿using Modelos.JsonConverters;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Reflection;
 using System.Text.Json.Serialization;
@@ -9,7 +10,7 @@ namespace Modelos.Classes
 {
     public class Moedas
     {
-        public static Comparison<Moeda> MaiorRentabilidade_Descendente = new((m1, m2) => -m1.BtcPorDia.CompareTo(m2.BtcPorDia));
+        public static Comparison<Moeda> MaiorRentabilidade_Descendente { get; } = new((m1, m2) => -m1.BtcPorDia.CompareTo(m2.BtcPorDia));
 
         /// <summary>
         /// Usar isto é desaconselhado, só está público para poder ser desserializado em condições. Usar <see cref="GetMoedas"/>
@@ -149,7 +150,7 @@ namespace Modelos.Classes
         /// <summary>
         /// Id utilizado internamente
         /// </summary>
-        [JsonIgnore(Condition = JsonIgnoreCondition.Always)]
+        [Key, JsonIgnore(Condition = JsonIgnoreCondition.Always)]
         public int Id { get; set; }
         public string Nome { get; set; }
         public string NomeExterno { get; set; }
@@ -157,8 +158,11 @@ namespace Modelos.Classes
         //Propriedades vindas da API
         [JsonPropertyName("Id"), JsonConverter(typeof(IntConverter))]
         public int IdExterno { get; set; }
+
+        [NotMapped]
         public string Tag { get; set; }
 
+        [NotMapped]
         public string Algorithm { get; set; }
         //public object block_time { get; set; } //Às vezes é string, outras é um int
         //public decimal block_reward { get; set; }
@@ -166,47 +170,60 @@ namespace Modelos.Classes
         //public int last_block { get; set; }
         //public decimal difficulty { get; set; }
         //public decimal difficulty24 { get; set; }
+
+        [NotMapped]
         public long Nethash { get; set; }
 
-        [JsonConverter(typeof(DecimalConverter))]
+        [JsonConverter(typeof(DecimalConverter)), NotMapped]
         public decimal Exchange_rate { get; set; }
 
-        [JsonConverter(typeof(DecimalConverter))]
+        [JsonConverter(typeof(DecimalConverter)), NotMapped]
         public decimal Exchange_rate24 { get; set; }
 
-        [JsonConverter(typeof(DecimalConverter))]
+        [JsonConverter(typeof(DecimalConverter)), NotMapped]
         public decimal Exchange_rate_vol { get; set; }
+
+        [NotMapped]
         public string Exchange_rate_curr { get; set; }
+
+        [NotMapped]
         public string Market_cap { get; set; }
 
-        [JsonConverter(typeof(DecimalConverter))]
+        [JsonConverter(typeof(DecimalConverter)), NotMapped]
         public decimal Estimated_rewards { get; set; }
 
-        [JsonConverter(typeof(DecimalConverter))]
+        [JsonConverter(typeof(DecimalConverter)), NotMapped]
         public decimal Estimated_rewards24 { get; set; }
 
         /// <summary>
         /// Quantidade de BTC ganha por dia
         /// </summary>
-        [JsonPropertyName("Btc_revenue"), JsonConverter(typeof(DecimalConverter))]
+        [JsonPropertyName("Btc_revenue"), JsonConverter(typeof(DecimalConverter)), NotMapped()]
         public decimal BtcPorDia { get; set; }
 
-        [JsonConverter(typeof(DecimalConverter))]
+        [JsonConverter(typeof(DecimalConverter)), NotMapped()]
         public decimal Btc_revenue24 { get; set; }
 
-        [JsonConverter(typeof(IntConverter))]
+        [JsonConverter(typeof(IntConverter)), NotMapped()]
         public int Profitability { get; set; }
 
-        [JsonConverter(typeof(IntConverter))]
+        [JsonConverter(typeof(IntConverter)), NotMapped()]
         public int Profitability24 { get; set; }
+
+        [NotMapped]
         public bool Lagging { get; set; }
 
-        [JsonConverter(typeof(IntConverter))]
+        [JsonConverter(typeof(IntConverter)), NotMapped()]
         public int Timestamp { get; set; }
 
         public Moeda()
         {
             Id = -1;
+        }
+
+        public override string ToString()
+        {
+            return $"{Id} - {Nome} - {BtcPorDia} BTC/Dia";
         }
     }
 }

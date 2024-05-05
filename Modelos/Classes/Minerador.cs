@@ -12,6 +12,7 @@ namespace Modelos.Classes
 
         public int? IdMoeda { get => Moeda?.Id; }
 
+        [NotMapped]
         public Moeda Moeda { get; set; }
 
         public Minerador() { }

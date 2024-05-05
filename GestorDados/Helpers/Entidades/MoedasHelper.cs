@@ -91,7 +91,7 @@ namespace GestorDados.Helpers.Entidades
                     }
                 });
 
-                await Dados.BulkMerge(moedasAPI.ToArray());
+                var resultado = await Dados.BulkMerge(moedasAPI.ToArray());
 
                 return moedasAPI;
             }
