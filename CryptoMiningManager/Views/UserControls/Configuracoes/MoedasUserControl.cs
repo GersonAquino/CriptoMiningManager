@@ -1,5 +1,4 @@
-﻿using Autofac;
-using DeepCopy;
+﻿using DeepCopy;
 using DevExpress.XtraEditors;
 using DevExpress.XtraSplashScreen;
 using GestorDados.Helpers;
@@ -8,8 +7,6 @@ using Modelos.Enums;
 using Modelos.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -17,26 +14,21 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes
 {
     internal partial class MoedasUserControl : DevExpress.XtraEditors.XtraUserControl
     {
-        private readonly string URLRentabilidade;
-
-        private readonly IDados Dados;
-        private readonly IHttpHelper HttpHelper;
         private readonly IEntidadesHelper<Moeda> EntidadesHelper;
 
         private Dictionary<int, Moeda> MoedasOriginais;
 
-        public MoedasUserControl(IDados dados, IEntidadesHelper<Moeda> entidadesHelper, IHttpHelper httpHelper)
+        public MoedasUserControl(IEntidadesHelper<Moeda> entidadesHelper)
         {
             InitializeComponent();
 
-            Dados = dados;
             EntidadesHelper = entidadesHelper;
-            HttpHelper = httpHelper;
         }
 
         private async void MineradoresUserControl_Load(object sender, EventArgs e)
         {
             await AtualizarDados();
+            MoedasGV.BestFitColumns(true);
         }
 
         private async void AtualizarBBI_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
@@ -99,7 +91,6 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes
             finally
             {
                 MoedasGV.EndDataUpdate();
-                MoedasGV.BestFitColumns(true);
                 splashScreenHandler.Dispose();
             }
         }

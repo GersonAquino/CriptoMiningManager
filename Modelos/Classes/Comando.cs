@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Modelos.Classes
@@ -9,5 +10,8 @@ namespace Modelos.Classes
         public string Comandos { get; set; }
         public bool PreMineracao { get; set; }
         public bool PosMineracao { get; set; }
+
+        [NotMapped]
+        public string ComandosCMD { get => "/C " + Comandos.Replace(Environment.NewLine, " & "); }
     }
 }

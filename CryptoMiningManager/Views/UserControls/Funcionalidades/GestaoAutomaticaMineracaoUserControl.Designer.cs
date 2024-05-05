@@ -13,7 +13,7 @@
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
-            PararBBI_ItemClick(null, null);
+            PararTudo().GetAwaiter().GetResult();
 
             if (disposing && (components != null))
             {

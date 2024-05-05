@@ -27,6 +27,7 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes
         private async void ComandosUserControl_Load(object sender, EventArgs e)
         {
             await AtualizarDados();
+            ComandosGV.BestFitColumns(true);
         }
 
         private async void AtualizarBBI_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
@@ -112,7 +113,6 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes
             finally
             {
                 ComandosGV.EndDataUpdate();
-                ComandosGV.BestFitColumns(true);
                 splashScreenHandler.Dispose();
             }
         }

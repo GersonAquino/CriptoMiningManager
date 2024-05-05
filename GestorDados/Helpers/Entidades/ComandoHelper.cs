@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using Modelos.Classes;
+using Modelos.Exceptions;
 using Modelos.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -64,17 +65,42 @@ namespace GestorDados.Helpers.Entidades
         ///<inheritdoc/>
         public async Task<int> GravarEntidade_GetIdGerado(Comando comando)
         {
+            string query;
+            if (comando.Ativo)
+            {
+                if (!comando.PreMineracao && !comando.PosMineracao)
+                    throw new CustomException("Por favor defina o tipo de comando (Pré-Mineração, Pós-Mineração ou ambos) antes de o definir como 'Ativo'.", "Comando inválido");
+
+                string tipoComando;
+                if (comando.PreMineracao)
+                {
+                    tipoComando = "AND PreMineracao = 1";
+                    if (comando.PosMineracao)
+                        tipoComando += " OR PosMineracao = 1";
+                }
+                else
+                    tipoComando = "AND PosMineracao = 1";
+
+                query = QueryHelper.Select("Id", Tabela,
+                    $"Ativo = 1 {tipoComando}{(comando.Id != -1 ? $" AND Id != {comando.Id}" : "")}", limit: 1);
+
+                int? idExistente = await Dados.ExecuteScalarOpenAsync<int?>(query);
+                if (idExistente.HasValue)
+                    throw new CustomException("Já existe um comando ativo com as definições de Pré/Pós-Mineracao.", "Comando ativo do mesmo tipo já existente");
+            }
+
             if (comando.Id == -1)
             {
-                string query = GravarEntidade_Base(comando) + "; SELECT LAST_INSERT_ROWID();";
+                query = GravarEntidade_Base(comando) + "; SELECT LAST_INSERT_ROWID();";
+
                 return await Dados.ExecuteScalarOpenAsync<int, Comando>(query, comando);
             }
-            
+
             return await GravarEntidade(comando) ? comando.Id : -1;
         }
 
         //FUNÇÕES AUXILIARES
-        private string GravarEntidade_Base(Comando comando)
+        private static string GravarEntidade_Base(Comando comando)
         {
             if (comando.Id < -1)
                 throw new ArgumentException($"Comando tem Id inválido ({comando.Id}).");

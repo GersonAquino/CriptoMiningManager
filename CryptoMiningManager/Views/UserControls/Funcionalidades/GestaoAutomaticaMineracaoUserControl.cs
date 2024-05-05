@@ -26,21 +26,25 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
 
         private int TempoEntreVerificacoes;
 
-        private CancellationTokenSource CancelarThread = null;
-        private Minerador MineradorAtivo = null;
-        private Moeda MoedaMaisRentavel;
-        private Process ProcessoAtivo = null;
-        private Semaphore SemaforoLogsMineracao = new(1, 1);
-        private Thread RentabilidadeThread = null;
+        private CancellationTokenSource CancelarThread { get; set; } = null;
+        private Comando PreMineracao { get; set; } = null;
+        private Comando PosMineracao { get; set; } = null;
+        private Minerador MineradorAtivo { get; set; } = null;
+        private Process ProcessoAtivo { get; set; } = null;
+        private Thread RentabilidadeThread { get; set; } = null;
 
-        private readonly Regex EscapedSequences = new(@"\x1B\[[0-9;]*[mGKH]", RegexOptions.Compiled);
+        private Regex EscapedSequences { get; } = new(@"\x1B\[[0-9;]*[mGKH]", RegexOptions.Compiled);
+        private Semaphore SemaforoLogsMineracao { get; } = new(1, 1);
 
-        private readonly IEntidadesHelper<Minerador> MineradoresHelper;
-        private readonly IEntidadesHelper<Moeda> MoedasHelper;
+        private IEntidadesHelper<Comando> ComandosHelper { get; }
+        private IEntidadesHelper<Minerador> MineradoresHelper { get; }
+        private IEntidadesHelper<Moeda> MoedasHelper { get; }
 
-        public GestaoAutomaticaMineracaoUserControl(IEntidadesHelper<Minerador> mineradoresHelper, IEntidadesHelper<Moeda> moedasHelper)
+        public GestaoAutomaticaMineracaoUserControl(IEntidadesHelper<Comando> comandosHelper, IEntidadesHelper<Minerador> mineradoresHelper, IEntidadesHelper<Moeda> moedasHelper)
         {
             InitializeComponent();
+
+            ComandosHelper = comandosHelper;
             MineradoresHelper = mineradoresHelper;
             MoedasHelper = moedasHelper;
 
@@ -55,22 +59,22 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
 
         private async void GestaoAutomaticaMineracaoUserControl_Load(object sender, EventArgs e)
         {
-            await AtualizarMineradores();
+            await AtualizarDados();
         }
 
         #region Operações
         private async void AtualizarBBI_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
         {
-            await AtualizarMineradores();
+            await AtualizarDados();
         }
 
-        private void IniciarBBI_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
+        private async void IniciarBBI_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
         {
             try
             {
                 using (IOverlaySplashScreenHandle splashScreenHandler = SplashScreenManager.ShowOverlayForm(this))
                 {
-                    PararProcessoAtivo();
+                    await PararProcessoAtivo();
                     PararThreadRentabilidade();
 
                     Minerador minerador;
@@ -83,7 +87,6 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
                             CancelarThread = new CancellationTokenSource();
                             RentabilidadeThread = new Thread(async () => await MinerarPorRentabilidade(CancelarThread.Token)) { IsBackground = true };
                             RentabilidadeThread.Start();
-
                             break;
                         case Algoritmo.Selecionado:
                             if (MineradoresGV.IsDataRow(MineradoresGV.FocusedRowHandle) && MineradoresGV.FocusedRowObject is Minerador mineradorAux)
@@ -109,21 +112,19 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
             }
         }
 
-        private void PararBBI_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
+        private async void PararBBI_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
         {
-            try
+            using (IOverlaySplashScreenHandle splashScreenHandler = SplashScreenManager.ShowOverlayForm(this))
             {
-                using (IOverlaySplashScreenHandle splashScreenHandler = SplashScreenManager.ShowOverlayForm(this))
+                try
                 {
-                    PararProcessoAtivo();
-                    PararThreadRentabilidade();
-                    ExecucaoME.Text = string.Empty;
+                    await PararTudo();
                 }
-            }
-            catch (Exception ex)
-            {
-                LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro ao parar minerador.");
-                XtraMessageBox.Show("Erro ao parar minerador: " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                catch (Exception ex)
+                {
+                    LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro ao parar minerador.");
+                    XtraMessageBox.Show("Erro ao parar minerador: " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
         }
         #endregion
@@ -142,6 +143,7 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
             }
         }
 
+        #region Output ProcessoAtivo
         private void ProcessoAtivo_ErrorDataReceived(object sender, DataReceivedEventArgs e)
         {
             if (e.Data == null) //Terminou o processo
@@ -183,15 +185,18 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
             ExecucaoME.AppendLine(RemoveEscapeSequences(e.Data));
             ScrollFim();
         }
+        #endregion
 
         //MÉTODOS AUXILIARES
-        private async Task AtualizarMineradores()
+        private async Task AtualizarDados()
         {
-            IOverlaySplashScreenHandle splashScreenHandler = SplashScreenManager.ShowOverlayForm(MineradoresGC);
+            IOverlaySplashScreenHandle splashScreenHandler = null;
             try
             {
+                splashScreenHandler = SplashScreenManager.ShowOverlayForm(MineradoresGC);
                 MineradoresGV.BeginDataUpdate();
 
+                //Atualizar mineradores
                 await MoedasHelper.GravarEntidades();
 
                 MineradoresBindingSource.Clear();
@@ -199,6 +204,18 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
                 {
                     if (registo.Value.Moeda != null)
                         MineradoresBindingSource.Add(registo.Value);
+                }
+
+                PreMineracao = null;
+                PosMineracao = null;
+                //Atualizar comandos
+                foreach (Comando comando in await ComandosHelper.GetEntidades("Ativo = 1"))
+                {
+                    if (comando.PreMineracao)
+                        PreMineracao = comando;
+
+                    if (comando.PosMineracao)
+                        PosMineracao = comando;
                 }
             }
             catch (Exception ex)
@@ -209,7 +226,7 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
             finally
             {
                 MineradoresGV.EndDataUpdate();
-                splashScreenHandler.Dispose();
+                splashScreenHandler?.Dispose();
             }
         }
 
@@ -238,9 +255,27 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
             return null;
         }
 
-        private void IniciarMinerador(Minerador minerador)
+        private async void IniciarMinerador(Minerador minerador)
         {
-            PararProcessoAtivo();
+            await PararProcessoAtivo();
+
+            if (PreMineracao != null)
+            {
+                using (Process processo = new())
+                {
+                    processo.StartInfo = new("cmd.exe", PreMineracao.ComandosCMD)
+                    {
+                        CreateNoWindow = true,
+                        UseShellExecute = false
+                    };
+
+                    if (processo.Start())
+                        await processo.WaitForExitAsync();
+                    else
+                        LogHelper.EscreveLog(LogLevel.Warning, "Não foi possível iniciar o comando pré-mineração {idComando}", PreMineracao.Id);
+                }
+            }
+
 
             ProcessoAtivo = new();
 
@@ -252,7 +287,9 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
                 RedirectStandardError = true
             };
 
-            ProcessoAtivo.Start();
+
+            if (!ProcessoAtivo.Start())
+                throw new Exception($"Não foi possível iniciar o minerador {minerador}");
 
             ProcessoAtivo.ErrorDataReceived += ProcessoAtivo_ErrorDataReceived;
             ProcessoAtivo.OutputDataReceived += ProcessoAtivo_OutputDataReceived;
@@ -301,7 +338,7 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
             }
         }
 
-        private void PararProcessoAtivo()
+        private async Task PararProcessoAtivo()
         {
             if (ProcessoAtivo == null)
                 return;
@@ -309,6 +346,23 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
             ProcessoAtivo.Kill(true);
             ProcessoAtivo.Dispose();
             ProcessoAtivo = null;
+
+            if (PosMineracao != null)
+            {
+                using (Process processo = new())
+                {
+                    processo.StartInfo = new("cmd.exe", PosMineracao.ComandosCMD)
+                    {
+                        CreateNoWindow = true,
+                        UseShellExecute = false
+                    };
+
+                    if (processo.Start())
+                        await processo.WaitForExitAsync();
+                    else
+                        LogHelper.EscreveLog(LogLevel.Warning, "Não foi possível iniciar o comando pós-mineração {idComando}", PosMineracao.Id);
+                }
+            }
         }
 
         private void PararThreadRentabilidade()
@@ -327,6 +381,13 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
             CancelarThread.Dispose();
             CancelarThread = null;
             RentabilidadeThread = null;
+        }
+
+        private async Task PararTudo()
+        {
+            await PararProcessoAtivo();
+            PararThreadRentabilidade();
+            ExecucaoME.Text = string.Empty;
         }
 
         private string RemoveEscapeSequences(string str)

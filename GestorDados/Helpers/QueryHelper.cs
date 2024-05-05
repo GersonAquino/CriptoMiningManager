@@ -23,17 +23,19 @@ namespace GestorDados.Helpers
         /// <returns></returns>
         internal static string InsertParametrizado(string tabela, params string[] colunas)
         {
-            StringBuilder sbInsert = new StringBuilder($"INSERT INTO {tabela} (");
-            StringBuilder sbValores = new StringBuilder(") VALUES (");
+            StringBuilder sbInsert = new($"INSERT INTO {tabela} (");
+            StringBuilder sbValores = new(") VALUES (");
 
             for (int i = 0; i < colunas.Length; i++)
             {
                 string coluna = $"{colunas[i]}, ";
                 sbInsert.Append(coluna);
-                sbValores.Append($"@{coluna}");
+                sbValores.Append('@').Append(coluna);
             }
+            sbInsert.Remove(sbInsert.Length - 2, 2);
+            sbValores.Remove(sbValores.Length - 2, 2).Append(')');
 
-            return sbInsert.ToString(0, sbInsert.Length - 2) + sbValores.Remove(sbValores.Length - 2, 2).Append(")").ToString();
+            return sbInsert.Append(sbValores).ToString();
         }
 
         /// <summary>
@@ -43,13 +45,23 @@ namespace GestorDados.Helpers
         /// <param name="tabelas"></param>
         /// <param name="condicoes"></param>
         /// <param name="ordenacao"></param>
+        /// <param name="limit">Equivalente ao TOP em SQL Server</param>
         /// <returns></returns>
-        internal static string Select(string campos, string tabelas, string condicoes = null, string ordenacao = null)
+        internal static string Select(string campos, string tabelas, string condicoes = null, string ordenacao = null, int? limit = null)
         {
-            return $@"SELECT {campos}
-                        FROM {tabelas}
-                        {(string.IsNullOrWhiteSpace(condicoes) ? "" : $"WHERE {condicoes}")}
-                        {(string.IsNullOrWhiteSpace(ordenacao) ? "" : $"ORDER BY {ordenacao}")}";
+            StringBuilder query = new StringBuilder("SELECT ").AppendLine(campos)
+                .Append("FROM ").AppendLine(tabelas);
+
+            if (!string.IsNullOrWhiteSpace(condicoes))
+                query.Append("WHERE ").AppendLine(condicoes);
+
+            if (!string.IsNullOrWhiteSpace(ordenacao))
+                query.Append("ORDER BY ").AppendLine(ordenacao);
+
+            if (limit.HasValue)
+                query.Append("LIMIT ").Append(limit.Value);
+
+            return query.Append(';').ToString();
         }
 
         /// <summary>
@@ -61,14 +73,14 @@ namespace GestorDados.Helpers
         /// <returns></returns>
         internal static string UpdateParametrizado(string tabela, string condicoes, params string[] colunas)
         {
-            StringBuilder sbUpdate = new StringBuilder($"UPDATE {tabela} SET ");
+            StringBuilder sbUpdate = new StringBuilder($"UPDATE ").Append(tabela).Append(" SET ");
 
             for (int i = 0; i < colunas.Length; i++)
             {
-                sbUpdate.Append($"{colunas[i]} = @{colunas[i]}, ");
+                sbUpdate.Append(colunas[i]).Append(" = @").Append(colunas[i]).Append(", ");
             }
 
-            return $@"{sbUpdate.ToString(0, sbUpdate.Length - 2)} WHERE {condicoes}";
+            return sbUpdate.Remove(sbUpdate.Length - 2, 2).Append(" WHERE ").Append(condicoes).ToString();
         }
     }
 }
