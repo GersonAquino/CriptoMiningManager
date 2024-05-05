@@ -162,25 +162,7 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
         {
             //Prevenir textos infinitos e excesso de utilização de memória com strings infinitas
             if (ExecucaoME.Text.Length > 10000)
-            {
-                try
-                {
-                    SemaforoLogsMineracao.WaitOne();
-                    using (StreamWriter streamWriter = new("LogsMineração.txt", true))
-                    {
-                        await streamWriter.WriteLineAsync($"{DateTime.Now:dd/MM/yyyy HH:mm:ss}{Environment.NewLine}{ExecucaoME.Text}");
-                        await streamWriter.FlushAsync();
-                        streamWriter.Close();
-                    }
-
-                    SemaforoLogsMineracao.Release();
-                    Invoke(() => ExecucaoME.Clear());
-                }
-                catch (Exception ex)
-                {
-                    LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro ao guardar logs de mineração.");
-                }
-            }
+                await EscreverLogsMineracao();
 
             ExecucaoME.AppendLine(RemoveEscapeSequences(e.Data));
             ScrollFim();
@@ -227,6 +209,27 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
             {
                 MineradoresGV.EndDataUpdate();
                 splashScreenHandler?.Dispose();
+            }
+        }
+
+        private async Task EscreverLogsMineracao()
+        {
+            try
+            {
+                SemaforoLogsMineracao.WaitOne();
+                using (StreamWriter streamWriter = new("LogsMineração.txt", true))
+                {
+                    await streamWriter.WriteLineAsync($"{DateTime.Now:dd/MM/yyyy HH:mm:ss}{Environment.NewLine}{ExecucaoME.Text}");
+                    await streamWriter.FlushAsync();
+                    streamWriter.Close();
+                }
+
+                SemaforoLogsMineracao.Release();
+                Invoke(() => ExecucaoME.Clear());
+            }
+            catch (Exception ex)
+            {
+                LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro ao guardar logs de mineração.");
             }
         }
 
@@ -346,6 +349,9 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
             ProcessoAtivo.Kill(true);
             ProcessoAtivo.Dispose();
             ProcessoAtivo = null;
+            MineradorAtivo = null;
+
+            await EscreverLogsMineracao();
 
             if (PosMineracao != null)
             {
