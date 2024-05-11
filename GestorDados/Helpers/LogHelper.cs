@@ -159,8 +159,6 @@ namespace GestorDados.Helpers
             Log.Logger = new LoggerConfiguration()
 #if DEBUG
                 .MinimumLevel.Debug() //MinimumLevel.Debug() serve para escrever os Log.Debug() na BD tbm, mais nada
-#else
-                .MinimumLevel.Information()
 #endif
                 //.ReadFrom.AppSettings()
                 .WriteTo.SQLite(connectionString)

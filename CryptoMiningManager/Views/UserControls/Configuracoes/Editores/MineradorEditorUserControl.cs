@@ -34,9 +34,24 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes.Editores
         {
             try
             {
+                //Se o minerador não tiver moeda, só adiciona as moedas ao binding source
+                //Caso tenha moeda vai verificar se a moeda da iteração atual é a correspondente
+                //Caso a encontre, atribui-a ao EditValue e para de fazer a verificação
+                Action<Moeda> iteracao = Entidade.Moeda != null ? m =>
+                {
+                    MoedasBindingSource.Add(m);
+
+                    if (m.Id == Entidade.Moeda.Id)
+                    {
+                        MoedaSearchLookUpEdit.EditValue = m;
+                        iteracao = m => MoedasBindingSource.Add(m);
+                    }
+                }
+                : m => MoedasBindingSource.Add(m);
+
                 foreach (Moeda moeda in await MoedasHelper.GetEntidades(ordenacao: "Nome DESC"))
                 {
-                    MoedasBindingSource.Add(moeda);
+                    iteracao(moeda);
                 }
             }
             catch (Exception ex)

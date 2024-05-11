@@ -10,7 +10,7 @@ namespace Modelos.Classes
 {
     public class Moedas
     {
-        public static Comparison<Moeda> MaiorRentabilidade_Descendente { get; } = new((m1, m2) => -m1.BtcPorDia.CompareTo(m2.BtcPorDia));
+        public static Comparison<Moeda> MaiorRentabilidade_Descendente { get; } = new((m1, m2) => -m1.Profitability24.CompareTo(m2.Profitability24));
 
         /// <summary>
         /// Usar isto é desaconselhado, só está público para poder ser desserializado em condições. Usar <see cref="GetMoedas"/>

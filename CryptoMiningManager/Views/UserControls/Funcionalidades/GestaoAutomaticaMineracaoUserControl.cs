@@ -77,6 +77,11 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
                     await PararProcessoAtivo();
                     PararThreadRentabilidade();
 
+                    //Talvez faça mais sentido criar sempre um ficheiro novo 
+                    if (File.Exists("LogsMineração.txt"))
+                        File.Delete("LogsMineração.txt");
+
+                    LogHelper.EscreveLog(LogLevel.Information, "A iniciar o minerador");
                     Minerador minerador;
                     switch ((Algoritmo)AlgoritmoBEI.EditValue)
                     {
@@ -99,6 +104,7 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
                         default:
                             throw new ArgumentException("Algoritmo inválido!");
                     }
+
                 }
             }
             catch (CustomException ce)
@@ -217,15 +223,15 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
             try
             {
                 SemaforoLogsMineracao.WaitOne();
-                using (StreamWriter streamWriter = new("LogsMineração.txt", true))
-                {
-                    await streamWriter.WriteLineAsync($"{DateTime.Now:dd/MM/yyyy HH:mm:ss}{Environment.NewLine}{ExecucaoME.Text}");
-                    await streamWriter.FlushAsync();
-                    streamWriter.Close();
-                }
+                //using (StreamWriter streamWriter = new("LogsMineração.txt", true))
+                //{
+                //    await streamWriter.WriteLineAsync($"{DateTime.Now:dd/MM/yyyy HH:mm:ss}{Environment.NewLine}{ExecucaoME.Text}");
+                //    await streamWriter.FlushAsync();
+                //    streamWriter.Close();
+                //}
 
-                SemaforoLogsMineracao.Release();
                 Invoke(() => ExecucaoME.Clear());
+                SemaforoLogsMineracao.Release();
             }
             catch (Exception ex)
             {
@@ -275,7 +281,7 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
                     if (processo.Start())
                         await processo.WaitForExitAsync();
                     else
-                        LogHelper.EscreveLog(LogLevel.Warning, "Não foi possível iniciar o comando pré-mineração {idComando}", PreMineracao.Id);
+                        Invoke(() => LogHelper.EscreveLog(LogLevel.Warning, "Não foi possível iniciar o comando pré-mineração {idComando}", PreMineracao.Id));
                 }
             }
 
@@ -301,8 +307,8 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
             ProcessoAtivo.BeginOutputReadLine();
 
             if (MineradorAtivo != null)
-                LogHelper.EscreveLog(LogLevel.Information, $"A mudar do minerador {MineradorAtivo} para o minerador {minerador}." +
-                    $"Moedas: Antes: {MineradorAtivo.Moeda} | Depois: {minerador.Moeda}");
+                Invoke(() => LogHelper.EscreveLog(LogLevel.Information, $"A mudar do minerador {MineradorAtivo} para o minerador {minerador}." +
+                    $"Moedas: Antes: {MineradorAtivo.Moeda} | Depois: {minerador.Moeda}"));
 
             if (MineradorAtivo?.Id != minerador.Id)
             {
@@ -320,6 +326,7 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
         {
             try
             {
+                Invoke(() => LogHelper.EscreveLog(LogLevel.Information, "A iniciar mineração por rentabilidade"));
                 while (!cancelar.IsCancellationRequested)
                 {
                     List<Moeda> moedas = await MoedasHelper.GravarEntidades();
@@ -366,7 +373,7 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
                     if (processo.Start())
                         await processo.WaitForExitAsync();
                     else
-                        LogHelper.EscreveLog(LogLevel.Warning, "Não foi possível iniciar o comando pós-mineração {idComando}", PosMineracao.Id);
+                        Invoke(() => LogHelper.EscreveLog(LogLevel.Warning, "Não foi possível iniciar o comando pós-mineração {idComando}", PosMineracao.Id));
                 }
             }
         }

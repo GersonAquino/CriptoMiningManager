@@ -51,7 +51,7 @@ namespace CryptoMiningManager
 
         private static IContainer ContainerConfig()
         {
-            ContainerBuilder builder = new ContainerBuilder();
+            ContainerBuilder builder = new();
 
             string connectionString = ConfigurationManager.ConnectionStrings["CriptoManager"].ConnectionString;
             string urlBase = ConfigurationManager.AppSettings["URLRentabilidade"];

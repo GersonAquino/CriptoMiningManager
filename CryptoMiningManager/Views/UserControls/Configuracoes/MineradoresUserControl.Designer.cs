@@ -113,6 +113,7 @@
             // colMoeda
             // 
             colMoeda.Caption = "Moeda";
+            colMoeda.FieldName = "Moeda";
             colMoeda.Name = "colMoeda";
             colMoeda.UnboundDataType = typeof(string);
             colMoeda.UnboundExpression = "ToStr([Moeda.Id]) + ' - ' + [Moeda.Nome]";
@@ -133,6 +134,7 @@
             // 
             colParametrosMinerador.Caption = "Parâmetros";
             colParametrosMinerador.FieldName = "Parametros";
+            colParametrosMinerador.MaxWidth = 300;
             colParametrosMinerador.MinWidth = 23;
             colParametrosMinerador.Name = "colParametrosMinerador";
             colParametrosMinerador.Visible = true;
@@ -186,7 +188,7 @@
             // 
             // MineradoresRC
             // 
-            MineradoresRC.EmptyAreaImageOptions.ImagePadding = new System.Windows.Forms.Padding(35, 40, 35, 40);
+            MineradoresRC.EmptyAreaImageOptions.ImagePadding = new System.Windows.Forms.Padding(35, 41, 35, 41);
             MineradoresRC.ExpandCollapseItem.Id = 0;
             MineradoresRC.Items.AddRange(new DevExpress.XtraBars.BarItem[] { MineradoresRC.ExpandCollapseItem, AtualizarBBI, NovoBBI, EditarBBI, EliminarBBI });
             MineradoresRC.Location = new System.Drawing.Point(0, 0);
