@@ -111,7 +111,7 @@ namespace GestorDados.Helpers.Entidades
             }
             else //Atualizar caso tenha Id válido
             {
-                query = QueryHelper.UpdateParametrizado(Tabela, "Id = @Id", "Ativo", "IdMoeda", "Localizacao", "Nome", "Parametros");
+                query = QueryHelper.UpdateParametrizado(Tabela, "Id = @Id", "Ativo", "IdMoeda", "Localizacao", "Nome", "Parametros", "DataAlteracao");
 
                 minerador.DataAlteracao = DateTime.Now;
             }

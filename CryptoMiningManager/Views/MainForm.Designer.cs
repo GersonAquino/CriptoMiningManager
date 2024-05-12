@@ -28,271 +28,242 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
+            components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-            this.MainRibbon = new DevExpress.XtraBars.Ribbon.RibbonControl();
-            this.AppConfigurationBarButtonItem = new DevExpress.XtraBars.BarButtonItem();
-            this.skinRibbonGalleryBarItem1 = new DevExpress.XtraBars.SkinRibbonGalleryBarItem();
-            this.skinPaletteRibbonGalleryBarItem1 = new DevExpress.XtraBars.SkinPaletteRibbonGalleryBarItem();
-            this.beiVersao = new DevExpress.XtraBars.BarEditItem();
-            this.repositoryItemTextEditVersao = new DevExpress.XtraEditors.Repository.RepositoryItemTextEdit();
-            this.GeralRibbonPage = new DevExpress.XtraBars.Ribbon.RibbonPage();
-            this.GeralRPG = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
-            this.TemaRPG = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
-            this.ribbonStatusBar = new DevExpress.XtraBars.Ribbon.RibbonStatusBar();
-            this.DocumentManager = new DevExpress.XtraBars.Docking2010.DocumentManager(this.components);
-            this.TabbedView = new DevExpress.XtraBars.Docking2010.Views.Tabbed.TabbedView(this.components);
-            this.dockManager = new DevExpress.XtraBars.Docking.DockManager(this.components);
-            this.FuncionalidadesDockPanel = new DevExpress.XtraBars.Docking.DockPanel();
-            this.dockPanel1_Container = new DevExpress.XtraBars.Docking.ControlContainer();
-            this.FuncionalidadesAccordionControl = new DevExpress.XtraBars.Navigation.AccordionControl();
-            this.FuncionalidadesACEG = new DevExpress.XtraBars.Navigation.AccordionControlElement();
-            this.GestaoAutomaticaMineracaoACE = new DevExpress.XtraBars.Navigation.AccordionControlElement();
-            this.ConfiguracoesACEG = new DevExpress.XtraBars.Navigation.AccordionControlElement();
-            this.MineradoresACE = new DevExpress.XtraBars.Navigation.AccordionControlElement();
-            this.ComandosACE = new DevExpress.XtraBars.Navigation.AccordionControlElement();
-            this.MoedasACE = new DevExpress.XtraBars.Navigation.AccordionControlElement();
-            ((System.ComponentModel.ISupportInitialize)(this.MainRibbon)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.repositoryItemTextEditVersao)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.DocumentManager)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.TabbedView)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dockManager)).BeginInit();
-            this.FuncionalidadesDockPanel.SuspendLayout();
-            this.dockPanel1_Container.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.FuncionalidadesAccordionControl)).BeginInit();
-            this.SuspendLayout();
+            MainRibbon = new DevExpress.XtraBars.Ribbon.RibbonControl();
+            AppConfigurationBarButtonItem = new DevExpress.XtraBars.BarButtonItem();
+            skinRibbonGalleryBarItem1 = new DevExpress.XtraBars.SkinRibbonGalleryBarItem();
+            skinPaletteRibbonGalleryBarItem1 = new DevExpress.XtraBars.SkinPaletteRibbonGalleryBarItem();
+            beiVersao = new DevExpress.XtraBars.BarEditItem();
+            repositoryItemTextEditVersao = new DevExpress.XtraEditors.Repository.RepositoryItemTextEdit();
+            GeralRibbonPage = new DevExpress.XtraBars.Ribbon.RibbonPage();
+            GeralRPG = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
+            TemaRPG = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
+            ribbonStatusBar = new DevExpress.XtraBars.Ribbon.RibbonStatusBar();
+            DocumentManager = new DevExpress.XtraBars.Docking2010.DocumentManager(components);
+            TabbedView = new DevExpress.XtraBars.Docking2010.Views.Tabbed.TabbedView(components);
+            dockManager = new DevExpress.XtraBars.Docking.DockManager(components);
+            FuncionalidadesDockPanel = new DevExpress.XtraBars.Docking.DockPanel();
+            dockPanel1_Container = new DevExpress.XtraBars.Docking.ControlContainer();
+            FuncionalidadesAccordionControl = new DevExpress.XtraBars.Navigation.AccordionControl();
+            FuncionalidadesACEG = new DevExpress.XtraBars.Navigation.AccordionControlElement();
+            GestaoAutomaticaMineracaoACE = new DevExpress.XtraBars.Navigation.AccordionControlElement();
+            ConfiguracoesACEG = new DevExpress.XtraBars.Navigation.AccordionControlElement();
+            ComandosACE = new DevExpress.XtraBars.Navigation.AccordionControlElement();
+            MineradoresACE = new DevExpress.XtraBars.Navigation.AccordionControlElement();
+            MoedasACE = new DevExpress.XtraBars.Navigation.AccordionControlElement();
+            ((System.ComponentModel.ISupportInitialize)MainRibbon).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)repositoryItemTextEditVersao).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)DocumentManager).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)TabbedView).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dockManager).BeginInit();
+            FuncionalidadesDockPanel.SuspendLayout();
+            dockPanel1_Container.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)FuncionalidadesAccordionControl).BeginInit();
+            SuspendLayout();
             // 
             // MainRibbon
             // 
-            this.MainRibbon.EmptyAreaImageOptions.ImagePadding = new System.Windows.Forms.Padding(35, 39, 35, 39);
-            this.MainRibbon.ExpandCollapseItem.Id = 0;
-            this.MainRibbon.Items.AddRange(new DevExpress.XtraBars.BarItem[] {
-            this.MainRibbon.ExpandCollapseItem,
-            this.AppConfigurationBarButtonItem,
-            this.skinRibbonGalleryBarItem1,
-            this.skinPaletteRibbonGalleryBarItem1,
-            this.beiVersao});
-            this.MainRibbon.Location = new System.Drawing.Point(0, 0);
-            this.MainRibbon.Margin = new System.Windows.Forms.Padding(4);
-            this.MainRibbon.MaxItemId = 5;
-            this.MainRibbon.MdiMergeStyle = DevExpress.XtraBars.Ribbon.RibbonMdiMergeStyle.Always;
-            this.MainRibbon.Name = "MainRibbon";
-            this.MainRibbon.OptionsMenuMinWidth = 385;
-            this.MainRibbon.Pages.AddRange(new DevExpress.XtraBars.Ribbon.RibbonPage[] {
-            this.GeralRibbonPage});
-            this.MainRibbon.RepositoryItems.AddRange(new DevExpress.XtraEditors.Repository.RepositoryItem[] {
-            this.repositoryItemTextEditVersao});
-            this.MainRibbon.Size = new System.Drawing.Size(1586, 182);
-            this.MainRibbon.StatusBar = this.ribbonStatusBar;
+            MainRibbon.EmptyAreaImageOptions.ImagePadding = new System.Windows.Forms.Padding(35, 39, 35, 39);
+            MainRibbon.ExpandCollapseItem.Id = 0;
+            MainRibbon.Items.AddRange(new DevExpress.XtraBars.BarItem[] { MainRibbon.ExpandCollapseItem, AppConfigurationBarButtonItem, skinRibbonGalleryBarItem1, skinPaletteRibbonGalleryBarItem1, beiVersao });
+            MainRibbon.Location = new System.Drawing.Point(0, 0);
+            MainRibbon.Margin = new System.Windows.Forms.Padding(4);
+            MainRibbon.MaxItemId = 5;
+            MainRibbon.MdiMergeStyle = DevExpress.XtraBars.Ribbon.RibbonMdiMergeStyle.Always;
+            MainRibbon.Name = "MainRibbon";
+            MainRibbon.OptionsMenuMinWidth = 385;
+            MainRibbon.Pages.AddRange(new DevExpress.XtraBars.Ribbon.RibbonPage[] { GeralRibbonPage });
+            MainRibbon.RepositoryItems.AddRange(new DevExpress.XtraEditors.Repository.RepositoryItem[] { repositoryItemTextEditVersao });
+            MainRibbon.Size = new System.Drawing.Size(1586, 182);
+            MainRibbon.StatusBar = ribbonStatusBar;
             // 
             // AppConfigurationBarButtonItem
             // 
-            this.AppConfigurationBarButtonItem.Caption = "Configurações da Aplicação";
-            this.AppConfigurationBarButtonItem.Id = 1;
-            this.AppConfigurationBarButtonItem.Name = "AppConfigurationBarButtonItem";
+            AppConfigurationBarButtonItem.Caption = "Configurações da Aplicação";
+            AppConfigurationBarButtonItem.Id = 1;
+            AppConfigurationBarButtonItem.Name = "AppConfigurationBarButtonItem";
             // 
             // skinRibbonGalleryBarItem1
             // 
-            this.skinRibbonGalleryBarItem1.Caption = "Tema";
-            this.skinRibbonGalleryBarItem1.Id = 2;
-            this.skinRibbonGalleryBarItem1.Name = "skinRibbonGalleryBarItem1";
+            skinRibbonGalleryBarItem1.Caption = "Tema";
+            skinRibbonGalleryBarItem1.Id = 2;
+            skinRibbonGalleryBarItem1.Name = "skinRibbonGalleryBarItem1";
             // 
             // skinPaletteRibbonGalleryBarItem1
             // 
-            this.skinPaletteRibbonGalleryBarItem1.Caption = "Palete";
-            this.skinPaletteRibbonGalleryBarItem1.Id = 3;
-            this.skinPaletteRibbonGalleryBarItem1.Name = "skinPaletteRibbonGalleryBarItem1";
+            skinPaletteRibbonGalleryBarItem1.Caption = "Palete";
+            skinPaletteRibbonGalleryBarItem1.Id = 3;
+            skinPaletteRibbonGalleryBarItem1.Name = "skinPaletteRibbonGalleryBarItem1";
             // 
             // beiVersao
             // 
-            this.beiVersao.Caption = "Versão:";
-            this.beiVersao.Edit = this.repositoryItemTextEditVersao;
-            this.beiVersao.EditValue = "1.0.0.0";
-            this.beiVersao.Id = 4;
-            this.beiVersao.Name = "beiVersao";
+            beiVersao.Caption = "Versão:";
+            beiVersao.Edit = repositoryItemTextEditVersao;
+            beiVersao.EditValue = "1.0.0.0";
+            beiVersao.Id = 4;
+            beiVersao.Name = "beiVersao";
             // 
             // repositoryItemTextEditVersao
             // 
-            this.repositoryItemTextEditVersao.AutoHeight = false;
-            this.repositoryItemTextEditVersao.Name = "repositoryItemTextEditVersao";
-            this.repositoryItemTextEditVersao.ReadOnly = true;
+            repositoryItemTextEditVersao.AutoHeight = false;
+            repositoryItemTextEditVersao.Name = "repositoryItemTextEditVersao";
+            repositoryItemTextEditVersao.ReadOnly = true;
             // 
             // GeralRibbonPage
             // 
-            this.GeralRibbonPage.Groups.AddRange(new DevExpress.XtraBars.Ribbon.RibbonPageGroup[] {
-            this.GeralRPG,
-            this.TemaRPG});
-            this.GeralRibbonPage.Name = "GeralRibbonPage";
-            this.GeralRibbonPage.Text = "Geral";
+            GeralRibbonPage.Groups.AddRange(new DevExpress.XtraBars.Ribbon.RibbonPageGroup[] { GeralRPG, TemaRPG });
+            GeralRibbonPage.Name = "GeralRibbonPage";
+            GeralRibbonPage.Text = "Geral";
             // 
             // GeralRPG
             // 
-            this.GeralRPG.ItemLinks.Add(this.AppConfigurationBarButtonItem);
-            this.GeralRPG.Name = "GeralRPG";
-            this.GeralRPG.Text = "Geral";
-            this.GeralRPG.Visible = false;
+            GeralRPG.ItemLinks.Add(AppConfigurationBarButtonItem);
+            GeralRPG.Name = "GeralRPG";
+            GeralRPG.Text = "Geral";
+            GeralRPG.Visible = false;
             // 
             // TemaRPG
             // 
-            this.TemaRPG.ItemLinks.Add(this.skinRibbonGalleryBarItem1);
-            this.TemaRPG.ItemLinks.Add(this.skinPaletteRibbonGalleryBarItem1);
-            this.TemaRPG.Name = "TemaRPG";
-            this.TemaRPG.Text = "Tema";
+            TemaRPG.ItemLinks.Add(skinRibbonGalleryBarItem1);
+            TemaRPG.ItemLinks.Add(skinPaletteRibbonGalleryBarItem1);
+            TemaRPG.Name = "TemaRPG";
+            TemaRPG.Text = "Tema";
             // 
             // ribbonStatusBar
             // 
-            this.ribbonStatusBar.ItemLinks.Add(this.beiVersao);
-            this.ribbonStatusBar.Location = new System.Drawing.Point(0, 971);
-            this.ribbonStatusBar.Margin = new System.Windows.Forms.Padding(4);
-            this.ribbonStatusBar.Name = "ribbonStatusBar";
-            this.ribbonStatusBar.Ribbon = this.MainRibbon;
-            this.ribbonStatusBar.Size = new System.Drawing.Size(1586, 33);
+            ribbonStatusBar.ItemLinks.Add(beiVersao);
+            ribbonStatusBar.Location = new System.Drawing.Point(0, 971);
+            ribbonStatusBar.Margin = new System.Windows.Forms.Padding(4);
+            ribbonStatusBar.Name = "ribbonStatusBar";
+            ribbonStatusBar.Ribbon = MainRibbon;
+            ribbonStatusBar.Size = new System.Drawing.Size(1586, 33);
             // 
             // DocumentManager
             // 
-            this.DocumentManager.ContainerControl = this;
-            this.DocumentManager.MenuManager = this.MainRibbon;
-            this.DocumentManager.RibbonAndBarsMergeStyle = DevExpress.XtraBars.Docking2010.Views.RibbonAndBarsMergeStyle.Always;
-            this.DocumentManager.View = this.TabbedView;
-            this.DocumentManager.ViewCollection.AddRange(new DevExpress.XtraBars.Docking2010.Views.BaseView[] {
-            this.TabbedView});
-            this.DocumentManager.DocumentActivate += new DevExpress.XtraBars.Docking2010.Views.DocumentEventHandler(this.DocumentManager_DocumentActivate);
+            DocumentManager.ContainerControl = this;
+            DocumentManager.MenuManager = MainRibbon;
+            DocumentManager.RibbonAndBarsMergeStyle = DevExpress.XtraBars.Docking2010.Views.RibbonAndBarsMergeStyle.Always;
+            DocumentManager.View = TabbedView;
+            DocumentManager.ViewCollection.AddRange(new DevExpress.XtraBars.Docking2010.Views.BaseView[] { TabbedView });
+            DocumentManager.DocumentActivate += DocumentManager_DocumentActivate;
             // 
             // TabbedView
             // 
-            this.TabbedView.DocumentClosing += new DevExpress.XtraBars.Docking2010.Views.DocumentCancelEventHandler(this.TabbedView_DocumentClosing);
+            TabbedView.DocumentClosing += TabbedView_DocumentClosing;
             // 
             // dockManager
             // 
-            this.dockManager.AutoHideSpeed = 4;
-            this.dockManager.Form = this;
-            this.dockManager.RootPanels.AddRange(new DevExpress.XtraBars.Docking.DockPanel[] {
-            this.FuncionalidadesDockPanel});
-            this.dockManager.TopZIndexControls.AddRange(new string[] {
-            "DevExpress.XtraBars.BarDockControl",
-            "DevExpress.XtraBars.StandaloneBarDockControl",
-            "System.Windows.Forms.MenuStrip",
-            "System.Windows.Forms.StatusStrip",
-            "System.Windows.Forms.StatusBar",
-            "DevExpress.XtraBars.Ribbon.RibbonStatusBar",
-            "DevExpress.XtraBars.Ribbon.RibbonControl",
-            "DevExpress.XtraBars.Navigation.OfficeNavigationBar",
-            "DevExpress.XtraBars.Navigation.TileNavPane",
-            "DevExpress.XtraBars.TabFormControl",
-            "DevExpress.XtraBars.FluentDesignSystem.FluentDesignFormControl",
-            "DevExpress.XtraBars.ToolbarForm.ToolbarFormControl"});
+            dockManager.AutoHideSpeed = 4;
+            dockManager.Form = this;
+            dockManager.RootPanels.AddRange(new DevExpress.XtraBars.Docking.DockPanel[] { FuncionalidadesDockPanel });
+            dockManager.TopZIndexControls.AddRange(new string[] { "DevExpress.XtraBars.BarDockControl", "DevExpress.XtraBars.StandaloneBarDockControl", "System.Windows.Forms.MenuStrip", "System.Windows.Forms.StatusStrip", "System.Windows.Forms.StatusBar", "DevExpress.XtraBars.Ribbon.RibbonStatusBar", "DevExpress.XtraBars.Ribbon.RibbonControl", "DevExpress.XtraBars.Navigation.OfficeNavigationBar", "DevExpress.XtraBars.Navigation.TileNavPane", "DevExpress.XtraBars.TabFormControl", "DevExpress.XtraBars.FluentDesignSystem.FluentDesignFormControl", "DevExpress.XtraBars.ToolbarForm.ToolbarFormControl" });
             // 
             // FuncionalidadesDockPanel
             // 
-            this.FuncionalidadesDockPanel.Controls.Add(this.dockPanel1_Container);
-            this.FuncionalidadesDockPanel.Dock = DevExpress.XtraBars.Docking.DockingStyle.Left;
-            this.FuncionalidadesDockPanel.ID = new System.Guid("e2195159-eed9-4634-ae20-2362dc2a59de");
-            this.FuncionalidadesDockPanel.Location = new System.Drawing.Point(0, 182);
-            this.FuncionalidadesDockPanel.Margin = new System.Windows.Forms.Padding(4);
-            this.FuncionalidadesDockPanel.Name = "FuncionalidadesDockPanel";
-            this.FuncionalidadesDockPanel.Options.ShowCloseButton = false;
-            this.FuncionalidadesDockPanel.OriginalSize = new System.Drawing.Size(244, 200);
-            this.FuncionalidadesDockPanel.Size = new System.Drawing.Size(244, 789);
-            this.FuncionalidadesDockPanel.Text = "Funcionalidades";
+            FuncionalidadesDockPanel.Controls.Add(dockPanel1_Container);
+            FuncionalidadesDockPanel.Dock = DevExpress.XtraBars.Docking.DockingStyle.Left;
+            FuncionalidadesDockPanel.ID = new System.Guid("e2195159-eed9-4634-ae20-2362dc2a59de");
+            FuncionalidadesDockPanel.Location = new System.Drawing.Point(0, 182);
+            FuncionalidadesDockPanel.Margin = new System.Windows.Forms.Padding(4);
+            FuncionalidadesDockPanel.Name = "FuncionalidadesDockPanel";
+            FuncionalidadesDockPanel.Options.ShowCloseButton = false;
+            FuncionalidadesDockPanel.OriginalSize = new System.Drawing.Size(244, 200);
+            FuncionalidadesDockPanel.Size = new System.Drawing.Size(244, 789);
+            FuncionalidadesDockPanel.Text = "Funcionalidades";
             // 
             // dockPanel1_Container
             // 
-            this.dockPanel1_Container.Controls.Add(this.FuncionalidadesAccordionControl);
-            this.dockPanel1_Container.Location = new System.Drawing.Point(3, 31);
-            this.dockPanel1_Container.Margin = new System.Windows.Forms.Padding(4);
-            this.dockPanel1_Container.Name = "dockPanel1_Container";
-            this.dockPanel1_Container.Size = new System.Drawing.Size(237, 755);
-            this.dockPanel1_Container.TabIndex = 0;
+            dockPanel1_Container.Controls.Add(FuncionalidadesAccordionControl);
+            dockPanel1_Container.Location = new System.Drawing.Point(3, 31);
+            dockPanel1_Container.Margin = new System.Windows.Forms.Padding(4);
+            dockPanel1_Container.Name = "dockPanel1_Container";
+            dockPanel1_Container.Size = new System.Drawing.Size(237, 755);
+            dockPanel1_Container.TabIndex = 0;
             // 
             // FuncionalidadesAccordionControl
             // 
-            this.FuncionalidadesAccordionControl.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.FuncionalidadesAccordionControl.Elements.AddRange(new DevExpress.XtraBars.Navigation.AccordionControlElement[] {
-            this.FuncionalidadesACEG,
-            this.ConfiguracoesACEG});
-            this.FuncionalidadesAccordionControl.Location = new System.Drawing.Point(0, 0);
-            this.FuncionalidadesAccordionControl.Margin = new System.Windows.Forms.Padding(4);
-            this.FuncionalidadesAccordionControl.Name = "FuncionalidadesAccordionControl";
-            this.FuncionalidadesAccordionControl.Size = new System.Drawing.Size(237, 755);
-            this.FuncionalidadesAccordionControl.TabIndex = 0;
-            this.FuncionalidadesAccordionControl.ViewType = DevExpress.XtraBars.Navigation.AccordionControlViewType.HamburgerMenu;
+            FuncionalidadesAccordionControl.Dock = System.Windows.Forms.DockStyle.Fill;
+            FuncionalidadesAccordionControl.Elements.AddRange(new DevExpress.XtraBars.Navigation.AccordionControlElement[] { FuncionalidadesACEG, ConfiguracoesACEG });
+            FuncionalidadesAccordionControl.Location = new System.Drawing.Point(0, 0);
+            FuncionalidadesAccordionControl.Margin = new System.Windows.Forms.Padding(4);
+            FuncionalidadesAccordionControl.Name = "FuncionalidadesAccordionControl";
+            FuncionalidadesAccordionControl.Size = new System.Drawing.Size(237, 755);
+            FuncionalidadesAccordionControl.TabIndex = 0;
+            FuncionalidadesAccordionControl.ViewType = DevExpress.XtraBars.Navigation.AccordionControlViewType.HamburgerMenu;
             // 
             // FuncionalidadesACEG
             // 
-            this.FuncionalidadesACEG.Elements.AddRange(new DevExpress.XtraBars.Navigation.AccordionControlElement[] {
-            this.GestaoAutomaticaMineracaoACE});
-            this.FuncionalidadesACEG.Expanded = true;
-            this.FuncionalidadesACEG.ImageOptions.SvgImage = ((DevExpress.Utils.Svg.SvgImage)(resources.GetObject("FuncionalidadesACEG.ImageOptions.SvgImage")));
-            this.FuncionalidadesACEG.Name = "FuncionalidadesACEG";
-            this.FuncionalidadesACEG.Text = "Funcionalidades";
+            FuncionalidadesACEG.Elements.AddRange(new DevExpress.XtraBars.Navigation.AccordionControlElement[] { GestaoAutomaticaMineracaoACE });
+            FuncionalidadesACEG.Expanded = true;
+            FuncionalidadesACEG.ImageOptions.SvgImage = (DevExpress.Utils.Svg.SvgImage)resources.GetObject("FuncionalidadesACEG.ImageOptions.SvgImage");
+            FuncionalidadesACEG.Name = "FuncionalidadesACEG";
+            FuncionalidadesACEG.Text = "Funcionalidades";
             // 
             // GestaoAutomaticaMineracaoACE
             // 
-            this.GestaoAutomaticaMineracaoACE.ImageOptions.SvgImage = ((DevExpress.Utils.Svg.SvgImage)(resources.GetObject("GestaoAutomaticaMineracaoACE.ImageOptions.SvgImage")));
-            this.GestaoAutomaticaMineracaoACE.Name = "GestaoAutomaticaMineracaoACE";
-            this.GestaoAutomaticaMineracaoACE.Style = DevExpress.XtraBars.Navigation.ElementStyle.Item;
-            this.GestaoAutomaticaMineracaoACE.Text = "Gestão automática de mineração";
-            this.GestaoAutomaticaMineracaoACE.Click += new System.EventHandler(this.GestaoAutomaticaMineracaoACE_Click);
+            GestaoAutomaticaMineracaoACE.ImageOptions.SvgImage = (DevExpress.Utils.Svg.SvgImage)resources.GetObject("GestaoAutomaticaMineracaoACE.ImageOptions.SvgImage");
+            GestaoAutomaticaMineracaoACE.Name = "GestaoAutomaticaMineracaoACE";
+            GestaoAutomaticaMineracaoACE.Style = DevExpress.XtraBars.Navigation.ElementStyle.Item;
+            GestaoAutomaticaMineracaoACE.Text = "Gestão automática de mineração";
+            GestaoAutomaticaMineracaoACE.Click += GestaoAutomaticaMineracaoACE_Click;
             // 
             // ConfiguracoesACEG
             // 
-            this.ConfiguracoesACEG.Elements.AddRange(new DevExpress.XtraBars.Navigation.AccordionControlElement[] {
-            this.ComandosACE,
-            this.MineradoresACE,
-            this.MoedasACE});
-            this.ConfiguracoesACEG.Expanded = true;
-            this.ConfiguracoesACEG.ImageOptions.SvgImage = ((DevExpress.Utils.Svg.SvgImage)(resources.GetObject("ConfiguracoesACEG.ImageOptions.SvgImage")));
-            this.ConfiguracoesACEG.Name = "ConfiguracoesACEG";
-            this.ConfiguracoesACEG.Text = "Configurações";
-            // 
-            // MineradoresACE
-            // 
-            this.MineradoresACE.Name = "MineradoresACE";
-            this.MineradoresACE.Style = DevExpress.XtraBars.Navigation.ElementStyle.Item;
-            this.MineradoresACE.Text = "Mineradores";
-            this.MineradoresACE.Click += new System.EventHandler(this.MineradoresACE_Click);
+            ConfiguracoesACEG.Elements.AddRange(new DevExpress.XtraBars.Navigation.AccordionControlElement[] { ComandosACE, MineradoresACE, MoedasACE });
+            ConfiguracoesACEG.Expanded = true;
+            ConfiguracoesACEG.ImageOptions.SvgImage = (DevExpress.Utils.Svg.SvgImage)resources.GetObject("ConfiguracoesACEG.ImageOptions.SvgImage");
+            ConfiguracoesACEG.Name = "ConfiguracoesACEG";
+            ConfiguracoesACEG.Text = "Configurações";
             // 
             // ComandosACE
             // 
-            this.ComandosACE.Name = "ComandosACE";
-            this.ComandosACE.Style = DevExpress.XtraBars.Navigation.ElementStyle.Item;
-            this.ComandosACE.Text = "Comandos";
-            this.ComandosACE.Click += new System.EventHandler(this.ComandosACE_Click);
+            ComandosACE.Name = "ComandosACE";
+            ComandosACE.Style = DevExpress.XtraBars.Navigation.ElementStyle.Item;
+            ComandosACE.Text = "Comandos";
+            ComandosACE.Click += ComandosACE_Click;
+            // 
+            // MineradoresACE
+            // 
+            MineradoresACE.Name = "MineradoresACE";
+            MineradoresACE.Style = DevExpress.XtraBars.Navigation.ElementStyle.Item;
+            MineradoresACE.Text = "Mineradores";
+            MineradoresACE.Click += MineradoresACE_Click;
             // 
             // MoedasACE
             // 
-            this.MoedasACE.Name = "MoedasACE";
-            this.MoedasACE.Style = DevExpress.XtraBars.Navigation.ElementStyle.Item;
-            this.MoedasACE.Text = "Moedas";
-            this.MoedasACE.Click += new System.EventHandler(this.MoedasACE_Click);
+            MoedasACE.Name = "MoedasACE";
+            MoedasACE.Style = DevExpress.XtraBars.Navigation.ElementStyle.Item;
+            MoedasACE.Text = "Moedas";
+            MoedasACE.Click += MoedasACE_Click;
             // 
             // MainForm
             // 
-            this.AllowFormGlass = DevExpress.Utils.DefaultBoolean.True;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1586, 1004);
-            this.Controls.Add(this.FuncionalidadesDockPanel);
-            this.Controls.Add(this.ribbonStatusBar);
-            this.Controls.Add(this.MainRibbon);
-            this.Margin = new System.Windows.Forms.Padding(4);
-            this.Name = "MainForm";
-            this.Ribbon = this.MainRibbon;
-            this.StatusBar = this.ribbonStatusBar;
-            this.Text = "Crypto Mining Manager";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
-            this.Load += new System.EventHandler(this.MainForm_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.MainRibbon)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.repositoryItemTextEditVersao)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.DocumentManager)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.TabbedView)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dockManager)).EndInit();
-            this.FuncionalidadesDockPanel.ResumeLayout(false);
-            this.dockPanel1_Container.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.FuncionalidadesAccordionControl)).EndInit();
-            this.ResumeLayout(false);
-            this.PerformLayout();
-
+            AllowFormGlass = DevExpress.Utils.DefaultBoolean.True;
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            ClientSize = new System.Drawing.Size(1586, 1004);
+            Controls.Add(FuncionalidadesDockPanel);
+            Controls.Add(ribbonStatusBar);
+            Controls.Add(MainRibbon);
+            IconOptions.Icon = (System.Drawing.Icon)resources.GetObject("MainForm.IconOptions.Icon");
+            Margin = new System.Windows.Forms.Padding(4);
+            Name = "MainForm";
+            Ribbon = MainRibbon;
+            StatusBar = ribbonStatusBar;
+            Text = "Crypto Mining Manager";
+            FormClosing += MainForm_FormClosing;
+            Load += MainForm_Load;
+            ((System.ComponentModel.ISupportInitialize)MainRibbon).EndInit();
+            ((System.ComponentModel.ISupportInitialize)repositoryItemTextEditVersao).EndInit();
+            ((System.ComponentModel.ISupportInitialize)DocumentManager).EndInit();
+            ((System.ComponentModel.ISupportInitialize)TabbedView).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dockManager).EndInit();
+            FuncionalidadesDockPanel.ResumeLayout(false);
+            dockPanel1_Container.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)FuncionalidadesAccordionControl).EndInit();
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
