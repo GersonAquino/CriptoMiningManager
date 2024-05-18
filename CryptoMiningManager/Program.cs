@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using CryptoMiningManager.Helpers;
 using CryptoMiningManager.Views;
+using CryptoMiningManager.Views.UserControls.Funcionalidades;
 using DevExpress.XtraEditors;
 using GestorDados;
 using GestorDados.Helpers;
@@ -78,7 +79,7 @@ namespace CryptoMiningManager
                 .Keyed<XtraUserControl>((tipo) =>
                 {
                     return tipo.Name.Replace("EditorUserControl", string.Empty);
-                }).InstancePerDependency();
+                }).InstancePerDependency().PreserveExistingDefaults();
 
             builder.RegisterAssemblyTypes(Assembly.Load(nameof(CryptoMiningManager)))
                 .Where(t => t.Namespace != null && t.Namespace.Contains(nameof(Views.UserControls))).InstancePerDependency().PreserveExistingDefaults();

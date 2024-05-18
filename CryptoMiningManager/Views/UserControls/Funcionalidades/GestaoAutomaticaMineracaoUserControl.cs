@@ -1,4 +1,5 @@
-﻿using DevExpress.XtraEditors;
+﻿using DevExpress.XtraBars;
+using DevExpress.XtraEditors;
 using DevExpress.XtraSplashScreen;
 using GestorDados.Helpers;
 using Modelos.Classes;
@@ -81,7 +82,6 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
                     if (File.Exists("LogsMineração.txt"))
                         File.Delete("LogsMineração.txt");
 
-                    LogHelper.EscreveLog(LogLevel.Information, "A iniciar o minerador");
                     Minerador minerador;
                     switch ((Algoritmo)AlgoritmoBEI.EditValue)
                     {
@@ -104,7 +104,6 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
                         default:
                             throw new ArgumentException("Algoritmo inválido!");
                     }
-
                 }
             }
             catch (CustomException ce)
@@ -313,13 +312,19 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
             if (MineradorAtivo?.Id != minerador.Id)
             {
                 MineradorAtivo = minerador;
-                Invoke(() =>
+                BeginInvoke(() =>
                 {
                     UltimaAlteracaoMineradorDE.DateTime = DateTime.Now;
                     MineradorAtivoTE.Text = MineradorAtivo.Nome;
                     MoedaAtualTE.Text = MineradorAtivo.Moeda.Nome;
                 });
             }
+
+            BeginInvoke(() =>
+            {
+                IniciarBBI.Visibility = BarItemVisibility.Never;
+                PararBBI.Visibility = BarItemVisibility.Always;
+            });
         }
 
         private async Task MinerarPorRentabilidade(CancellationToken cancelar)
@@ -336,7 +341,7 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
                     if (minerador != null && MineradorAtivo?.Id != minerador.Id)
                         IniciarMinerador(minerador);
 
-                    Invoke(() => UltimaVerificacaoRentabilidadeDE.DateTime = DateTime.Now);
+                    BeginInvoke(() => UltimaVerificacaoRentabilidadeDE.DateTime = DateTime.Now);
                     Thread.Sleep(TempoEntreVerificacoes);
                 }
             }
@@ -348,7 +353,7 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
             }
         }
 
-        private async Task PararProcessoAtivo()
+        private async Task PararProcessoAtivo(bool disposing = false)
         {
             if (ProcessoAtivo == null)
                 return;
@@ -372,9 +377,18 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
 
                     if (processo.Start())
                         await processo.WaitForExitAsync();
-                    else
+                    else if (!disposing)
                         Invoke(() => LogHelper.EscreveLog(LogLevel.Warning, "Não foi possível iniciar o comando pós-mineração {idComando}", PosMineracao.Id));
                 }
+            }
+
+            if (!disposing)
+            {
+                Invoke(() =>
+                {
+                    IniciarBBI.Visibility = BarItemVisibility.Always;
+                    PararBBI.Visibility = BarItemVisibility.Never;
+                });
             }
         }
 
@@ -396,9 +410,9 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
             RentabilidadeThread = null;
         }
 
-        private async Task PararTudo()
+        public async Task PararTudo(bool disposing = false)
         {
-            await PararProcessoAtivo();
+            await PararProcessoAtivo(disposing);
             PararThreadRentabilidade();
             ExecucaoME.Text = string.Empty;
         }
@@ -410,7 +424,7 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
 
         private void ScrollFim()
         {
-            Invoke(() =>
+            BeginInvoke(() =>
             {
                 ExecucaoME.SelectionStart = ExecucaoME.Text.Length;
                 ExecucaoME.SelectionLength = 0;

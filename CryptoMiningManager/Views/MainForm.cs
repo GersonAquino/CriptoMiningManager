@@ -15,6 +15,7 @@ namespace CryptoMiningManager.Views
     public partial class MainForm : DevExpress.XtraBars.Ribbon.RibbonForm
     {
         private ILifetimeScope Scope { get; }
+        private GestaoAutomaticaMineracaoUserControl GestaoAutomaticaMineracaoUC { get; set; }
 
         public MainForm(ILifetimeScope scope)
         {
@@ -105,13 +106,17 @@ namespace CryptoMiningManager.Views
             e.Cancel = XtraMessageBox.Show("Pretende terminar a aplicação?", this.Text, MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes;
         }
 
-        private void TabbedView_DocumentClosing(object sender, DocumentCancelEventArgs e)
+        private async void TabbedView_DocumentClosing(object sender, DocumentCancelEventArgs e)
         {
-            if (e.Document.Caption == GestaoAutomaticaMineracaoACE.Text &&
-                DialogResult.Yes != XtraMessageBox.Show("Fechar este separador irá parar qualquer processo de mineração em progresso, pretende continuar?",
-                    "Atenção", MessageBoxButtons.YesNo, MessageBoxIcon.Warning))
+            if (e.Document.Caption == GestaoAutomaticaMineracaoACE.Text)
             {
-                e.Cancel = true;
+                if (DialogResult.Yes == XtraMessageBox.Show("Fechar este separador irá parar qualquer processo de mineração em progresso, pretende continuar?",
+                    "Atenção", MessageBoxButtons.YesNo, MessageBoxIcon.Warning))
+                {
+                    await GestaoAutomaticaMineracaoUC.PararTudo();
+                }
+                else
+                    e.Cancel = true;
             }
         }
 
@@ -123,7 +128,7 @@ namespace CryptoMiningManager.Views
         /// <param name="sender"></param>
         private void CallUserControlTab<T>(object sender) where T : UserControl
         {
-            if (!(sender is AccordionControlElement controlElement))
+            if (sender is not AccordionControlElement controlElement)
                 return;
 
             try
@@ -138,6 +143,9 @@ namespace CryptoMiningManager.Views
 
                     BaseDocument doc = this.TabbedView.AddOrActivateDocument(s => s.Caption == controlElement.Text, () => userControl);
                     doc.Caption = controlElement.Text;
+
+                    if (userControl is GestaoAutomaticaMineracaoUserControl gestaoAutomaticaMineracao)
+                        GestaoAutomaticaMineracaoUC = gestaoAutomaticaMineracao;
                 }
             }
             catch (Exception ex)

@@ -1,4 +1,8 @@
-﻿namespace CryptoMiningManager.Views.UserControls.Funcionalidades
+﻿using GestorDados.Helpers;
+using Modelos.Enums;
+using System;
+
+namespace CryptoMiningManager.Views.UserControls.Funcionalidades
 {
     partial class GestaoAutomaticaMineracaoUserControl
     {
@@ -13,7 +17,14 @@
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
-            PararTudo().GetAwaiter().GetResult();
+            //try
+            //{
+            //    PararTudo(true).GetAwaiter().GetResult();
+            //}
+            //catch (Exception ex)
+            //{
+            //    LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro");
+            //}
 
             if (disposing && (components != null))
             {
@@ -241,6 +252,7 @@
             PararBBI.Id = 2;
             PararBBI.ImageOptions.SvgImage = (DevExpress.Utils.Svg.SvgImage)resources.GetObject("PararBBI.ImageOptions.SvgImage");
             PararBBI.Name = "PararBBI";
+            PararBBI.Visibility = DevExpress.XtraBars.BarItemVisibility.Never;
             PararBBI.ItemClick += PararBBI_ItemClick;
             // 
             // AlgoritmoBEI
@@ -345,6 +357,10 @@
             UltimaVerificacaoRentabilidadeDE.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] { new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo) });
             UltimaVerificacaoRentabilidadeDE.Properties.CalendarTimeProperties.AllowDropDownWhenReadOnly = DevExpress.Utils.DefaultBoolean.False;
             UltimaVerificacaoRentabilidadeDE.Properties.CalendarTimeProperties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] { new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo) });
+            UltimaVerificacaoRentabilidadeDE.Properties.DisplayFormat.FormatString = "G";
+            UltimaVerificacaoRentabilidadeDE.Properties.DisplayFormat.FormatType = DevExpress.Utils.FormatType.DateTime;
+            UltimaVerificacaoRentabilidadeDE.Properties.EditFormat.FormatString = "G";
+            UltimaVerificacaoRentabilidadeDE.Properties.EditFormat.FormatType = DevExpress.Utils.FormatType.DateTime;
             UltimaVerificacaoRentabilidadeDE.Properties.MaskSettings.Set("mask", "G");
             UltimaVerificacaoRentabilidadeDE.Properties.ReadOnly = true;
             UltimaVerificacaoRentabilidadeDE.Size = new System.Drawing.Size(216, 26);
@@ -362,6 +378,10 @@
             UltimaAlteracaoMineradorDE.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] { new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo) });
             UltimaAlteracaoMineradorDE.Properties.CalendarTimeProperties.AllowDropDownWhenReadOnly = DevExpress.Utils.DefaultBoolean.False;
             UltimaAlteracaoMineradorDE.Properties.CalendarTimeProperties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] { new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo) });
+            UltimaAlteracaoMineradorDE.Properties.DisplayFormat.FormatString = "G";
+            UltimaAlteracaoMineradorDE.Properties.DisplayFormat.FormatType = DevExpress.Utils.FormatType.DateTime;
+            UltimaAlteracaoMineradorDE.Properties.EditFormat.FormatString = "G";
+            UltimaAlteracaoMineradorDE.Properties.EditFormat.FormatType = DevExpress.Utils.FormatType.DateTime;
             UltimaAlteracaoMineradorDE.Properties.MaskSettings.Set("mask", "G");
             UltimaAlteracaoMineradorDE.Properties.ReadOnly = true;
             UltimaAlteracaoMineradorDE.Size = new System.Drawing.Size(216, 26);
@@ -484,6 +504,7 @@
             // ExecucaoME
             // 
             ExecucaoME.Location = new System.Drawing.Point(12, 344);
+            ExecucaoME.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             ExecucaoME.MenuManager = GestaoAutomaticaMineracaoRC;
             ExecucaoME.Name = "ExecucaoME";
             ExecucaoME.Properties.Appearance.BackColor = System.Drawing.Color.Black;
