@@ -59,7 +59,7 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
 			AlgoritmoBEI.EditValue = Algoritmo.MaisRentavel;
 
 			TempoEntreVerificacoes = 180000; //30 minutos
-			TemporizadorBEI.EditValue = DateTime.Today;
+			TemporizadorBEI.EditValue = new DateTime(0);
 		}
 
 		private async void GestaoAutomaticaMineracaoUserControl_Load(object sender, EventArgs e)
@@ -84,49 +84,11 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
 
 					if (TemporizadorBEI.EditValue is DateTime tempo && tempo.TimeOfDay.Ticks != 0)
 					{
-						IniciarBBI.Visibility = BarItemVisibility.Never;
-						PararBBI.Visibility = BarItemVisibility.Always;
-						try
-						{
-							await Task.Run(() => Thread.Sleep(tempo.TimeOfDay));
-						}
-						finally
-						{
-							IniciarBBI.Visibility = BarItemVisibility.Always;
-							PararBBI.Visibility = BarItemVisibility.Never;
-						}
+						ToggleBotoesIniciar_Parar(false);
+						Temporizador.Enabled = true;
 					}
-
-					int i = 1;
-					string nomeBase = $"Log_{DateTime.Now:yyyy-MM-dd HH:mm:ss}";
-					CaminhoCompletoLogMineracao = Path.Combine(LocalizacaoLogsMineracao, $"{nomeBase}.txt");
-					while (File.Exists(CaminhoCompletoLogMineracao))
-					{
-						CaminhoCompletoLogMineracao = Path.Combine(LocalizacaoLogsMineracao, $"{nomeBase}_{i++}.txt");
-					}
-
-					Minerador minerador;
-					switch ((Algoritmo)AlgoritmoBEI.EditValue)
-					{
-						case Algoritmo.Moeda:
-
-							break;
-						case Algoritmo.MaisRentavel:
-							CancelarThread = new CancellationTokenSource();
-							RentabilidadeThread = new Thread(async () => await MinerarPorRentabilidade(CancelarThread.Token)) { IsBackground = true };
-							RentabilidadeThread.Start();
-							break;
-						case Algoritmo.Selecionado:
-							if (MineradoresGV.IsDataRow(MineradoresGV.FocusedRowHandle) && MineradoresGV.FocusedRowObject is Minerador mineradorAux)
-								minerador = mineradorAux;
-							else
-								throw new CustomException("Não há nenhum minerador selecionado!");
-
-							IniciarMinerador(minerador);
-							break;
-						default:
-							throw new ArgumentException("Algoritmo inválido!");
-					}
+					else
+						IniciarMineracao();
 				}
 			}
 			catch (CustomException ce)
@@ -203,6 +165,30 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
 			}
 		}
 		#endregion
+
+		private void Temporizador_Tick(object sender, EventArgs e)
+		{
+			try
+			{
+				if (TemporizadorBEI.EditValue is DateTime tempo)
+				{
+					//Subtrai 1 segundo da forma mais eficiente que há, ainda que seja praticamente insignificante
+					DateTime novoTempo = tempo.AddTicks(-TimeSpan.TicksPerSecond);
+					TemporizadorBEI.EditValue = novoTempo;
+
+					if (novoTempo.TimeOfDay.Ticks == 0)
+						TerminarTemporizador();
+				}
+				else
+					TerminarTemporizador();
+			}
+			catch (Exception ex)
+			{
+				//Em caso de falha, regista-se o erro e inicia-se a mineração
+				LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro no temporizador");
+				TerminarTemporizador();
+			}
+		}
 
 		//MÉTODOS AUXILIARES
 		private async Task AtualizarDados()
@@ -287,6 +273,43 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
 			return null;
 		}
 
+		private void IniciarMineracao()
+		{
+			if (!Directory.Exists(LocalizacaoLogsMineracao))
+				Directory.CreateDirectory(LocalizacaoLogsMineracao);
+
+			int i = 1;
+			string nomeBase = $"Log_{DateTime.Now:yyyy-MM-dd HH-mm-ss}";
+			CaminhoCompletoLogMineracao = Path.Combine(LocalizacaoLogsMineracao, $"{nomeBase}.txt");
+			while (File.Exists(CaminhoCompletoLogMineracao))
+			{
+				CaminhoCompletoLogMineracao = Path.Combine(LocalizacaoLogsMineracao, $"{nomeBase}_{i++}.txt");
+			}
+
+			Minerador minerador;
+			switch ((Algoritmo)AlgoritmoBEI.EditValue)
+			{
+				case Algoritmo.Moeda:
+
+					break;
+				case Algoritmo.MaisRentavel:
+					CancelarThread = new CancellationTokenSource();
+					RentabilidadeThread = new Thread(async () => await MinerarPorRentabilidade(CancelarThread.Token)) { IsBackground = true };
+					RentabilidadeThread.Start();
+					break;
+				case Algoritmo.Selecionado:
+					if (MineradoresGV.IsDataRow(MineradoresGV.FocusedRowHandle) && MineradoresGV.FocusedRowObject is Minerador mineradorAux)
+						minerador = mineradorAux;
+					else
+						throw new CustomException("Não há nenhum minerador selecionado!");
+
+					IniciarMinerador(minerador);
+					break;
+				default:
+					throw new ArgumentException("Algoritmo inválido!");
+			}
+		}
+
 		private async void IniciarMinerador(Minerador minerador)
 		{
 			await PararProcessoAtivo();
@@ -344,11 +367,7 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
 				});
 			}
 
-			BeginInvoke(() =>
-			{
-				IniciarBBI.Visibility = BarItemVisibility.Never;
-				PararBBI.Visibility = BarItemVisibility.Always;
-			});
+			ToggleBotoesIniciar_Parar(false);
 		}
 
 		private async Task MinerarPorRentabilidade(CancellationToken cancelar)
@@ -413,11 +432,7 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
 				}
 			}
 
-			Invoke(() =>
-			{
-				IniciarBBI.Visibility = BarItemVisibility.Always;
-				PararBBI.Visibility = BarItemVisibility.Never;
-			});
+			ToggleBotoesIniciar_Parar(true);
 		}
 
 		private void PararThreadRentabilidade()
@@ -440,9 +455,17 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
 
 		public async Task PararTudo()
 		{
-			await PararProcessoAtivo();
-			PararThreadRentabilidade();
-			ExecucaoME.Text = string.Empty;
+			if (Temporizador.Enabled)
+			{
+				Temporizador.Enabled = false;
+				ToggleBotoesIniciar_Parar(true);
+			}
+			else
+			{
+				await PararProcessoAtivo();
+				PararThreadRentabilidade();
+				ExecucaoME.Text = string.Empty;
+			}
 		}
 
 		private string RemoveEscapeSequences(string str)
@@ -457,6 +480,36 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
 				ExecucaoME.SelectionStart = ExecucaoME.Text.Length;
 				ExecucaoME.SelectionLength = 0;
 				ExecucaoME.ScrollToCaret();
+			});
+		}
+
+		/// <summary>
+		/// Para o temporizador e inicia a mineração
+		/// </summary>
+		private void TerminarTemporizador()
+		{
+			Temporizador.Enabled = false;
+			IniciarMineracao();
+		}
+
+		/// <summary>
+		/// Alterna o botão visível entre o Iniciar e o Parar
+		/// </summary>
+		/// <param name="mostraIniciar">true para mostrar o botão Iniciar e esconder o Parar, false para o inverso</param>
+		private void ToggleBotoesIniciar_Parar(bool mostraIniciar)
+		{
+			Invoke(() =>
+			{
+				if (mostraIniciar)
+				{
+					IniciarBBI.Visibility = BarItemVisibility.Always;
+					PararBBI.Visibility = BarItemVisibility.Never;
+				}
+				else
+				{
+					IniciarBBI.Visibility = BarItemVisibility.Never;
+					PararBBI.Visibility = BarItemVisibility.Always;
+				}
 			});
 		}
 	}

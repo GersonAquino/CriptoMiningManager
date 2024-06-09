@@ -42,7 +42,7 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
 		private void InitializeComponent()
 		{
 			components = new System.ComponentModel.Container();
-			DevExpress.XtraGrid.GridLevelNode gridLevelNode1 = new DevExpress.XtraGrid.GridLevelNode();
+			DevExpress.XtraGrid.GridLevelNode gridLevelNode2 = new DevExpress.XtraGrid.GridLevelNode();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(GestaoAutomaticaMineracaoUserControl));
 			MoedasGV = new DevExpress.XtraGrid.Views.Grid.GridView();
 			colIdMoedas = new DevExpress.XtraGrid.Columns.GridColumn();
@@ -92,7 +92,7 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
 			RootLCG = new DevExpress.XtraLayout.LayoutControlGroup();
 			MineradoresLCI = new DevExpress.XtraLayout.LayoutControlItem();
 			ExecucaoLCI = new DevExpress.XtraLayout.LayoutControlItem();
-			timer1 = new System.Windows.Forms.Timer(components);
+			Temporizador = new System.Windows.Forms.Timer(components);
 			((System.ComponentModel.ISupportInitialize)MoedasGV).BeginInit();
 			((System.ComponentModel.ISupportInitialize)MineradoresGC).BeginInit();
 			((System.ComponentModel.ISupportInitialize)MineradoresBindingSource).BeginInit();
@@ -163,9 +163,9 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
 			// 
 			MineradoresGC.DataSource = MineradoresBindingSource;
 			MineradoresGC.EmbeddedNavigator.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-			gridLevelNode1.LevelTemplate = MoedasGV;
-			gridLevelNode1.RelationName = "Moedas";
-			MineradoresGC.LevelTree.Nodes.AddRange(new DevExpress.XtraGrid.GridLevelNode[] { gridLevelNode1 });
+			gridLevelNode2.LevelTemplate = MoedasGV;
+			gridLevelNode2.RelationName = "Moedas";
+			MineradoresGC.LevelTree.Nodes.AddRange(new DevExpress.XtraGrid.GridLevelNode[] { gridLevelNode2 });
 			MineradoresGC.Location = new System.Drawing.Point(12, 12);
 			MineradoresGC.MainView = MineradoresGV;
 			MineradoresGC.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
@@ -565,9 +565,10 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
 			ExecucaoLCI.TextLocation = DevExpress.Utils.Locations.Top;
 			ExecucaoLCI.TextSize = new System.Drawing.Size(54, 17);
 			// 
-			// timer1
+			// Temporizador
 			// 
-			timer1.Interval = 1000;
+			Temporizador.Interval = 1000;
+			Temporizador.Tick += Temporizador_Tick;
 			// 
 			// GestaoAutomaticaMineracaoUserControl
 			// 
@@ -666,6 +667,6 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
         private DevExpress.XtraLayout.LayoutControlItem ExecucaoLCI;
 		private DevExpress.XtraBars.BarEditItem TemporizadorBEI;
 		private DevExpress.XtraEditors.Repository.RepositoryItemTimeEdit TemporizadorRITE;
-		private System.Windows.Forms.Timer timer1;
+		private System.Windows.Forms.Timer Temporizador;
 	}
 }
