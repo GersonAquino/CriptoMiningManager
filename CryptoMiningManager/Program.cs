@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using Autofac.Core;
 using CryptoMiningManager.Helpers;
 using CryptoMiningManager.Views;
 using CryptoMiningManager.Views.UserControls.Funcionalidades;
@@ -6,7 +7,6 @@ using DevExpress.XtraEditors;
 using GestorDados;
 using GestorDados.Helpers;
 using Modelos.Interfaces;
-using Serilog;
 using System;
 using System.Configuration;
 using System.IO;
@@ -16,81 +16,85 @@ using System.Windows.Forms;
 
 namespace CryptoMiningManager
 {
-    internal static class Program
-    {
-        /// <summary>   
-        /// The main entry point for the application.
-        /// </summary>
-        [STAThread]
-        private static void Main()
-        {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
+	internal static class Program
+	{
+		/// <summary>   
+		/// The main entry point for the application.
+		/// </summary>
+		[STAThread]
+		private static void Main()
+		{
+			Application.EnableVisualStyles();
+			Application.SetCompatibleTextRenderingDefault(false);
 
-            #region JIT Improve
-            Assembly assembly = Assembly.GetExecutingAssembly();
+			#region JIT Improve
+			Assembly assembly = Assembly.GetExecutingAssembly();
 
-            ProfileOptimization.SetProfileRoot(Path.GetDirectoryName(assembly.Location));
-            ProfileOptimization.StartProfile(assembly.GetName().Name);
-            #endregion JIT Improve
+			ProfileOptimization.SetProfileRoot(Path.GetDirectoryName(assembly.Location));
+			ProfileOptimization.StartProfile(assembly.GetName().Name);
+			#endregion JIT Improve
 
-            LogHelper.StartLogger(ConfigurationManager.ConnectionStrings["CriptoManager"].ConnectionString.Split('=')[1]);
+			string connectionString = ConfigurationManager.ConnectionStrings["CriptoManager"].ConnectionString;
 
-            try
-            {
-                using (IContainer container = ContainerConfig())
-                using (ILifetimeScope scope = container.BeginLifetimeScope())
-                {
-                    Application.Run(scope.Resolve<MainForm>());
-                }
-            }
-            finally
-            {
-                LogHelper.StopLogger();
-            }
-        }
+			LogHelper.StartLogger(connectionString.Split('=')[1]);
 
-        private static IContainer ContainerConfig()
-        {
-            ContainerBuilder builder = new();
+			try
+			{
+				using (IContainer container = ContainerConfig(connectionString))
+				using (ILifetimeScope scope = container.BeginLifetimeScope())
+				{
+					Application.Run(scope.Resolve<MainForm>());
+				}
+			}
+			finally
+			{
+				LogHelper.StopLogger();
+			}
+		}
 
-            string connectionString = ConfigurationManager.ConnectionStrings["CriptoManager"].ConnectionString;
-            string urlBase = ConfigurationManager.AppSettings["URLRentabilidade"];
+		private static IContainer ContainerConfig(string connectionString)
+		{
+			ContainerBuilder builder = new();
 
-            //Modelos
-            builder.RegisterAssemblyTypes(Assembly.Load(nameof(Modelos))).Where(t => t.Namespace != null).InstancePerDependency();
+			Type tipoString = typeof(string);
 
-            // SQL e dados
-            builder.Register(context => new Dados(connectionString, true)).As<IDados>().InstancePerLifetimeScope();
-            builder.RegisterAssemblyTypes(Assembly.Load(nameof(GestorDados)))
-                .Where(t => t.Namespace != null && t.Namespace.Contains(nameof(GestorDados.Helpers.Entidades)))
-                .AsImplementedInterfaces().InstancePerLifetimeScope();
+			//Modelos
+			builder.RegisterAssemblyTypes(Assembly.Load(nameof(Modelos))).Where(t => t.Namespace != null).InstancePerDependency();
 
-            // Base Helpers
-            builder.RegisterType<JsonHelper>().As<IJsonHelper>().SingleInstance();
-            builder.Register(c => new HttpHelper(c.Resolve<IJsonHelper>(), urlBase)).As<IHttpHelper>().InstancePerLifetimeScope();
+			// SQL e dados
+			builder.RegisterType<Dados>().WithParameters(new Parameter[] { new TypedParameter(tipoString, connectionString), TypedParameter.From(true) })
+				.As<IDados>().InstancePerLifetimeScope();
+			builder.Register(context => new Dados(connectionString, true)).As<IDados>().InstancePerLifetimeScope();
+			builder.RegisterAssemblyTypes(Assembly.Load(nameof(GestorDados)))
+				.Where(t => t.Namespace != null && t.Namespace.Contains(nameof(GestorDados.Helpers.Entidades)))
+				.AsImplementedInterfaces().InstancePerLifetimeScope();
 
-            // Forms e UserControls
-            builder.RegisterType<MainForm>().SingleInstance();
+			// Base Helpers
+			builder.RegisterType<JsonHelper>().As<IJsonHelper>().SingleInstance();
+			builder.RegisterType<HttpHelper>().WithParameter(new TypedParameter(tipoString, ConfigurationManager.AppSettings["URLRentabilidade"]))
+				.As<IHttpHelper>().InstancePerLifetimeScope();
 
-            //Regista os editores com o nome da classe correspondente
-            builder.RegisterAssemblyTypes(Assembly.Load(nameof(CryptoMiningManager)))
-                .Where(t => t.Namespace != null && t.Namespace.Contains(nameof(Views.UserControls.Configuracoes.Editores)))
-                .Keyed<XtraUserControl>((tipo) =>
-                {
-                    return tipo.Name.Replace("EditorUserControl", string.Empty);
-                }).InstancePerDependency().PreserveExistingDefaults();
+			// Forms e UserControls
+			builder.RegisterType<MainForm>().SingleInstance();
 
-            builder.RegisterAssemblyTypes(Assembly.Load(nameof(CryptoMiningManager)))
-                .Where(t => t.Namespace != null && t.Namespace.Contains(nameof(Views.UserControls))).InstancePerDependency().PreserveExistingDefaults();
+			//Regista os editores com o nome da classe correspondente //Nota: Os editores devem ser formados por NomeClasse + "EditorUserControl"
+			builder.RegisterAssemblyTypes(Assembly.Load(nameof(CryptoMiningManager)))
+				.Where(t => t.Namespace != null && t.Namespace.Contains(nameof(Views.UserControls.Configuracoes.Editores)))
+				.Keyed<XtraUserControl>((tipo) => tipo.Name.Replace("EditorUserControl", string.Empty)).InstancePerDependency().PreserveExistingDefaults();
 
-            //Helpers
-            builder.RegisterType<ConfiguracoesEntidadesHelper>().InstancePerLifetimeScope();
+			builder.RegisterType<GestaoAutomaticaMineracaoUserControl>()
+				.WithParameter(new TypedParameter(tipoString, ConfigurationManager.AppSettings["LocalizacaoLogsMineracao"])).InstancePerDependency();
 
-            //Utils
-            builder.RegisterAssemblyTypes(Assembly.Load(nameof(Utils))).Where(t => t.Namespace != null).SingleInstance();
+			builder.RegisterAssemblyTypes(Assembly.Load(nameof(CryptoMiningManager)))
+				.Where(t => t.Namespace != null && t.Namespace.Contains(nameof(Views.UserControls))).InstancePerDependency().PreserveExistingDefaults();
 
-            return builder.Build();
-        }
-    }
+			//Helpers
+			builder.RegisterType<ConfiguracoesEntidadesHelper>().InstancePerLifetimeScope();
+
+			//Utils
+			builder.RegisterAssemblyTypes(Assembly.Load(nameof(Utils))).Where(t => t.Namespace != null).SingleInstance();
+
+			return builder.Build();
+		}
+	}
 }

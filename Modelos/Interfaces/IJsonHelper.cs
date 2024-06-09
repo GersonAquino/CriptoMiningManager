@@ -4,12 +4,12 @@ using System.Threading.Tasks;
 
 namespace Modelos.Interfaces
 {
-    public interface IJsonHelper
-    {
-        T Deserialize<T>(Stream stream) where T : class;
-        T Deserialize<T>(string json) where T : class;
-        Task<List<T>> DeserializeAsync<T>(Stream stream) where T : class;
-        Task<T> DeserializeSingleAsync<T>(Stream stream) where T : class;
-        Task<string> SerializeAsync(object value);
-    }
+	public interface IJsonHelper
+	{
+		T Deserialize<T>(Stream stream) where T : class;
+		T Deserialize<T>(string json) where T : class;
+		Task<List<T>> DeserializeAsync<T>(Stream stream) where T : class;
+		Task<T> DeserializeSingleAsync<T>(Stream stream) where T : class;
+		Task<string> SerializeAsync(object value);
+	}
 }

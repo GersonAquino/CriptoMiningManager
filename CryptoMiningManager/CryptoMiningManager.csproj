@@ -49,12 +49,8 @@
 		<PackageReference Include="DeepCopy">
 			<Version>1.0.3</Version>
 		</PackageReference>
-		<PackageReference Include="DevExpress.Data" Version="23.2.3" />
-		<PackageReference Include="DevExpress.Win.Design" Version="23.2.3" />
-		<PackageReference Include="DevExpress.Win.Grid" Version="23.2.3" />
-		<PackageReference Include="DevExpress.Win.Navigation" Version="23.2.3" />
+		<PackageReference Include="DevExpress.Win.Design" Version="23.2.6" />
+		<PackageReference Include="DevExpress.Win.Navigation" Version="23.2.6" />
 		<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-		<PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
-		<PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.0" />
 	</ItemGroup>
 </Project>
