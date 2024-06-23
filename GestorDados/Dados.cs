@@ -130,7 +130,7 @@ namespace GestorDados
 		}
 
 		///<inheritdoc/>
-		public async Task<int> BulkMerge<T>(params T[] entidades) where T : class, new()
+		public async Task<int> BulkMerge<T>(List<T> entidades) where T : class, new()
 		{
 			//Obter tabela alvo
 			Type tipo = typeof(T);
@@ -140,12 +140,12 @@ namespace GestorDados
 			//Obter informação sobre chave primária - É autoincrement?
 			string query =
 				$@"SELECT CASE
-                        WHEN sql LIKE '%AUTOINCREMENT%' THEN 1 ELSE 0
-                    END AS 'Autoincrement'
-                FROM sqlite_master
-                WHERE type = 'table'
-                AND name = '{tabela}'
-                LIMIT 1";
+							WHEN sql LIKE '%AUTOINCREMENT%' THEN 1 ELSE 0
+						END AS 'Autoincrement'
+					FROM sqlite_master
+					WHERE type = 'table'
+					AND name = '{tabela}'
+					LIMIT 1";
 
 			Task<bool> isAutoIncrementTask = ExecuteScalarOpenAsync<bool>(query);
 			//isAutoIncrementTask.Start(); //Aparentemente o Start() já deve ser chamado pelo Dapper automaticamente e não é preciso chamá-lo aqui
@@ -206,7 +206,7 @@ namespace GestorDados
 			Action<T, StringBuilder, DynamicParameters, string, List<PropertyInfo>, PropertyInfo, string, object, int> TratarIteracao =
 				isAutoIncrement ? CriarComandoInsertOuUpdate : CriarComandoReplace_Aux;
 
-			for (int i = 0; i < entidades.Length; i++)
+			for (int i = 0; i < entidades.Count; i++)
 			{
 				TratarIteracao(entidades[i], sbFinal, parametros, baseUpdate, colunas, chavePrimaria, baseInsert, valorDefeitoChavePrimaria, i);
 			}

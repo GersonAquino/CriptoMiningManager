@@ -9,6 +9,7 @@ using GestorDados.Helpers;
 using Modelos.Interfaces;
 using System;
 using System.Configuration;
+using System.Drawing;
 using System.IO;
 using System.Reflection;
 using System.Runtime;
@@ -22,7 +23,7 @@ namespace CryptoMiningManager
 		/// The main entry point for the application.
 		/// </summary>
 		[STAThread]
-		private static void Main()
+		private static void Main() //string[] args
 		{
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
@@ -43,7 +44,22 @@ namespace CryptoMiningManager
 				using (IContainer container = ContainerConfig(connectionString))
 				using (ILifetimeScope scope = container.BeginLifetimeScope())
 				{
-					Application.Run(scope.Resolve<MainForm>());
+					using (NotifyIcon icon = new())
+					{
+						icon.Icon = Icon.ExtractAssociatedIcon(Assembly.GetExecutingAssembly().Location);
+						icon.Visible = true;
+						icon.ContextMenuStrip = new()
+						{
+							Items = {
+									new ToolStripMenuItem("Esconder", null, (_, _) => scope.Resolve<MainForm>()?.Hide(), "Esconder"),
+									new ToolStripMenuItem("Sair", null, (_, _) => scope.Resolve<MainForm>()?.Close(), "Sair"),
+								}
+						};
+
+						icon.DoubleClick += (object sender, EventArgs e) => scope.Resolve<MainForm>().Show();
+
+						Application.Run(scope.Resolve<MainForm>());
+					}
 				}
 			}
 			finally

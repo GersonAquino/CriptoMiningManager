@@ -31,7 +31,7 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
 		private Comando PreMineracao { get; set; } = null;
 		private Comando PosMineracao { get; set; } = null;
 		private Minerador MineradorAtivo { get; set; } = null;
-		private Process ProcessoAtivo { get; set; } = null;
+		public Process ProcessoAtivo { get; set; } = null;
 		private Thread RentabilidadeThread { get; set; } = null;
 
 		private Regex EscapedSequences { get; } = new(@"\x1B\[[0-9;]*[mGKH]", RegexOptions.Compiled);

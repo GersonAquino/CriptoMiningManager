@@ -36,7 +36,7 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes.Editores
 				if (string.IsNullOrWhiteSpace(Entidade.Comandos))
 				{
 					ComandosMemoEdit.Focus();
-					throw new CustomException("Campo 'Comandos' não deve ficar vazio.", "Campos em falta");
+					throw new CustomException($"Campo '{ItemForComandos.Text}' não deve ficar vazio.", "Campos em falta");
 				}
 
 				int idGerado = await EntidadesHelper.GravarEntidade_GetIdGerado(Entidade);

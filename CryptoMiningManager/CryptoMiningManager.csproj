@@ -10,6 +10,7 @@
 		<FileVersion>$(VersionPrefix)</FileVersion>
 		<ApplicationIcon>Icon.ico</ApplicationIcon>
 		<PackageIcon>Icon.png</PackageIcon>
+		<SignAssembly>False</SignAssembly>
 	</PropertyGroup>
 	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
 		<DebugType>embedded</DebugType>
@@ -24,8 +25,14 @@
 	</ItemGroup>
 	<ItemGroup>
 		<Compile Update="Views\UserControls\Configuracoes\ComandosUserControl.cs" />
+		<Compile Update="Views\UserControls\Configuracoes\Editores\ConfiguracaoGeralEditorUserControl.cs">
+		  <SubType>UserControl</SubType>
+		</Compile>
 		<Compile Update="Views\UserControls\Configuracoes\Editores\ComandoEditorUserControl.cs" />
 		<Compile Update="Views\UserControls\Configuracoes\Editores\MineradorEditorUserControl.cs" />
+		<Compile Update="Views\UserControls\Configuracoes\ConfiguracoesGeraisUserControl.cs">
+		  <SubType>UserControl</SubType>
+		</Compile>
 		<Compile Update="Views\UserControls\Configuracoes\MoedasUserControl.cs" />
 		<Compile Update="Views\UserControls\Configuracoes\MineradoresUserControl.cs" />
 		<Compile Update="Views\UserControls\Funcionalidades\GestaoAutomaticaMineracaoUserControl.cs" />

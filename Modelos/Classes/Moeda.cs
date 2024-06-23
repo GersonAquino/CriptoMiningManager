@@ -28,7 +28,7 @@ namespace Modelos.Classes
 
 			PropertyInfo[] propriedades = coins.GetType().GetProperties();
 
-			List<Moeda> moedas = new List<Moeda>(propriedades.Length);
+			List<Moeda> moedas = new(propriedades.Length);
 			foreach (PropertyInfo propriedade in propriedades)
 			{
 				if (propriedade.GetValue(coins) is Moeda moeda)
@@ -37,6 +37,8 @@ namespace Modelos.Classes
 					moedas.Add(moeda);
 				}
 			}
+
+			moedas.TrimExcess();
 
 			return moedas;
 		}
@@ -145,13 +147,13 @@ namespace Modelos.Classes
 	/// Classe genérica com propriedades desnecessárias comentadas para evitar stresses e simplificar a leitura do JSON
 	/// </summary>
 	[System.ComponentModel.Description("Moeda"), Table("Moedas")]
-	public class Moeda
+	public class Moeda : Registo
 	{
 		/// <summary>
 		/// Id utilizado internamente
 		/// </summary>
 		[Key, JsonIgnore(Condition = JsonIgnoreCondition.Always)]
-		public int Id { get; set; }
+		public new int Id { get; set; }
 		public string Nome { get; set; }
 		public string NomeExterno { get; set; }
 

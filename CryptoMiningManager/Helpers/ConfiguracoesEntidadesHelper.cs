@@ -12,7 +12,6 @@ using Modelos.Classes;
 using Modelos.Enums;
 using Modelos.Exceptions;
 using System;
-using System.Linq;
 using System.Windows.Forms;
 using Utils;
 
@@ -40,7 +39,7 @@ namespace CryptoMiningManager.Helpers
 			try
 			{
 				MainForm mainForm = Scope.Resolve<MainForm>();
-				BaseDocument doc = mainForm.TabbedView.Documents.FirstOrDefault(d => d.Caption == caption);
+				BaseDocument doc = mainForm.TabbedView.Documents.FindFirst(d => d.Caption == caption);
 				if (doc != null)
 					mainForm.TabbedView.ActivateDocument(doc.Control);
 				else
@@ -48,6 +47,7 @@ namespace CryptoMiningManager.Helpers
 					Type tipoEntidade = typeof(T);
 					XtraUserControl editor = Scope.ResolveKeyed<XtraUserControl>(tipoEntidade.Name, new TypedParameter(tipoEntidade, entidadeAEditar ?? Scope.Resolve<T>()));
 					doc = mainForm.TabbedView.AddDocument(editor, caption);
+					mainForm.TabbedView.Controller.Activate(doc);
 				}
 
 				splashScreenHandler.QueueFocus(doc.Control); //Previne que o foco volte instantâneamente para o UC "pai"

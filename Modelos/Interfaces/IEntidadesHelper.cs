@@ -13,6 +13,14 @@ namespace Modelos.Interfaces
 		Task<int> EliminarEntidades(IEnumerable<int> ids);
 
 		/// <summary>
+		/// Obtém a primeira entidade (<typeparamref name="T"/>) que cumpra as <paramref name="condicoes"/> definidas
+		/// </summary>
+		/// <param name="condicoes"></param>
+		/// <param name="ordenacao"></param>
+		/// <returns></returns>
+		Task<T> GetEntidade(string condicoes, string ordenacao = null);
+
+		/// <summary>
 		/// Obtém todas entidades (<typeparamref name="T"/>)
 		/// </summary>
 		/// <param name="condicoes"></param>

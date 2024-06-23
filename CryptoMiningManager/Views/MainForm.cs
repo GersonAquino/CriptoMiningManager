@@ -6,7 +6,9 @@ using DevExpress.XtraBars.Navigation;
 using DevExpress.XtraEditors;
 using DevExpress.XtraSplashScreen;
 using GestorDados.Helpers;
+using Modelos.Classes;
 using Modelos.Enums;
+using Modelos.Interfaces;
 using System;
 using System.Windows.Forms;
 
@@ -14,66 +16,60 @@ namespace CryptoMiningManager.Views
 {
 	public partial class MainForm : DevExpress.XtraBars.Ribbon.RibbonForm
 	{
+		private IEntidadesHelper<ConfiguracaoGeral> ConfigGeralHelper { get; }
 		private ILifetimeScope Scope { get; }
+
+		public ConfiguracaoGeral ConfigGeralAtiva { get; set; }
 		private GestaoAutomaticaMineracaoUserControl GestaoAutomaticaMineracaoUC { get; set; }
 
-		public MainForm(ILifetimeScope scope)
+
+
+		public MainForm(ILifetimeScope scope, IEntidadesHelper<ConfiguracaoGeral> configGeralHelper)
 		{
 			InitializeComponent();
 
+			ConfigGeralHelper = configGeralHelper;
 			Scope = scope;
 		}
 
-		private void MainForm_Load(object sender, EventArgs e)
+		private async void MainForm_Load(object sender, EventArgs e)
 		{
-			// Create menus
-			//#region Funcionalidades
-			//AccordionControlElement FuncionalityGroup = FuncionalidadesAccordionControl.AddGroup();
-			//FuncionalityGroup.ImageOptions.SvgImage = Properties.Resources.payment;
-			//FuncionalityGroup.Text = "Funcionalidades";
+			try
+			{
+				ConfigGeralAtiva = await ConfigGeralHelper.GetEntidade("Ativo = 1");
+				if (ConfigGeralAtiva == null)
+				{
+					ConfigGeralAtiva = new();
+					ConfigGeralAtiva.Descricao = "Configuração Geral";
+					ConfigGeralAtiva.Ativo = true;
+					ConfigGeralAtiva.DataCriacao = DateTime.Now;
+					ConfigGeralAtiva.DataAlteracao = DateTime.Now;
 
-			//AccordionControlElement CreateClientErpElement = FuncionalityGroup.Elements.Add();
-			//CreateClientErpElement.ImageOptions.SvgImage = Properties.Resources.customers;
-			//CreateClientErpElement.Style = ElementStyle.Item;
-			//CreateClientErpElement.Text = "Clientes";
-			//CreateClientErpElement.Click += CreateClientErpElement_Click;
-
-			//AccordionControlElement InvoicesElement = FuncionalityGroup.Elements.Add();
-			//InvoicesElement.ImageOptions.SvgImage = Properties.Resources.bo_list;
-			//InvoicesElement.Text = "Faturas";
-			//InvoicesElement.Style = ElementStyle.Item;
-			//InvoicesElement.Click += EventsAirElement_Click;
-			//#endregion
-
-			//#region Histórico
-			//AccordionControlElement HistoryGroup = FuncionalidadesAccordionControl.AddGroup();
-			//HistoryGroup.ImageOptions.SvgImage = Properties.Resources.chartverticalaxis_logscale;
-			//HistoryGroup.Text = "Histórico";
-
-			//AccordionControlElement LogsElement = HistoryGroup.Elements.Add();
-			//LogsElement.ImageOptions.SvgImage = Properties.Resources.detailed;
-			//LogsElement.Style = ElementStyle.Item;
-			//LogsElement.Text = "Logs";
-			//LogsElement.Click += LogsElementElement_Click;
-			//#endregion
-
-			//#region Configurações
-			//AccordionControlElement ConfigurationGroup = FuncionalidadesAccordionControl.AddGroup();
-			//ConfigurationGroup.ImageOptions.SvgImage = Properties.Resources.viewsettings;
-			//ConfigurationGroup.Text = "Configurações";
-
-			//AccordionControlElement GeneralConfigurationElement = ConfigurationGroup.Elements.Add();
-			//GeneralConfigurationElement.ImageOptions.SvgImage = Properties.Resources.viewsettings;
-			//GeneralConfigurationElement.Style = ElementStyle.Item;
-			//GeneralConfigurationElement.Text = "Configurações Gerais";
-			//GeneralConfigurationElement.Click += ConfigsGeraisElementElement_Click;
-			//#endregion
+					if (!await ConfigGeralHelper.GravarEntidade(ConfigGeralAtiva))
+					{
+						ConfigGeralAtiva = null;
+						XtraMessageBox.Show("Não foi possível criar uma configuração geral base, por favor considere criar uma manualmente.",
+						"Configuração Geral", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				ConfigGeralAtiva = null;
+				LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro");
+				XtraMessageBox.Show("Erro ao carregar!", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+			}
 		}
 
 		#region Eventos Click que criam um tab com um UserControl
 		private void ComandosACE_Click(object sender, EventArgs e)
 		{
 			CallUserControlTab<ComandosUserControl>(sender);
+		}
+
+		private void ConfiguracoesGeraisACE_Click(object sender, EventArgs e)
+		{
+			CallUserControlTab<ConfiguracoesGeraisUserControl>(sender);
 		}
 
 		private void GestaoAutomaticaMineracaoACE_Click(object sender, EventArgs e)
@@ -101,19 +97,45 @@ namespace CryptoMiningManager.Views
 			}
 		}
 
-		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+		private async void MainForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
-			e.Cancel = XtraMessageBox.Show("Pretende terminar a aplicação?", this.Text, MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes;
+			try
+			{
+				if (ConfigGeralAtiva?.MinimizarAoFechar == true && this.Visible)
+				{
+					this.Hide();
+					e.Cancel = true;
+					return;
+				}
+
+				string mensagem;
+				if (GestaoAutomaticaMineracaoUC?.ProcessoAtivo != null) //TabbedView.Documents.Exists(d => d.Caption == GestaoAutomaticaMineracaoACE.Text) && //Em princípio esta validação não é precisa
+					mensagem = "Existe um processo de mineração ativo, pretende continuar?";
+				else
+					mensagem = "Pretende terminar a aplicação?";
+
+				e.Cancel = XtraMessageBox.Show(mensagem, this.Text, MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes;
+
+				if (!e.Cancel && GestaoAutomaticaMineracaoUC != null)
+					await GestaoAutomaticaMineracaoUC.PararTudo();
+			}
+			catch (Exception ex)
+			{
+				LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro");
+				XtraMessageBox.Show("Erro ao fechar aplicação (a aplicação fechará na mesma).", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				e.Cancel = false;
+			}
 		}
 
 		private async void TabbedView_DocumentClosing(object sender, DocumentCancelEventArgs e)
 		{
-			if (e.Document.Caption == GestaoAutomaticaMineracaoACE.Text)
+			if (e.Document.Caption == GestaoAutomaticaMineracaoACE.Text && GestaoAutomaticaMineracaoUC.ProcessoAtivo != null)
 			{
-				if (DialogResult.Yes == XtraMessageBox.Show("Fechar este separador irá parar qualquer processo de mineração em progresso, pretende continuar?",
+				if (DialogResult.Yes == XtraMessageBox.Show("Fechar este separador irá parar o processo de mineração ativo, pretende continuar?",
 					"Atenção", MessageBoxButtons.YesNo, MessageBoxIcon.Warning))
 				{
 					await GestaoAutomaticaMineracaoUC.PararTudo();
+					GestaoAutomaticaMineracaoUC = null;
 				}
 				else
 					e.Cancel = true;
@@ -135,13 +157,22 @@ namespace CryptoMiningManager.Views
 			{
 				using (IOverlaySplashScreenHandle splashScreenHandler = SplashScreenManager.ShowOverlayForm(this))
 				{
+					//Caso já haja um separador com este control, não se cria outro
+					BaseDocument doc = TabbedView.Documents.FindFirst(d => d.Control is T);
+					if (doc != null)
+					{
+						TabbedView.ActivateDocument(doc.Control);
+						return;
+					}
+
 					ILifetimeScope scope = Scope.BeginLifetimeScope();
 					T userControl = scope.Resolve<T>();
 
 					//Fazer o dispose da scope do userControl sem ter de alterar o event handler dos designers
 					userControl.Disposed += (s, e) => scope.Dispose();
 
-					BaseDocument doc = this.TabbedView.AddOrActivateDocument(s => s.Caption == controlElement.Text, () => userControl);
+					doc = TabbedView.AddDocument(userControl);
+					TabbedView.Controller.Activate(doc);
 					doc.Caption = controlElement.Text;
 
 					if (userControl is GestaoAutomaticaMineracaoUserControl gestaoAutomaticaMineracao)
