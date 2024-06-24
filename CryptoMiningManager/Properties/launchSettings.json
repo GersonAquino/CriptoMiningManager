@@ -1,9 +1,5 @@
 {
   "profiles": {
-    "Hidden": {
-      "commandName": "Project",
-      "commandLineArgs": "-systray"
-    },
     "CryptoMiningManager": {
       "commandName": "Project"
     }

@@ -1,4 +1,6 @@
 ﻿using Autofac;
+using CryptoMiningManager.Constants;
+using CryptoMiningManager.CustomControls;
 using CryptoMiningManager.Views.UserControls.Configuracoes;
 using CryptoMiningManager.Views.UserControls.Funcionalidades;
 using DevExpress.XtraBars.Docking2010.Views;
@@ -19,17 +21,20 @@ namespace CryptoMiningManager.Views
 		private IEntidadesHelper<ConfiguracaoGeral> ConfigGeralHelper { get; }
 		private ILifetimeScope Scope { get; }
 
-		public ConfiguracaoGeral ConfigGeralAtiva { get; set; }
+		private bool UtilizadorQuerSair { get; set; }
+		private CustomNotifyIcon TaskBarIcon { get; } //Não está implementado no designer para ser implementado no AutoFac como singleton e poder ser alterado onde for preciso
 		private GestaoAutomaticaMineracaoUserControl GestaoAutomaticaMineracaoUC { get; set; }
 
+		public ConfiguracaoGeral ConfigGeralAtiva { get; set; }
 
-
-		public MainForm(ILifetimeScope scope, IEntidadesHelper<ConfiguracaoGeral> configGeralHelper)
+		public MainForm(ILifetimeScope scope, IEntidadesHelper<ConfiguracaoGeral> configGeralHelper, CustomNotifyIcon notifyIcon)
 		{
 			InitializeComponent();
 
 			ConfigGeralHelper = configGeralHelper;
 			Scope = scope;
+			TaskBarIcon = notifyIcon;
+			UtilizadorQuerSair = false;
 		}
 
 		private async void MainForm_Load(object sender, EventArgs e)
@@ -42,16 +47,28 @@ namespace CryptoMiningManager.Views
 					ConfigGeralAtiva = new();
 					ConfigGeralAtiva.Descricao = "Configuração Geral";
 					ConfigGeralAtiva.Ativo = true;
-					ConfigGeralAtiva.DataCriacao = DateTime.Now;
-					ConfigGeralAtiva.DataAlteracao = DateTime.Now;
 
 					if (!await ConfigGeralHelper.GravarEntidade(ConfigGeralAtiva))
 					{
 						ConfigGeralAtiva = null;
+						LogHelper.EscreveLog(LogLevel.Error, "Falha ao criar configuração geral base automaticamente! É necessário validar o código! (não houve exceção)");
 						XtraMessageBox.Show("Não foi possível criar uma configuração geral base, por favor considere criar uma manualmente.",
 						"Configuração Geral", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 					}
 				}
+
+				if (ConfigGeralAtiva?.IniciarMinimizada == true)
+					this.Hide();
+
+				ToolStripMenuItem item = TaskBarIcon.AdicionarItem(Taskbar.Mineracao); //TODO: Implementar
+				CustomNotifyIcon.AdicionarSubItem(item, Taskbar_Mineracao.Iniciar, null);
+				CustomNotifyIcon.AdicionarSubItem(item, Taskbar_Mineracao.Parar, null, false);
+
+				TaskBarIcon.AdicionarItem(Taskbar.Configuracoes); //TODO: Implementar
+				TaskBarIcon.AdicionarItem(Taskbar.Sair, (_, _) => { UtilizadorQuerSair = true; this.Close(); }, true);
+
+				TaskBarIcon.NotifyIcon.DoubleClick += (object sender, EventArgs e) => this.Show();
+				TaskBarIcon.NotifyIcon.Visible = true;
 			}
 			catch (Exception ex)
 			{
@@ -101,6 +118,19 @@ namespace CryptoMiningManager.Views
 		{
 			try
 			{
+				if (UtilizadorQuerSair)
+				{
+					if (GestaoAutomaticaMineracaoUC?.ProcessoAtivo != null)
+					{
+						if (XtraMessageBox.Show("Existe um processo de mineração ativo, pretende continuar?", this.Text, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+							await GestaoAutomaticaMineracaoUC.PararTudo();
+						else
+							e.Cancel = true;
+					}
+
+					return;
+				}
+
 				if (ConfigGeralAtiva?.MinimizarAoFechar == true && this.Visible)
 				{
 					this.Hide();
@@ -124,6 +154,10 @@ namespace CryptoMiningManager.Views
 				LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro");
 				XtraMessageBox.Show("Erro ao fechar aplicação (a aplicação fechará na mesma).", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
 				e.Cancel = false;
+			}
+			finally
+			{
+				UtilizadorQuerSair = false;
 			}
 		}
 

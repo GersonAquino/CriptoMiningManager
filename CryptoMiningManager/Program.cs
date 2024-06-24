@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using Autofac.Core;
+using CryptoMiningManager.CustomControls;
 using CryptoMiningManager.Helpers;
 using CryptoMiningManager.Views;
 using CryptoMiningManager.Views.UserControls.Funcionalidades;
@@ -44,22 +45,9 @@ namespace CryptoMiningManager
 				using (IContainer container = ContainerConfig(connectionString))
 				using (ILifetimeScope scope = container.BeginLifetimeScope())
 				{
-					using (NotifyIcon icon = new())
-					{
-						icon.Icon = Icon.ExtractAssociatedIcon(Assembly.GetExecutingAssembly().Location);
-						icon.Visible = true;
-						icon.ContextMenuStrip = new()
-						{
-							Items = {
-									new ToolStripMenuItem("Esconder", null, (_, _) => scope.Resolve<MainForm>()?.Hide(), "Esconder"),
-									new ToolStripMenuItem("Sair", null, (_, _) => scope.Resolve<MainForm>()?.Close(), "Sair"),
-								}
-						};
+					scope.Resolve<CustomNotifyIcon>().NotifyIcon.Icon = Icon.ExtractAssociatedIcon(Assembly.GetExecutingAssembly().Location);
 
-						icon.DoubleClick += (object sender, EventArgs e) => scope.Resolve<MainForm>().Show();
-
-						Application.Run(scope.Resolve<MainForm>());
-					}
+					Application.Run(scope.Resolve<MainForm>());
 				}
 			}
 			finally
@@ -106,6 +94,8 @@ namespace CryptoMiningManager
 
 			//Helpers
 			builder.RegisterType<ConfiguracoesEntidadesHelper>().InstancePerLifetimeScope();
+
+			builder.RegisterType<CustomNotifyIcon>().SingleInstance();
 
 			//Utils
 			builder.RegisterAssemblyTypes(Assembly.Load(nameof(Utils))).Where(t => t.Namespace != null).SingleInstance();

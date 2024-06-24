@@ -53,6 +53,7 @@
 			ConfiguracoesGeraisACE = new DevExpress.XtraBars.Navigation.AccordionControlElement();
 			MineradoresACE = new DevExpress.XtraBars.Navigation.AccordionControlElement();
 			MoedasACE = new DevExpress.XtraBars.Navigation.AccordionControlElement();
+			notifyIcon1 = new System.Windows.Forms.NotifyIcon(components);
 			((System.ComponentModel.ISupportInitialize)MainRibbon).BeginInit();
 			((System.ComponentModel.ISupportInitialize)repositoryItemTextEditVersao).BeginInit();
 			((System.ComponentModel.ISupportInitialize)DocumentManager).BeginInit();
@@ -245,6 +246,11 @@
 			MoedasACE.Text = "Moedas";
 			MoedasACE.Click += MoedasACE_Click;
 			// 
+			// notifyIcon1
+			// 
+			notifyIcon1.Text = "notifyIcon1";
+			notifyIcon1.Visible = true;
+			// 
 			// MainForm
 			// 
 			AllowFormGlass = DevExpress.Utils.DefaultBoolean.True;
@@ -301,5 +307,6 @@
         private DevExpress.XtraBars.Navigation.AccordionControlElement ComandosACE;
         private DevExpress.XtraBars.Navigation.AccordionControlElement MoedasACE;
 		private DevExpress.XtraBars.Navigation.AccordionControlElement ConfiguracoesGeraisACE;
+		private System.Windows.Forms.NotifyIcon notifyIcon1;
 	}
 }

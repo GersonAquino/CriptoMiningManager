@@ -88,18 +88,17 @@ namespace GestorDados.Helpers.Entidades
 		///<inheritdoc/>
 		public virtual async Task<bool> GravarEntidade(T entidade)
 		{
-			return await Dados.ExecuteOpenAsync(await GravarEntidade_Base(entidade), entidade) == 1;
+			if (entidade.Id == -1)
+				return await GravarEntidadeNova(entidade) > 0;
+
+			return await Dados.ExecuteOpenAsync(await GravarEntidade_QueryBase(entidade), entidade) == 1;
 		}
 
 		///<inheritdoc/>
 		public virtual async Task<int> GravarEntidade_GetIdGerado(T entidade)
 		{
 			if (entidade.Id == -1)
-			{
-				string query = await GravarEntidade_Base(entidade) + "; SELECT LAST_INSERT_ROWID();";
-
-				return await Dados.ExecuteScalarOpenAsync<int, T>(query, entidade);
-			}
+				return await GravarEntidadeNova(entidade);
 
 			return await GravarEntidade(entidade) ? entidade.Id : -1;
 		}
@@ -118,7 +117,7 @@ namespace GestorDados.Helpers.Entidades
 		}
 
 		//FUNÇÕES AUXILIARES
-		protected virtual async Task<string> GravarEntidade_Base(T entidade)
+		protected virtual async Task<string> GravarEntidade_QueryBase(T entidade)
 		{
 			if (entidade.Id < -1)
 				throw new ArgumentException($"{Descricao} tem Id inválido ({entidade.Id}).");
@@ -146,5 +145,19 @@ namespace GestorDados.Helpers.Entidades
 		protected virtual void GravarEntidade_ValidacoesExtra(T entidade) { }
 		protected virtual Task GravarEntidade_ValidacoesExtra_Async(T entidade) { return null; }
 		#endregion
+
+		/// <summary>
+		/// Grava uma entidade (<typeparamref name="T"/>) nova e atualiza o Id da mesma
+		/// </summary>
+		/// <param name="entidade"></param>
+		/// <returns>Id da entidade gerada</returns>
+		private async Task<int> GravarEntidadeNova(T entidade)
+		{
+			string query = await GravarEntidade_QueryBase(entidade) + "; SELECT LAST_INSERT_ROWID();";
+
+			entidade.Id = await Dados.ExecuteScalarOpenAsync<int, T>(query, entidade);
+
+			return entidade.Id;
+		}
 	}
 }
