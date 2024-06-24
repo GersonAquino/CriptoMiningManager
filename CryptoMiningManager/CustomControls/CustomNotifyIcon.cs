@@ -57,9 +57,11 @@ namespace CryptoMiningManager.CustomControls
 		{
 			AdicionarSubItem(Items[nomePai] as ToolStripMenuItem, texto, eventHandler);
 		}
+
 		public static ToolStripMenuItem AdicionarSubItem(ToolStripMenuItem itemPai, string texto, EventHandler eventHandler, bool visible = true)
 		{
 			ToolStripMenuItem item = new(texto, null, eventHandler);
+			item.Visible = visible;
 			itemPai.DropDownItems.Add(item);
 			return item;
 		}

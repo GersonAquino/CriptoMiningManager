@@ -65,7 +65,7 @@ namespace CryptoMiningManager
 			//Modelos
 			builder.RegisterAssemblyTypes(Assembly.Load(nameof(Modelos))).Where(t => t.Namespace != null).InstancePerDependency();
 
-			// SQL e dados
+			//SQL e dados
 			builder.RegisterType<Dados>().WithParameters(new Parameter[] { new TypedParameter(tipoString, connectionString), TypedParameter.From(true) })
 				.As<IDados>().InstancePerLifetimeScope();
 			builder.Register(context => new Dados(connectionString, true)).As<IDados>().InstancePerLifetimeScope();
@@ -73,12 +73,12 @@ namespace CryptoMiningManager
 				.Where(t => t.Namespace != null && t.Namespace.Contains(nameof(GestorDados.Helpers.Entidades)))
 				.AsImplementedInterfaces().InstancePerLifetimeScope();
 
-			// Base Helpers
+			//Base Helpers
 			builder.RegisterType<JsonHelper>().As<IJsonHelper>().SingleInstance();
 			builder.RegisterType<HttpHelper>().WithParameter(new TypedParameter(tipoString, ConfigurationManager.AppSettings["URLRentabilidade"]))
 				.As<IHttpHelper>().InstancePerLifetimeScope();
 
-			// Forms e UserControls
+			//Forms e UserControls
 			builder.RegisterType<MainForm>().SingleInstance();
 
 			//Regista os editores com o nome da classe correspondente //Nota: Os editores devem ser formados por NomeClasse + "EditorUserControl"
@@ -86,15 +86,16 @@ namespace CryptoMiningManager
 				.Where(t => t.Namespace != null && t.Namespace.Contains(nameof(Views.UserControls.Configuracoes.Editores)))
 				.Keyed<XtraUserControl>((tipo) => tipo.Name.Replace("EditorUserControl", string.Empty)).InstancePerDependency().PreserveExistingDefaults();
 
-			builder.RegisterType<GestaoAutomaticaMineracaoUserControl>()
-				.WithParameter(new TypedParameter(tipoString, ConfigurationManager.AppSettings["LocalizacaoLogsMineracao"])).InstancePerDependency();
+			//builder.RegisterType<GestaoAutomaticaMineracaoUserControl>().InstancePerDependency();
 
 			builder.RegisterAssemblyTypes(Assembly.Load(nameof(CryptoMiningManager)))
 				.Where(t => t.Namespace != null && t.Namespace.Contains(nameof(Views.UserControls))).InstancePerDependency().PreserveExistingDefaults();
 
 			//Helpers
 			builder.RegisterType<ConfiguracoesEntidadesHelper>().InstancePerLifetimeScope();
+			builder.RegisterType<MineracaoHelper>().WithParameter(new TypedParameter(tipoString, ConfigurationManager.AppSettings["LocalizacaoLogsMineracao"])).SingleInstance();
 
+			//Taskbar Icon
 			builder.RegisterType<CustomNotifyIcon>().SingleInstance();
 
 			//Utils

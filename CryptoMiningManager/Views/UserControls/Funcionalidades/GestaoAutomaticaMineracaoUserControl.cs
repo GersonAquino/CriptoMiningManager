@@ -1,9 +1,11 @@
-﻿using DevExpress.XtraBars;
+﻿using CryptoMiningManager.Helpers;
+using DevExpress.XtraBars;
 using DevExpress.XtraEditors;
 using DevExpress.XtraSplashScreen;
 using GestorDados.Helpers;
 using Modelos.Classes;
 using Modelos.Enums;
+using Modelos.EventArgs;
 using Modelos.Exceptions;
 using Modelos.Interfaces;
 using System;
@@ -11,46 +13,27 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using ThreadState = System.Threading.ThreadState;
 
 namespace CryptoMiningManager.Views.UserControls.Funcionalidades
 {
 	public partial class GestaoAutomaticaMineracaoUserControl : DevExpress.XtraEditors.XtraUserControl
 	{
-		private int TempoEntreVerificacoes { get; set; }
-
-		private string CaminhoCompletoLogMineracao { get; set; }
-		private string LocalizacaoLogsMineracao { get; set; }
-
-		private CancellationTokenSource CancelarThread { get; set; } = null;
-		private Comando PreMineracao { get; set; } = null;
-		private Comando PosMineracao { get; set; } = null;
-		private Minerador MineradorAtivo { get; set; } = null;
-		public Process ProcessoAtivo { get; set; } = null;
-		private Thread RentabilidadeThread { get; set; } = null;
-
-		private Regex EscapedSequences { get; } = new(@"\x1B\[[0-9;]*[mGKH]", RegexOptions.Compiled);
-		private Semaphore SemaforoLogsMineracao { get; } = new(1, 1);
-
 		private IEntidadesHelper<Comando> ComandosHelper { get; }
 		private IEntidadesHelper<Minerador> MineradoresHelper { get; }
 		private IEntidadesHelper<Moeda> MoedasHelper { get; }
 
+		private MineracaoHelper MineracaoHelper { get; }
+		private Semaphore SemaforoLogsMineracao { get; } = new(1, 1);
+
 		public GestaoAutomaticaMineracaoUserControl(IEntidadesHelper<Comando> comandosHelper, IEntidadesHelper<Minerador> mineradoresHelper,
-			IEntidadesHelper<Moeda> moedasHelper, string localizacaoLogsMineracao)
+			IEntidadesHelper<Moeda> moedasHelper, MineracaoHelper mineracaoHelper)
 		{
 			InitializeComponent();
-
 			ComandosHelper = comandosHelper;
-
-			//Caso apareça mais algum caso como este (dados da configuração que precisem de ser lidos), talvez faça sentido criar algum tipo de classe estática ou algo parecido
-			LocalizacaoLogsMineracao = localizacaoLogsMineracao;
-
+			MineracaoHelper = mineracaoHelper;
 			MineradoresHelper = mineradoresHelper;
 			MoedasHelper = moedasHelper;
 
@@ -58,8 +41,63 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
 			AlgoritmoRIDG.Items.AddEnum<Algoritmo>();
 			AlgoritmoBEI.EditValue = Algoritmo.MaisRentavel;
 
-			TempoEntreVerificacoes = 180000; //30 minutos
+			MineracaoHelper.TempoEntreVerificacoes = 180000; //30 minutos
 			TemporizadorBEI.EditValue = new DateTime(0);
+
+			MineracaoHelper.Mineradores = (BindingList<Minerador>)MineradoresBindingSource.List;
+
+			MineracaoHelper.AlteracaoEstadoMineracao += MineracaoHelper_AlteracaoEstadoMineracao;
+			MineracaoHelper.AlteracaoMinerador += MineracaoHelper_AlteracaoMinerador; ;
+			MineracaoHelper.AlteracaoMoedaMaisRentavel += MineracaoHelper_AlteracaoMoedaMaisRentavel; ;
+			MineracaoHelper.ErroMinerador += MineracaoHelper_ErroMinerador;
+			MineracaoHelper.OutputMinerador += MineracaoHelper_OutputMinerador;
+			MineracaoHelper.RegistarLogsMineracao += MineracaoHelper_RegistarLogsMineracao;
+			MineracaoHelper.VerificaoRentabilidade += MineracaoHelper_VerificaoRentabilidade;
+		}
+
+		private void MineracaoHelper_ErroMinerador(object sender, DataReceivedEventArgs e)
+		{
+			ExecucaoME.AppendLine("ERRO: " + MineracaoHelper.RemoveEscapeSequences(e.Data));
+			ScrollFim();
+		}
+
+		private void MineracaoHelper_VerificaoRentabilidade(object sender, EventArgs e)
+		{
+			BeginInvoke(() => UltimaVerificacaoRentabilidadeDE.DateTime = DateTime.Now);
+		}
+
+		private void MineracaoHelper_AlteracaoMoedaMaisRentavel(object sender, AlteracaoMoedaMaisRentavelEventArgs e)
+		{
+			Invoke(() => MoedaMaisRentavelTE.Text = string.IsNullOrWhiteSpace(e.Moeda.Nome) ? e.Moeda.NomeExterno : e.Moeda.Nome);
+		}
+
+		private void MineracaoHelper_RegistarLogsMineracao(object sender, EventArgs e)
+		{
+			EscreverLogsMineracao();
+		}
+
+		private void MineracaoHelper_OutputMinerador(object sender, DataReceivedEventArgs e)
+		{
+			if (ExecucaoME.Text.Length > 50000)
+				EscreverLogsMineracao();
+
+			ExecucaoME.AppendLine(MineracaoHelper.RemoveEscapeSequences(e.Data));
+			ScrollFim();
+		}
+
+		private void MineracaoHelper_AlteracaoMinerador(object sender, Modelos.EventArgs.AlteracaoMineradorEventArgs e)
+		{
+			BeginInvoke(() =>
+			{
+				UltimaAlteracaoMineradorDE.DateTime = DateTime.Now;
+				MineradorAtivoTE.Text = e.Minerador.Nome;
+				MoedaAtualTE.Text = e.Minerador.Moeda.Nome;
+			});
+		}
+
+		private void MineracaoHelper_AlteracaoEstadoMineracao(object sender, Modelos.EventArgs.AlteracaoEstadoMineracaoEventArgs e)
+		{
+			ToggleBotoesIniciar_Parar(e.Ativa);
 		}
 
 		private async void GestaoAutomaticaMineracaoUserControl_Load(object sender, EventArgs e)
@@ -79,16 +117,15 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
 			{
 				using (IOverlaySplashScreenHandle splashScreenHandler = SplashScreenManager.ShowOverlayForm(this))
 				{
-					await PararProcessoAtivo();
-					PararThreadRentabilidade();
+					await MineracaoHelper.PararTudo();
 
 					if (TemporizadorBEI.EditValue is DateTime tempo && tempo.TimeOfDay.Ticks != 0)
 					{
-						ToggleBotoesIniciar_Parar(false);
+						ToggleBotoesIniciar_Parar(true);
 						Temporizador.Enabled = true;
 					}
-					else
-						IniciarMineracao();
+					else if (MineradoresGV.IsDataRow(MineradoresGV.FocusedRowHandle) && MineradoresGV.FocusedRowObject is Minerador minerador)
+						await MineracaoHelper.Iniciar((Algoritmo)AlgoritmoBEI.EditValue, minerador);
 				}
 			}
 			catch (CustomException ce)
@@ -108,7 +145,13 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
 			{
 				try
 				{
-					await PararTudo();
+					if (Temporizador.Enabled)
+						Temporizador.Enabled = false;
+					else
+					{
+						await MineracaoHelper.PararTudo();
+						ExecucaoME.Text = string.Empty;
+					}
 				}
 				catch (Exception ex)
 				{
@@ -124,7 +167,7 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
 			try
 			{
 				int intervaloVerificacaoRentabilidade = decimal.ToInt32((decimal)IntervaloVerificacaoRentabilidadeBEI.EditValue);
-				TempoEntreVerificacoes = intervaloVerificacaoRentabilidade * 60000; //*1000 por serem milisegundos e *60 para passar a minutos
+				MineracaoHelper.TempoEntreVerificacoes = intervaloVerificacaoRentabilidade * 60000; //*1000 por serem milisegundos e *60 para passar a minutos
 			}
 			catch (Exception ex)
 			{
@@ -132,39 +175,6 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
 				XtraMessageBox.Show("Erro ao alterar intervalo de verificação de rentabilidade: " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
 		}
-
-		#region Output ProcessoAtivo
-		private void ProcessoAtivo_ErrorDataReceived(object sender, DataReceivedEventArgs e)
-		{
-			if (e.Data == null) //Terminou o processo
-			{
-				LogHelper.EscreveLog(LogLevel.Information, $"A terminar o minerador {MineradorAtivo}");
-				return;
-			}
-
-			ExecucaoME.AppendLine("ERRO: " + RemoveEscapeSequences(e.Data));
-			LogHelper.EscreveLog(LogLevel.Warning, $"Erro no minerador {MineradorAtivo}: {e.Data}");
-
-			ScrollFim();
-		}
-
-		private void ProcessoAtivo_OutputDataReceived(object sender, DataReceivedEventArgs e)
-		{
-			try
-			{
-				//Prevenir textos infinitos e excesso de utilização de memória com strings infinitas
-				if (ExecucaoME.Text.Length > 50000)
-					EscreverLogsMineracao();
-
-				ExecucaoME.AppendLine(RemoveEscapeSequences(e.Data));
-				ScrollFim();
-			}
-			catch (Exception ex)
-			{
-				LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro ao tratar output");
-			}
-		}
-		#endregion
 
 		private void Temporizador_Tick(object sender, EventArgs e)
 		{
@@ -209,16 +219,16 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
 						MineradoresBindingSource.Add(registo.Value);
 				}
 
-				PreMineracao = null;
-				PosMineracao = null;
+				MineracaoHelper.PreMineracao = null;
+				MineracaoHelper.PosMineracao = null;
 				//Atualizar comandos
 				foreach (Comando comando in await ComandosHelper.GetEntidades("Ativo = 1"))
 				{
 					if (comando.PreMineracao)
-						PreMineracao = comando;
+						MineracaoHelper.PreMineracao = comando;
 
 					if (comando.PosMineracao)
-						PosMineracao = comando;
+						MineracaoHelper.PosMineracao = comando;
 				}
 			}
 			catch (Exception ex)
@@ -237,7 +247,7 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
 		{
 			//O semáforo garante que nunca se vai tentar escrever no ficheiro 2 vezes (ou mais) em simultâneo
 			SemaforoLogsMineracao.WaitOne();
-			using (StreamWriter streamWriter = new(CaminhoCompletoLogMineracao, true))
+			using (StreamWriter streamWriter = new(MineracaoHelper.CaminhoCompletoLogMineracao, true))
 			{
 				streamWriter.WriteLine($"{DateTime.Now:dd/MM/yyyy HH:mm:ss}{Environment.NewLine}{ExecucaoME.Text}");
 				streamWriter.Flush();
@@ -246,231 +256,6 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
 
 			Invoke(() => ExecucaoME.Clear());
 			SemaforoLogsMineracao.Release();
-		}
-
-		private Minerador GetMineradorMaisRentavel(List<Moeda> moedas)
-		{
-			moedas.Sort(Moedas.MaiorRentabilidade_Descendente);
-
-			Invoke(() => MoedaMaisRentavelTE.Text = string.IsNullOrWhiteSpace(moedas[0].Nome) ? moedas[0].NomeExterno : moedas[0].Nome);
-
-			Func<Moeda, bool> IsMoedaAtual = MineradorAtivo == null ? m => false :
-				m => m.Id == MineradorAtivo.Moeda.Id;
-
-			Dictionary<int, Minerador> mineradoresPorMoeda = ((BindingList<Minerador>)MineradoresBindingSource.List).ToDictionary(m => m.Moeda.Id);
-
-			foreach (Moeda moeda in moedas)
-			{
-				//Se se chegar à moeda do MineradorAtual, então não vale a pena continuar a procurar.
-				//Já estamos a minerar a moeda mais rentável para a qual foi configurado um minerador.
-				if (IsMoedaAtual(moeda))
-					return MineradorAtivo;
-
-				if (mineradoresPorMoeda.TryGetValue(moeda.Id, out Minerador minerador))
-					return minerador;
-			}
-
-			return null;
-		}
-
-		private void IniciarMineracao()
-		{
-			if (!Directory.Exists(LocalizacaoLogsMineracao))
-				Directory.CreateDirectory(LocalizacaoLogsMineracao);
-
-			int i = 1;
-			string nomeBase = $"Log_{DateTime.Now:yyyy-MM-dd HH-mm-ss}";
-			CaminhoCompletoLogMineracao = Path.Combine(LocalizacaoLogsMineracao, $"{nomeBase}.txt");
-			while (File.Exists(CaminhoCompletoLogMineracao))
-			{
-				CaminhoCompletoLogMineracao = Path.Combine(LocalizacaoLogsMineracao, $"{nomeBase}_{i++}.txt");
-			}
-
-			Minerador minerador;
-			switch ((Algoritmo)AlgoritmoBEI.EditValue)
-			{
-				case Algoritmo.Moeda:
-
-					break;
-				case Algoritmo.MaisRentavel:
-					CancelarThread = new CancellationTokenSource();
-					RentabilidadeThread = new Thread(async () => await MinerarPorRentabilidade(CancelarThread.Token)) { IsBackground = true };
-					RentabilidadeThread.Start();
-					break;
-				case Algoritmo.Selecionado:
-					if (MineradoresGV.IsDataRow(MineradoresGV.FocusedRowHandle) && MineradoresGV.FocusedRowObject is Minerador mineradorAux)
-						minerador = mineradorAux;
-					else
-						throw new CustomException("Não há nenhum minerador selecionado!");
-
-					IniciarMinerador(minerador);
-					break;
-				default:
-					throw new ArgumentException("Algoritmo inválido!");
-			}
-		}
-
-		private async void IniciarMinerador(Minerador minerador)
-		{
-			await PararProcessoAtivo();
-
-			if (PreMineracao != null)
-			{
-				using (Process processo = new())
-				{
-					processo.StartInfo = new("cmd.exe", PreMineracao.ComandosCMD)
-					{
-						CreateNoWindow = true,
-						UseShellExecute = false
-					};
-
-					if (processo.Start())
-						await processo.WaitForExitAsync();
-					else
-						Invoke(() => LogHelper.EscreveLog(LogLevel.Warning, "Não foi possível iniciar o comando pré-mineração {idComando}", PreMineracao.Id));
-				}
-			}
-
-
-			ProcessoAtivo = new();
-
-			ProcessoAtivo.StartInfo = new(minerador.Localizacao, minerador.Parametros)
-			{
-				CreateNoWindow = true,
-				UseShellExecute = false,
-				RedirectStandardOutput = true,
-				RedirectStandardError = true
-			};
-
-
-			if (!ProcessoAtivo.Start())
-				throw new Exception($"Não foi possível iniciar o minerador {minerador}");
-
-			ProcessoAtivo.ErrorDataReceived += ProcessoAtivo_ErrorDataReceived;
-			ProcessoAtivo.OutputDataReceived += ProcessoAtivo_OutputDataReceived;
-
-			ProcessoAtivo.BeginErrorReadLine();
-			ProcessoAtivo.BeginOutputReadLine();
-
-			if (MineradorAtivo != null)
-				Invoke(() => LogHelper.EscreveLog(LogLevel.Information, $"A mudar do minerador {MineradorAtivo} para o minerador {minerador}." +
-					$"Moedas: Antes: {MineradorAtivo.Moeda} | Depois: {minerador.Moeda}"));
-
-			if (MineradorAtivo?.Id != minerador.Id)
-			{
-				MineradorAtivo = minerador;
-				BeginInvoke(() =>
-				{
-					UltimaAlteracaoMineradorDE.DateTime = DateTime.Now;
-					MineradorAtivoTE.Text = MineradorAtivo.Nome;
-					MoedaAtualTE.Text = MineradorAtivo.Moeda.Nome;
-				});
-			}
-
-			ToggleBotoesIniciar_Parar(false);
-		}
-
-		private async Task MinerarPorRentabilidade(CancellationToken cancelar)
-		{
-			try
-			{
-				Invoke(() => LogHelper.EscreveLog(LogLevel.Information, "A iniciar mineração por rentabilidade"));
-				while (!cancelar.IsCancellationRequested)
-				{
-					List<Moeda> moedas = await MoedasHelper.GravarEntidades();
-
-					Minerador minerador = GetMineradorMaisRentavel(moedas);
-
-					if (minerador != null && MineradorAtivo?.Id != minerador.Id)
-						IniciarMinerador(minerador);
-
-					BeginInvoke(() => UltimaVerificacaoRentabilidadeDE.DateTime = DateTime.Now);
-					Thread.Sleep(TempoEntreVerificacoes);
-				}
-			}
-			catch (ThreadInterruptedException) { }
-			catch (Exception ex)
-			{
-				LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro ao verificar rentabilidade.");
-				XtraMessageBox.Show("Erro ao verificar rentabilidade: " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
-			}
-		}
-
-		private async Task PararProcessoAtivo()
-		{
-			if (ProcessoAtivo == null)
-				return;
-
-			ProcessoAtivo.Kill(true);
-			ProcessoAtivo.Dispose();
-			ProcessoAtivo = null;
-			MineradorAtivo = null;
-
-			try
-			{
-				EscreverLogsMineracao();
-			}
-			catch (Exception ex)
-			{
-				LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro ao guardar logs de mineração.");
-			}
-
-			if (PosMineracao != null)
-			{
-				using (Process processo = new())
-				{
-					processo.StartInfo = new("cmd.exe", PosMineracao.ComandosCMD)
-					{
-						CreateNoWindow = true,
-						UseShellExecute = false
-					};
-
-					if (processo.Start())
-						await processo.WaitForExitAsync();
-					else
-						Invoke(() => LogHelper.EscreveLog(LogLevel.Warning, "Não foi possível iniciar o comando pós-mineração {idComando}", PosMineracao.Id));
-				}
-			}
-
-			ToggleBotoesIniciar_Parar(true);
-		}
-
-		private void PararThreadRentabilidade()
-		{
-			if (RentabilidadeThread == null)
-				return;
-
-			if (RentabilidadeThread.ThreadState == ThreadState.WaitSleepJoin)
-				RentabilidadeThread.Interrupt();
-			else
-				CancelarThread.Cancel();
-
-			if (!RentabilidadeThread.Join(10000))
-				XtraMessageBox.Show("O processo está a levar mais tempo para parar do que o esperado.", "Possível falha", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-
-			CancelarThread.Dispose();
-			CancelarThread = null;
-			RentabilidadeThread = null;
-		}
-
-		public async Task PararTudo()
-		{
-			if (Temporizador.Enabled)
-			{
-				Temporizador.Enabled = false;
-				ToggleBotoesIniciar_Parar(true);
-			}
-			else
-			{
-				await PararProcessoAtivo();
-				PararThreadRentabilidade();
-				ExecucaoME.Text = string.Empty;
-			}
-		}
-
-		private string RemoveEscapeSequences(string str)
-		{
-			return EscapedSequences.Replace(str, "");
 		}
 
 		private void ScrollFim()
@@ -486,29 +271,32 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
 		/// <summary>
 		/// Para o temporizador e inicia a mineração
 		/// </summary>
-		private void TerminarTemporizador()
+		private async void TerminarTemporizador()
 		{
 			Temporizador.Enabled = false;
-			IniciarMineracao();
+			await MineracaoHelper.Iniciar((Algoritmo)AlgoritmoBEI.EditValue);
 		}
 
 		/// <summary>
 		/// Alterna o botão visível entre o Iniciar e o Parar
 		/// </summary>
-		/// <param name="mostraIniciar">true para mostrar o botão Iniciar e esconder o Parar, false para o inverso</param>
-		private void ToggleBotoesIniciar_Parar(bool mostraIniciar)
+		/// <param name="mineracaoAtiva">true para mostrar o botão Iniciar e esconder o Parar, false para o inverso</param>
+		private void ToggleBotoesIniciar_Parar(bool mineracaoAtiva)
 		{
+			if (this.IsDisposed)
+				return;
+
 			Invoke(() =>
 			{
-				if (mostraIniciar)
-				{
-					IniciarBBI.Visibility = BarItemVisibility.Always;
-					PararBBI.Visibility = BarItemVisibility.Never;
-				}
-				else
+				if (mineracaoAtiva)
 				{
 					IniciarBBI.Visibility = BarItemVisibility.Never;
 					PararBBI.Visibility = BarItemVisibility.Always;
+				}
+				else
+				{
+					IniciarBBI.Visibility = BarItemVisibility.Always;
+					PararBBI.Visibility = BarItemVisibility.Never;
 				}
 			});
 		}

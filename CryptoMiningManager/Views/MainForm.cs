@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using CryptoMiningManager.Constants;
 using CryptoMiningManager.CustomControls;
+using CryptoMiningManager.Helpers;
 using CryptoMiningManager.Views.UserControls.Configuracoes;
 using CryptoMiningManager.Views.UserControls.Funcionalidades;
 using DevExpress.XtraBars.Docking2010.Views;
@@ -24,14 +25,16 @@ namespace CryptoMiningManager.Views
 		private bool UtilizadorQuerSair { get; set; }
 		private CustomNotifyIcon TaskBarIcon { get; } //Não está implementado no designer para ser implementado no AutoFac como singleton e poder ser alterado onde for preciso
 		private GestaoAutomaticaMineracaoUserControl GestaoAutomaticaMineracaoUC { get; set; }
+		private MineracaoHelper MineracaoHelper { get; }
 
 		public ConfiguracaoGeral ConfigGeralAtiva { get; set; }
 
-		public MainForm(ILifetimeScope scope, IEntidadesHelper<ConfiguracaoGeral> configGeralHelper, CustomNotifyIcon notifyIcon)
+		public MainForm(ILifetimeScope scope, IEntidadesHelper<ConfiguracaoGeral> configGeralHelper, CustomNotifyIcon notifyIcon, MineracaoHelper mineracaoHelper)
 		{
 			InitializeComponent();
 
 			ConfigGeralHelper = configGeralHelper;
+			MineracaoHelper = mineracaoHelper;
 			Scope = scope;
 			TaskBarIcon = notifyIcon;
 			UtilizadorQuerSair = false;
@@ -63,6 +66,7 @@ namespace CryptoMiningManager.Views
 				ToolStripMenuItem item = TaskBarIcon.AdicionarItem(Taskbar.Mineracao); //TODO: Implementar
 				CustomNotifyIcon.AdicionarSubItem(item, Taskbar_Mineracao.Iniciar, null);
 				CustomNotifyIcon.AdicionarSubItem(item, Taskbar_Mineracao.Parar, null, false);
+				CustomNotifyIcon.AdicionarSubItem(item, Taskbar_Mineracao.Algoritmo, null); //TODO: Implementar //Por agora fica sempre por rentabilidade
 
 				TaskBarIcon.AdicionarItem(Taskbar.Configuracoes); //TODO: Implementar
 				TaskBarIcon.AdicionarItem(Taskbar.Sair, (_, _) => { UtilizadorQuerSair = true; this.Close(); }, true);
@@ -120,10 +124,10 @@ namespace CryptoMiningManager.Views
 			{
 				if (UtilizadorQuerSair)
 				{
-					if (GestaoAutomaticaMineracaoUC?.ProcessoAtivo != null)
+					if (MineracaoHelper.ProcessoAtivo != null)
 					{
 						if (XtraMessageBox.Show("Existe um processo de mineração ativo, pretende continuar?", this.Text, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
-							await GestaoAutomaticaMineracaoUC.PararTudo();
+							await MineracaoHelper.PararTudo();
 						else
 							e.Cancel = true;
 					}
@@ -139,7 +143,7 @@ namespace CryptoMiningManager.Views
 				}
 
 				string mensagem;
-				if (GestaoAutomaticaMineracaoUC?.ProcessoAtivo != null) //TabbedView.Documents.Exists(d => d.Caption == GestaoAutomaticaMineracaoACE.Text) && //Em princípio esta validação não é precisa
+				if (MineracaoHelper.ProcessoAtivo != null) //TabbedView.Documents.Exists(d => d.Caption == GestaoAutomaticaMineracaoACE.Text) && //Em princípio esta validação não é precisa
 					mensagem = "Existe um processo de mineração ativo, pretende continuar?";
 				else
 					mensagem = "Pretende terminar a aplicação?";
@@ -147,7 +151,7 @@ namespace CryptoMiningManager.Views
 				e.Cancel = XtraMessageBox.Show(mensagem, this.Text, MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes;
 
 				if (!e.Cancel && GestaoAutomaticaMineracaoUC != null)
-					await GestaoAutomaticaMineracaoUC.PararTudo();
+					await MineracaoHelper.PararTudo();
 			}
 			catch (Exception ex)
 			{
@@ -163,12 +167,12 @@ namespace CryptoMiningManager.Views
 
 		private async void TabbedView_DocumentClosing(object sender, DocumentCancelEventArgs e)
 		{
-			if (e.Document.Caption == GestaoAutomaticaMineracaoACE.Text && GestaoAutomaticaMineracaoUC.ProcessoAtivo != null)
+			if (e.Document.Caption == GestaoAutomaticaMineracaoACE.Text && MineracaoHelper.ProcessoAtivo != null)
 			{
 				if (DialogResult.Yes == XtraMessageBox.Show("Fechar este separador irá parar o processo de mineração ativo, pretende continuar?",
 					"Atenção", MessageBoxButtons.YesNo, MessageBoxIcon.Warning))
 				{
-					await GestaoAutomaticaMineracaoUC.PararTudo();
+					await MineracaoHelper.PararTudo();
 					GestaoAutomaticaMineracaoUC = null;
 				}
 				else

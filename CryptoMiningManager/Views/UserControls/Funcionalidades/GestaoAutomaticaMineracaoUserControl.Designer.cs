@@ -1,8 +1,4 @@
-﻿using GestorDados.Helpers;
-using Modelos.Enums;
-using System;
-
-namespace CryptoMiningManager.Views.UserControls.Funcionalidades
+﻿namespace CryptoMiningManager.Views.UserControls.Funcionalidades
 {
     partial class GestaoAutomaticaMineracaoUserControl
     {
@@ -17,15 +13,6 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
-            //try
-            //{
-            //    PararTudo(true).GetAwaiter().GetResult();
-            //}
-            //catch (Exception ex)
-            //{
-            //    LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro");
-            //}
-
             if (disposing && (components != null))
             {
                 components.Dispose();
