@@ -9,7 +9,7 @@ namespace GestorDados.Helpers.Entidades
 	{
 		public ConfiguracaoGeralHelper(IDados dados) : base(dados) { }
 
-		//FUNÇÕES AUXILIARES
+		//MÉTODOS AUXILIARES
 		protected override async Task GravarEntidade_ValidacoesExtra_Async(ConfiguracaoGeral entidade)
 		{
 			if (entidade.Ativo)

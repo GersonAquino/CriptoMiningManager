@@ -8,7 +8,6 @@ using Modelos.Exceptions;
 using Modelos.Interfaces;
 using System;
 using System.Windows.Forms;
-using static System.Formats.Asn1.AsnWriter;
 
 namespace CryptoMiningManager.Views.UserControls.Configuracoes.Editores
 {

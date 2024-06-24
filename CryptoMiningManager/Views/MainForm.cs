@@ -180,7 +180,7 @@ namespace CryptoMiningManager.Views
 			}
 		}
 
-		//FUNÇÕES AUXILIARES
+		//MÉTODOS AUXILIARES
 		/// <summary>
 		/// Cria um novo separador com uma <see cref="ILifetimeScope"/> nova
 		/// </summary>

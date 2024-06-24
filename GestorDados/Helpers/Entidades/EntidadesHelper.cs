@@ -116,7 +116,7 @@ namespace GestorDados.Helpers.Entidades
 			return entidadesList;
 		}
 
-		//FUNÇÕES AUXILIARES
+		//MÉTODOS AUXILIARES
 		protected virtual async Task<string> GravarEntidade_QueryBase(T entidade)
 		{
 			if (entidade.Id < -1)

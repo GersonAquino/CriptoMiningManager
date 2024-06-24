@@ -20,17 +20,17 @@ namespace Modelos.Classes
 		/// Se estiver ativo, ao gravar uma entidade, pergunta se pretende criar uma nova entidade (para atualizar o editor)
 		/// <para>TODO: POR IMPLEMENTAR E CRIAR NA BD</para>
 		/// </summary>
-        public bool ConfirmacoesExtraNosEditores { get; set; }
+		public bool ConfirmacoesExtraNosEditores { get; set; }
 
-        /// <summary>
-        /// Peso a aplicar na equação de rentabilidade de mineradores para verificar se deve realmente trocar de minerador.
-        /// O consumo é medido em Watts.
-        /// <para>TODO: POR IMPLEMENTAR</para>
-        /// </summary>
-        public int PesoConsumo { get; set; }
+		/// <summary>
+		/// Peso a aplicar na equação de rentabilidade de mineradores para verificar se deve realmente trocar de minerador.
+		/// O consumo é medido em Watts.
+		/// <para>TODO: POR IMPLEMENTAR</para>
+		/// </summary>
+		public int PesoConsumo { get; set; }
 
-        public string Descricao { get; set; }
+		public string Descricao { get; set; }
 
-        public ConfiguracaoGeral() { }
+		public ConfiguracaoGeral() { }
 	}
 }

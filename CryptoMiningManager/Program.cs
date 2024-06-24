@@ -3,7 +3,6 @@ using Autofac.Core;
 using CryptoMiningManager.CustomControls;
 using CryptoMiningManager.Helpers;
 using CryptoMiningManager.Views;
-using CryptoMiningManager.Views.UserControls.Funcionalidades;
 using DevExpress.XtraEditors;
 using GestorDados;
 using GestorDados.Helpers;

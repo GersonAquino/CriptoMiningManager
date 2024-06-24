@@ -55,51 +55,6 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
 			MineracaoHelper.VerificaoRentabilidade += MineracaoHelper_VerificaoRentabilidade;
 		}
 
-		private void MineracaoHelper_ErroMinerador(object sender, DataReceivedEventArgs e)
-		{
-			ExecucaoME.AppendLine("ERRO: " + MineracaoHelper.RemoveEscapeSequences(e.Data));
-			ScrollFim();
-		}
-
-		private void MineracaoHelper_VerificaoRentabilidade(object sender, EventArgs e)
-		{
-			BeginInvoke(() => UltimaVerificacaoRentabilidadeDE.DateTime = DateTime.Now);
-		}
-
-		private void MineracaoHelper_AlteracaoMoedaMaisRentavel(object sender, AlteracaoMoedaMaisRentavelEventArgs e)
-		{
-			Invoke(() => MoedaMaisRentavelTE.Text = string.IsNullOrWhiteSpace(e.Moeda.Nome) ? e.Moeda.NomeExterno : e.Moeda.Nome);
-		}
-
-		private void MineracaoHelper_RegistarLogsMineracao(object sender, EventArgs e)
-		{
-			EscreverLogsMineracao();
-		}
-
-		private void MineracaoHelper_OutputMinerador(object sender, DataReceivedEventArgs e)
-		{
-			if (ExecucaoME.Text.Length > 50000)
-				EscreverLogsMineracao();
-
-			ExecucaoME.AppendLine(MineracaoHelper.RemoveEscapeSequences(e.Data));
-			ScrollFim();
-		}
-
-		private void MineracaoHelper_AlteracaoMinerador(object sender, Modelos.EventArgs.AlteracaoMineradorEventArgs e)
-		{
-			BeginInvoke(() =>
-			{
-				UltimaAlteracaoMineradorDE.DateTime = DateTime.Now;
-				MineradorAtivoTE.Text = e.Minerador.Nome;
-				MoedaAtualTE.Text = e.Minerador.Moeda.Nome;
-			});
-		}
-
-		private void MineracaoHelper_AlteracaoEstadoMineracao(object sender, Modelos.EventArgs.AlteracaoEstadoMineracaoEventArgs e)
-		{
-			ToggleBotoesIniciar_Parar(e.Ativa);
-		}
-
 		private async void GestaoAutomaticaMineracaoUserControl_Load(object sender, EventArgs e)
 		{
 			await AtualizarDados();
@@ -175,6 +130,53 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
 				XtraMessageBox.Show("Erro ao alterar intervalo de verificação de rentabilidade: " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
 		}
+
+		#region Eventos MineracaoHelper
+		private void MineracaoHelper_AlteracaoEstadoMineracao(object sender, AlteracaoEstadoMineracaoEventArgs e)
+		{
+			ToggleBotoesIniciar_Parar(e.Ativa);
+		}
+
+		private void MineracaoHelper_AlteracaoMinerador(object sender, AlteracaoMineradorEventArgs e)
+		{
+			BeginInvoke(() =>
+			{
+				UltimaAlteracaoMineradorDE.DateTime = DateTime.Now;
+				MineradorAtivoTE.Text = e.Minerador.Nome;
+				MoedaAtualTE.Text = e.Minerador.Moeda.Nome;
+			});
+		}
+
+		private void MineracaoHelper_AlteracaoMoedaMaisRentavel(object sender, AlteracaoMoedaMaisRentavelEventArgs e)
+		{
+			Invoke(() => MoedaMaisRentavelTE.Text = string.IsNullOrWhiteSpace(e.Moeda.Nome) ? e.Moeda.NomeExterno : e.Moeda.Nome);
+		}
+
+		private void MineracaoHelper_ErroMinerador(object sender, DataReceivedEventArgs e)
+		{
+			ExecucaoME.AppendLine("ERRO: " + MineracaoHelper.RemoveEscapeSequences(e.Data));
+			ScrollFim();
+		}
+
+		private void MineracaoHelper_OutputMinerador(object sender, DataReceivedEventArgs e)
+		{
+			if (ExecucaoME.Text.Length > 50000)
+				EscreverLogsMineracao();
+
+			ExecucaoME.AppendLine(MineracaoHelper.RemoveEscapeSequences(e.Data));
+			ScrollFim();
+		}
+
+		private void MineracaoHelper_RegistarLogsMineracao(object sender, EventArgs e)
+		{
+			EscreverLogsMineracao();
+		}
+
+		private void MineracaoHelper_VerificaoRentabilidade(object sender, EventArgs e)
+		{
+			BeginInvoke(() => UltimaVerificacaoRentabilidadeDE.DateTime = DateTime.Now);
+		}
+		#endregion
 
 		private void Temporizador_Tick(object sender, EventArgs e)
 		{

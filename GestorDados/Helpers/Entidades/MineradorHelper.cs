@@ -43,7 +43,7 @@ namespace GestorDados.Helpers.Entidades
 		}
 
 
-		//FUNÇÕES AUXILIARES
+		//MÉTODOS AUXILIARES
 		protected override void GravarEntidade_ValidacoesExtra(Minerador entidade)
 		{
 			if (!entidade.CPU && !entidade.GPU)

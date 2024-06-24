@@ -9,7 +9,6 @@ using Modelos.Interfaces;
 using System;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using static System.Formats.Asn1.AsnWriter;
 
 namespace CryptoMiningManager.Views.UserControls.Configuracoes
 {
@@ -75,7 +74,7 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes
 
 						if (configGeral.Ativo)
 						{
-							if (XtraMessageBox.Show("Está prestes a eliminar a configuração geral ativa, pretende continuar?", 
+							if (XtraMessageBox.Show("Está prestes a eliminar a configuração geral ativa, pretende continuar?",
 							"Configuração geral ativa selecionada", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
 								return;
 
@@ -114,7 +113,7 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes
 			}
 		}
 
-		//FUNÇÕES AUXILIARES
+		//MÉTODOS AUXILIARES
 		private async Task AtualizarDados()
 		{
 			IOverlaySplashScreenHandle splashScreenHandler = SplashScreenManager.ShowOverlayForm(ConfigsGeraisGC);

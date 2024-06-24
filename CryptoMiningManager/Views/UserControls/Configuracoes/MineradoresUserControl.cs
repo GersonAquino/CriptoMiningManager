@@ -92,7 +92,7 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes
 			}
 		}
 
-		//FUNÇÕES AUXILIARES
+		//MÉTODOS AUXILIARES
 		private async Task AtualizarDados()
 		{
 			IOverlaySplashScreenHandle splashScreenHandler = SplashScreenManager.ShowOverlayForm(MineradoresGC);

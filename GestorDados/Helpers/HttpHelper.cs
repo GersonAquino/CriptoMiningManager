@@ -90,7 +90,7 @@ namespace GestorDados.Helpers
 			}
 		}
 
-		//FUNÇÕES AUXILIARES
+		//MÉTODOS AUXILIARES
 		private async Task<T> PedidoPOSTHttpBase<T>(string uri, HttpContent content, params (string Header, string Valor)[] requestHeaders) where T : class
 		{
 			using (HttpClient client = new())
