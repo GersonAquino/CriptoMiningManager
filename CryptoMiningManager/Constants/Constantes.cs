@@ -13,5 +13,6 @@
 		public const string Algoritmo = "Algoritmo";
 		public const string Iniciar = "Iniciar";
 		public const string Parar = "Parar";
+		public const string Mineradores = "Mineradores";
 	}
 }

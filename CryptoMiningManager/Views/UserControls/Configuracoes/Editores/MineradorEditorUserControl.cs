@@ -48,7 +48,7 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes.Editores
 				}
 				: m => MoedasBindingSource.Add(m);
 
-				foreach (Moeda moeda in await MoedasHelper.GetEntidades(ordenacao: "Nome DESC"))
+				foreach (Moeda moeda in await MoedasHelper.GetEntidades(ordenacao: "Nome ASC"))
 				{
 					iteracao(moeda);
 				}

@@ -39,12 +39,10 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
 
 			//Este método aparentemente vai buscar o DescriptionAttribute sozinho, então já fica com uma Caption decente
 			AlgoritmoRIDG.Items.AddEnum<Algoritmo>();
-			AlgoritmoBEI.EditValue = Algoritmo.MaisRentavel;
+			AlgoritmoBEI.EditValue = Algoritmo.Rentabilidade;
 
 			MineracaoHelper.TempoEntreVerificacoes = 180000; //30 minutos
 			TemporizadorBEI.EditValue = new DateTime(0);
-
-			MineracaoHelper.Mineradores = (BindingList<Minerador>)MineradoresBindingSource.List;
 
 			MineracaoHelper.AlteracaoEstadoMineracao += MineracaoHelper_AlteracaoEstadoMineracao;
 			MineracaoHelper.AlteracaoMinerador += MineracaoHelper_AlteracaoMinerador; ;
@@ -72,7 +70,7 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
 			{
 				using (IOverlaySplashScreenHandle splashScreenHandler = SplashScreenManager.ShowOverlayForm(this))
 				{
-					await MineracaoHelper.PararTudo();
+					await MineracaoHelper.Parar();
 
 					if (TemporizadorBEI.EditValue is DateTime tempo && tempo.TimeOfDay.Ticks != 0)
 					{
@@ -104,7 +102,7 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
 						Temporizador.Enabled = false;
 					else
 					{
-						await MineracaoHelper.PararTudo();
+						await MineracaoHelper.Parar();
 						ExecucaoME.Text = string.Empty;
 					}
 				}

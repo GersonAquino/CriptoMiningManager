@@ -13,7 +13,7 @@ using Utils;
 namespace GestorDados.Helpers.Entidades
 {
 	//Esta classe pode gerar problemas com a implementação atual do Autofac, até agora parece que não, mas se algo parecer estranho pode ter a ver com isto
-	public abstract class EntidadesHelper<T> : IEntidadesHelper<T> where T : Registo, new() //Descender de Configuracao não é obrigatório, mas pareceu-me fazer sentido
+	public abstract class EntidadesHelper<T> : IEntidadesHelper<T> where T : Registo, new()
 	{
 		protected string[] ColunasSemId { get; }
 		protected string Descricao { get; }
@@ -50,6 +50,7 @@ namespace GestorDados.Helpers.Entidades
 			return await Dados.ExecuteOpenAsync(query, new { Ids = ids });
 		}
 
+		///<inheritdoc/>
 		public virtual async Task<T> GetEntidade(string condicoes = null, string ordenacao = null)
 		{
 			string query = QueryHelper.Select("*", Tabela, condicoes, ordenacao, limit: 1);

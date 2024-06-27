@@ -37,14 +37,14 @@ namespace CryptoMiningManager
 
 			string connectionString = ConfigurationManager.ConnectionStrings["CriptoManager"].ConnectionString;
 
-			LogHelper.StartLogger(connectionString.Split('=')[1]);
+			LogHelper.StartLogger(connectionString.Split('=', 3)[1]);
 
 			try
 			{
 				using (IContainer container = ContainerConfig(connectionString))
 				using (ILifetimeScope scope = container.BeginLifetimeScope())
 				{
-					scope.Resolve<CustomNotifyIcon>().NotifyIcon.Icon = Icon.ExtractAssociatedIcon(Assembly.GetExecutingAssembly().Location);
+					scope.Resolve<CustomNotifyIcon>().NotifyIcon.Icon = Icon.ExtractAssociatedIcon(assembly.Location);
 
 					Application.Run(scope.Resolve<MainForm>());
 				}
@@ -93,6 +93,7 @@ namespace CryptoMiningManager
 			//Helpers
 			builder.RegisterType<ConfiguracoesEntidadesHelper>().InstancePerLifetimeScope();
 			builder.RegisterType<MineracaoHelper>().WithParameter(new TypedParameter(tipoString, ConfigurationManager.AppSettings["LocalizacaoLogsMineracao"])).SingleInstance();
+			//TODO: Passar LocalizacaoLogsMineracao para Configurações Gerais, ou talvez criar Configurações Mineração e meter lá o URLRentabilidade também
 
 			//Taskbar Icon
 			builder.RegisterType<CustomNotifyIcon>().SingleInstance();

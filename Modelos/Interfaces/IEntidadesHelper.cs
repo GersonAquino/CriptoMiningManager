@@ -59,6 +59,11 @@ namespace Modelos.Interfaces
 		/// <returns>Id da entidade gravada ou -1 em caso de falha</returns>
 		Task<int> GravarEntidade_GetIdGerado(T entidade);
 
+		/// <summary>
+		/// Grava todas as entidades recebidas
+		/// </summary>
+		/// <param name="entidades"></param>
+		/// <returns>Entidades com a DataAlteracao atualizada</returns>
 		Task<List<T>> GravarEntidades(IEnumerable<T> entidades = null);
 	}
 }

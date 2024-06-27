@@ -42,6 +42,8 @@
 			IniciarMinimizadaCheckEdit = new DevExpress.XtraEditors.CheckEdit();
 			MedirConsumoCheckEdit = new DevExpress.XtraEditors.CheckEdit();
 			MinimizarAoFecharCheckEdit = new DevExpress.XtraEditors.CheckEdit();
+			DescricaoMemoEdit = new DevExpress.XtraEditors.MemoEdit();
+			PesoConsumoSpinEdit = new DevExpress.XtraEditors.SpinEdit();
 			BaseLCG = new DevExpress.XtraLayout.LayoutControlGroup();
 			ConfigGeralLCG = new DevExpress.XtraLayout.LayoutControlGroup();
 			ItemForDataCriacao = new DevExpress.XtraLayout.LayoutControlItem();
@@ -53,8 +55,6 @@
 			ItemForPesoConsumo = new DevExpress.XtraLayout.LayoutControlItem();
 			ItemForMinimizarAoFechar = new DevExpress.XtraLayout.LayoutControlItem();
 			ItemForDescricao = new DevExpress.XtraLayout.LayoutControlItem();
-			DescricaoMemoEdit = new DevExpress.XtraEditors.MemoEdit();
-			PesoConsumoSpinEdit = new DevExpress.XtraEditors.SpinEdit();
 			((System.ComponentModel.ISupportInitialize)ConfigGeralEditorRC).BeginInit();
 			((System.ComponentModel.ISupportInitialize)BaseDLC).BeginInit();
 			BaseDLC.SuspendLayout();
@@ -67,6 +67,8 @@
 			((System.ComponentModel.ISupportInitialize)IniciarMinimizadaCheckEdit.Properties).BeginInit();
 			((System.ComponentModel.ISupportInitialize)MedirConsumoCheckEdit.Properties).BeginInit();
 			((System.ComponentModel.ISupportInitialize)MinimizarAoFecharCheckEdit.Properties).BeginInit();
+			((System.ComponentModel.ISupportInitialize)DescricaoMemoEdit.Properties).BeginInit();
+			((System.ComponentModel.ISupportInitialize)PesoConsumoSpinEdit.Properties).BeginInit();
 			((System.ComponentModel.ISupportInitialize)BaseLCG).BeginInit();
 			((System.ComponentModel.ISupportInitialize)ConfigGeralLCG).BeginInit();
 			((System.ComponentModel.ISupportInitialize)ItemForDataCriacao).BeginInit();
@@ -78,23 +80,20 @@
 			((System.ComponentModel.ISupportInitialize)ItemForPesoConsumo).BeginInit();
 			((System.ComponentModel.ISupportInitialize)ItemForMinimizarAoFechar).BeginInit();
 			((System.ComponentModel.ISupportInitialize)ItemForDescricao).BeginInit();
-			((System.ComponentModel.ISupportInitialize)DescricaoMemoEdit.Properties).BeginInit();
-			((System.ComponentModel.ISupportInitialize)PesoConsumoSpinEdit.Properties).BeginInit();
 			SuspendLayout();
 			// 
 			// ConfigGeralEditorRC
 			// 
-			ConfigGeralEditorRC.EmptyAreaImageOptions.ImagePadding = new System.Windows.Forms.Padding(35, 41, 35, 41);
+			ConfigGeralEditorRC.EmptyAreaImageOptions.ImagePadding = new System.Windows.Forms.Padding(30, 31, 30, 31);
 			ConfigGeralEditorRC.ExpandCollapseItem.Id = 0;
 			ConfigGeralEditorRC.Items.AddRange(new DevExpress.XtraBars.BarItem[] { ConfigGeralEditorRC.ExpandCollapseItem, GravarBBI });
 			ConfigGeralEditorRC.Location = new System.Drawing.Point(0, 0);
-			ConfigGeralEditorRC.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			ConfigGeralEditorRC.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
 			ConfigGeralEditorRC.MaxItemId = 3;
 			ConfigGeralEditorRC.Name = "ConfigGeralEditorRC";
-			ConfigGeralEditorRC.OptionsMenuMinWidth = 385;
 			ConfigGeralEditorRC.Pages.AddRange(new DevExpress.XtraBars.Ribbon.RibbonPage[] { ConfigGeralEditorRP });
 			ConfigGeralEditorRC.RibbonStyle = DevExpress.XtraBars.Ribbon.RibbonControlStyle.Office2019;
-			ConfigGeralEditorRC.Size = new System.Drawing.Size(1395, 186);
+			ConfigGeralEditorRC.Size = new System.Drawing.Size(1196, 173);
 			// 
 			// GravarBBI
 			// 
@@ -129,26 +128,26 @@
 			BaseDLC.DataMember = null;
 			BaseDLC.DataSource = ConfigGeralBindingSource;
 			BaseDLC.Dock = System.Windows.Forms.DockStyle.Fill;
-			BaseDLC.Location = new System.Drawing.Point(0, 186);
-			BaseDLC.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			BaseDLC.Location = new System.Drawing.Point(0, 173);
+			BaseDLC.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
 			BaseDLC.MenuManager = ConfigGeralEditorRC;
 			BaseDLC.Name = "BaseDLC";
 			BaseDLC.Root = BaseLCG;
-			BaseDLC.Size = new System.Drawing.Size(1395, 638);
+			BaseDLC.Size = new System.Drawing.Size(1196, 457);
 			BaseDLC.TabIndex = 1;
 			BaseDLC.Text = "dataLayoutControl1";
 			// 
 			// AtivoCheckEdit
 			// 
 			AtivoCheckEdit.DataBindings.Add(new System.Windows.Forms.Binding("Checked", ConfigGeralBindingSource, "Ativo", true));
-			AtivoCheckEdit.Location = new System.Drawing.Point(12, 170);
-			AtivoCheckEdit.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			AtivoCheckEdit.Location = new System.Drawing.Point(11, 133);
+			AtivoCheckEdit.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
 			AtivoCheckEdit.MenuManager = ConfigGeralEditorRC;
 			AtivoCheckEdit.Name = "AtivoCheckEdit";
 			AtivoCheckEdit.Properties.Caption = "Ativa";
 			AtivoCheckEdit.Properties.GlyphAlignment = DevExpress.Utils.HorzAlignment.Default;
 			AtivoCheckEdit.Properties.NullStyle = DevExpress.XtraEditors.Controls.StyleIndeterminate.Unchecked;
-			AtivoCheckEdit.Size = new System.Drawing.Size(1371, 21);
+			AtivoCheckEdit.Size = new System.Drawing.Size(1174, 20);
 			AtivoCheckEdit.StyleController = BaseDLC;
 			AtivoCheckEdit.TabIndex = 6;
 			// 
@@ -160,14 +159,14 @@
 			// 
 			DataCriacaoDateEdit.DataBindings.Add(new System.Windows.Forms.Binding("DateTime", ConfigGeralBindingSource, "DataCriacao", true));
 			DataCriacaoDateEdit.EditValue = null;
-			DataCriacaoDateEdit.Location = new System.Drawing.Point(111, 195);
-			DataCriacaoDateEdit.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			DataCriacaoDateEdit.Location = new System.Drawing.Point(93, 157);
+			DataCriacaoDateEdit.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
 			DataCriacaoDateEdit.MenuManager = ConfigGeralEditorRC;
 			DataCriacaoDateEdit.Name = "DataCriacaoDateEdit";
 			DataCriacaoDateEdit.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] { new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo) });
 			DataCriacaoDateEdit.Properties.CalendarTimeProperties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] { new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo) });
 			DataCriacaoDateEdit.Properties.ReadOnly = true;
-			DataCriacaoDateEdit.Size = new System.Drawing.Size(584, 26);
+			DataCriacaoDateEdit.Size = new System.Drawing.Size(503, 22);
 			DataCriacaoDateEdit.StyleController = BaseDLC;
 			DataCriacaoDateEdit.TabIndex = 7;
 			// 
@@ -175,170 +174,68 @@
 			// 
 			DataAlteracaoDateEdit.DataBindings.Add(new System.Windows.Forms.Binding("DateTime", ConfigGeralBindingSource, "DataAlteracao", true));
 			DataAlteracaoDateEdit.EditValue = null;
-			DataAlteracaoDateEdit.Location = new System.Drawing.Point(798, 195);
-			DataAlteracaoDateEdit.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			DataAlteracaoDateEdit.Location = new System.Drawing.Point(682, 157);
+			DataAlteracaoDateEdit.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
 			DataAlteracaoDateEdit.MenuManager = ConfigGeralEditorRC;
 			DataAlteracaoDateEdit.Name = "DataAlteracaoDateEdit";
 			DataAlteracaoDateEdit.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] { new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo) });
 			DataAlteracaoDateEdit.Properties.CalendarTimeProperties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] { new DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo) });
 			DataAlteracaoDateEdit.Properties.ReadOnly = true;
-			DataAlteracaoDateEdit.Size = new System.Drawing.Size(585, 26);
+			DataAlteracaoDateEdit.Size = new System.Drawing.Size(503, 22);
 			DataAlteracaoDateEdit.StyleController = BaseDLC;
 			DataAlteracaoDateEdit.TabIndex = 8;
 			// 
 			// IniciarMinimizadaCheckEdit
 			// 
 			IniciarMinimizadaCheckEdit.DataBindings.Add(new System.Windows.Forms.Binding("Checked", ConfigGeralBindingSource, "IniciarMinimizada", true));
-			IniciarMinimizadaCheckEdit.Location = new System.Drawing.Point(12, 115);
-			IniciarMinimizadaCheckEdit.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			IniciarMinimizadaCheckEdit.Location = new System.Drawing.Point(11, 83);
+			IniciarMinimizadaCheckEdit.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
 			IniciarMinimizadaCheckEdit.MenuManager = ConfigGeralEditorRC;
 			IniciarMinimizadaCheckEdit.Name = "IniciarMinimizadaCheckEdit";
 			IniciarMinimizadaCheckEdit.Properties.Caption = "Iniciar Minimizada";
 			IniciarMinimizadaCheckEdit.Properties.GlyphAlignment = DevExpress.Utils.HorzAlignment.Default;
 			IniciarMinimizadaCheckEdit.Properties.NullStyle = DevExpress.XtraEditors.Controls.StyleIndeterminate.Unchecked;
-			IniciarMinimizadaCheckEdit.Size = new System.Drawing.Size(683, 21);
+			IniciarMinimizadaCheckEdit.Size = new System.Drawing.Size(585, 20);
 			IniciarMinimizadaCheckEdit.StyleController = BaseDLC;
 			IniciarMinimizadaCheckEdit.TabIndex = 3;
 			// 
 			// MedirConsumoCheckEdit
 			// 
 			MedirConsumoCheckEdit.DataBindings.Add(new System.Windows.Forms.Binding("Checked", ConfigGeralBindingSource, "MedirConsumo", true));
-			MedirConsumoCheckEdit.Location = new System.Drawing.Point(12, 140);
-			MedirConsumoCheckEdit.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			MedirConsumoCheckEdit.Location = new System.Drawing.Point(11, 107);
+			MedirConsumoCheckEdit.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
 			MedirConsumoCheckEdit.MenuManager = ConfigGeralEditorRC;
 			MedirConsumoCheckEdit.Name = "MedirConsumoCheckEdit";
 			MedirConsumoCheckEdit.Properties.Caption = "Medir Consumo";
 			MedirConsumoCheckEdit.Properties.GlyphAlignment = DevExpress.Utils.HorzAlignment.Default;
 			MedirConsumoCheckEdit.Properties.NullStyle = DevExpress.XtraEditors.Controls.StyleIndeterminate.Unchecked;
-			MedirConsumoCheckEdit.Size = new System.Drawing.Size(683, 21);
+			MedirConsumoCheckEdit.Size = new System.Drawing.Size(585, 20);
 			MedirConsumoCheckEdit.StyleController = BaseDLC;
 			MedirConsumoCheckEdit.TabIndex = 4;
 			// 
 			// MinimizarAoFecharCheckEdit
 			// 
 			MinimizarAoFecharCheckEdit.DataBindings.Add(new System.Windows.Forms.Binding("Checked", ConfigGeralBindingSource, "MinimizarAoFechar", true));
-			MinimizarAoFecharCheckEdit.Location = new System.Drawing.Point(699, 115);
-			MinimizarAoFecharCheckEdit.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			MinimizarAoFecharCheckEdit.Location = new System.Drawing.Point(600, 83);
+			MinimizarAoFecharCheckEdit.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
 			MinimizarAoFecharCheckEdit.MenuManager = ConfigGeralEditorRC;
 			MinimizarAoFecharCheckEdit.Name = "MinimizarAoFecharCheckEdit";
 			MinimizarAoFecharCheckEdit.Properties.Caption = "Minimizar ao Fechar";
 			MinimizarAoFecharCheckEdit.Properties.GlyphAlignment = DevExpress.Utils.HorzAlignment.Default;
 			MinimizarAoFecharCheckEdit.Properties.NullStyle = DevExpress.XtraEditors.Controls.StyleIndeterminate.Unchecked;
-			MinimizarAoFecharCheckEdit.Size = new System.Drawing.Size(684, 21);
+			MinimizarAoFecharCheckEdit.Size = new System.Drawing.Size(585, 20);
 			MinimizarAoFecharCheckEdit.StyleController = BaseDLC;
 			MinimizarAoFecharCheckEdit.TabIndex = 2;
-			// 
-			// BaseLCG
-			// 
-			BaseLCG.EnableIndentsWithoutBorders = DevExpress.Utils.DefaultBoolean.True;
-			BaseLCG.GroupBordersVisible = false;
-			BaseLCG.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] { ConfigGeralLCG });
-			BaseLCG.Name = "BaseLCG";
-			BaseLCG.Size = new System.Drawing.Size(1395, 638);
-			BaseLCG.TextVisible = false;
-			// 
-			// ConfigGeralLCG
-			// 
-			ConfigGeralLCG.AllowDrawBackground = false;
-			ConfigGeralLCG.GroupBordersVisible = false;
-			ConfigGeralLCG.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] { ItemForDataCriacao, ItemForAtivo, emptySpaceItem1, ItemForDataAlteracao, ItemForIniciarMinimizada, ItemForMedirConsumo, ItemForPesoConsumo, ItemForMinimizarAoFechar, ItemForDescricao });
-			ConfigGeralLCG.Location = new System.Drawing.Point(0, 0);
-			ConfigGeralLCG.Name = "ConfigGeralLCG";
-			ConfigGeralLCG.Size = new System.Drawing.Size(1375, 618);
-			// 
-			// ItemForDataCriacao
-			// 
-			ItemForDataCriacao.Control = DataCriacaoDateEdit;
-			ItemForDataCriacao.Location = new System.Drawing.Point(0, 183);
-			ItemForDataCriacao.Name = "ItemForDataCriacao";
-			ItemForDataCriacao.Size = new System.Drawing.Size(687, 30);
-			ItemForDataCriacao.Text = "Data Criação";
-			ItemForDataCriacao.TextSize = new System.Drawing.Size(87, 17);
-			// 
-			// ItemForAtivo
-			// 
-			ItemForAtivo.Control = AtivoCheckEdit;
-			ItemForAtivo.Location = new System.Drawing.Point(0, 158);
-			ItemForAtivo.Name = "ItemForAtivo";
-			ItemForAtivo.Size = new System.Drawing.Size(1375, 25);
-			ItemForAtivo.Text = "Ativo";
-			ItemForAtivo.TextSize = new System.Drawing.Size(0, 0);
-			ItemForAtivo.TextVisible = false;
-			// 
-			// emptySpaceItem1
-			// 
-			emptySpaceItem1.AllowHotTrack = false;
-			emptySpaceItem1.Location = new System.Drawing.Point(0, 213);
-			emptySpaceItem1.Name = "emptySpaceItem1";
-			emptySpaceItem1.Size = new System.Drawing.Size(1375, 405);
-			emptySpaceItem1.TextSize = new System.Drawing.Size(0, 0);
-			// 
-			// ItemForDataAlteracao
-			// 
-			ItemForDataAlteracao.Control = DataAlteracaoDateEdit;
-			ItemForDataAlteracao.Location = new System.Drawing.Point(687, 183);
-			ItemForDataAlteracao.Name = "ItemForDataAlteracao";
-			ItemForDataAlteracao.Size = new System.Drawing.Size(688, 30);
-			ItemForDataAlteracao.Text = "Data Alteração";
-			ItemForDataAlteracao.TextSize = new System.Drawing.Size(87, 17);
-			// 
-			// ItemForIniciarMinimizada
-			// 
-			ItemForIniciarMinimizada.Control = IniciarMinimizadaCheckEdit;
-			ItemForIniciarMinimizada.Location = new System.Drawing.Point(0, 103);
-			ItemForIniciarMinimizada.Name = "ItemForIniciarMinimizada";
-			ItemForIniciarMinimizada.Size = new System.Drawing.Size(687, 25);
-			ItemForIniciarMinimizada.Text = "Iniciar Minimizada";
-			ItemForIniciarMinimizada.TextSize = new System.Drawing.Size(0, 0);
-			ItemForIniciarMinimizada.TextVisible = false;
-			// 
-			// ItemForMedirConsumo
-			// 
-			ItemForMedirConsumo.Control = MedirConsumoCheckEdit;
-			ItemForMedirConsumo.Location = new System.Drawing.Point(0, 128);
-			ItemForMedirConsumo.Name = "ItemForMedirConsumo";
-			ItemForMedirConsumo.Size = new System.Drawing.Size(687, 30);
-			ItemForMedirConsumo.Text = "Medir Consumo";
-			ItemForMedirConsumo.TextSize = new System.Drawing.Size(0, 0);
-			ItemForMedirConsumo.TextVisible = false;
-			// 
-			// ItemForPesoConsumo
-			// 
-			ItemForPesoConsumo.Control = PesoConsumoSpinEdit;
-			ItemForPesoConsumo.Location = new System.Drawing.Point(687, 128);
-			ItemForPesoConsumo.Name = "ItemForPesoConsumo";
-			ItemForPesoConsumo.Size = new System.Drawing.Size(688, 30);
-			ItemForPesoConsumo.Text = "Peso Consumo";
-			ItemForPesoConsumo.TextSize = new System.Drawing.Size(87, 17);
-			// 
-			// ItemForMinimizarAoFechar
-			// 
-			ItemForMinimizarAoFechar.Control = MinimizarAoFecharCheckEdit;
-			ItemForMinimizarAoFechar.Location = new System.Drawing.Point(687, 103);
-			ItemForMinimizarAoFechar.Name = "ItemForMinimizarAoFechar";
-			ItemForMinimizarAoFechar.Size = new System.Drawing.Size(688, 25);
-			ItemForMinimizarAoFechar.Text = "Minimizar Ao Fechar";
-			ItemForMinimizarAoFechar.TextSize = new System.Drawing.Size(0, 0);
-			ItemForMinimizarAoFechar.TextVisible = false;
-			// 
-			// ItemForDescricao
-			// 
-			ItemForDescricao.Control = DescricaoMemoEdit;
-			ItemForDescricao.Location = new System.Drawing.Point(0, 0);
-			ItemForDescricao.Name = "ItemForDescricao";
-			ItemForDescricao.Size = new System.Drawing.Size(1375, 103);
-			ItemForDescricao.Text = "Descrição";
-			ItemForDescricao.TextLocation = DevExpress.Utils.Locations.Top;
-			ItemForDescricao.TextSize = new System.Drawing.Size(87, 17);
 			// 
 			// DescricaoMemoEdit
 			// 
 			DescricaoMemoEdit.DataBindings.Add(new System.Windows.Forms.Binding("EditValue", ConfigGeralBindingSource, "Descricao", true));
-			DescricaoMemoEdit.Location = new System.Drawing.Point(12, 41);
+			DescricaoMemoEdit.Location = new System.Drawing.Point(11, 26);
+			DescricaoMemoEdit.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
 			DescricaoMemoEdit.MenuManager = ConfigGeralEditorRC;
 			DescricaoMemoEdit.Name = "DescricaoMemoEdit";
 			DescricaoMemoEdit.Properties.MaxLength = 200;
-			DescricaoMemoEdit.Size = new System.Drawing.Size(1371, 70);
+			DescricaoMemoEdit.Size = new System.Drawing.Size(1174, 53);
 			DescricaoMemoEdit.StyleController = BaseDLC;
 			DescricaoMemoEdit.TabIndex = 0;
 			// 
@@ -346,7 +243,8 @@
 			// 
 			PesoConsumoSpinEdit.DataBindings.Add(new System.Windows.Forms.Binding("Value", ConfigGeralBindingSource, "PesoConsumo", true));
 			PesoConsumoSpinEdit.EditValue = new decimal(new int[] { 0, 0, 0, 0 });
-			PesoConsumoSpinEdit.Location = new System.Drawing.Point(798, 140);
+			PesoConsumoSpinEdit.Location = new System.Drawing.Point(682, 107);
+			PesoConsumoSpinEdit.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
 			PesoConsumoSpinEdit.MenuManager = ConfigGeralEditorRC;
 			PesoConsumoSpinEdit.Name = "PesoConsumoSpinEdit";
 			PesoConsumoSpinEdit.Properties.Appearance.Options.UseTextOptions = true;
@@ -357,19 +255,122 @@
 			PesoConsumoSpinEdit.Properties.Mask.UseMaskAsDisplayFormat = true;
 			PesoConsumoSpinEdit.Properties.MaskSettings.Set("mask", "N0");
 			PesoConsumoSpinEdit.Properties.MaxValue = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
-			PesoConsumoSpinEdit.Size = new System.Drawing.Size(585, 26);
+			PesoConsumoSpinEdit.Size = new System.Drawing.Size(503, 22);
 			PesoConsumoSpinEdit.StyleController = BaseDLC;
 			PesoConsumoSpinEdit.TabIndex = 5;
 			// 
+			// BaseLCG
+			// 
+			BaseLCG.EnableIndentsWithoutBorders = DevExpress.Utils.DefaultBoolean.True;
+			BaseLCG.GroupBordersVisible = false;
+			BaseLCG.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] { ConfigGeralLCG });
+			BaseLCG.Name = "BaseLCG";
+			BaseLCG.Size = new System.Drawing.Size(1196, 457);
+			BaseLCG.TextVisible = false;
+			// 
+			// ConfigGeralLCG
+			// 
+			ConfigGeralLCG.AllowDrawBackground = false;
+			ConfigGeralLCG.GroupBordersVisible = false;
+			ConfigGeralLCG.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] { ItemForDataCriacao, ItemForAtivo, emptySpaceItem1, ItemForDataAlteracao, ItemForIniciarMinimizada, ItemForMedirConsumo, ItemForPesoConsumo, ItemForMinimizarAoFechar, ItemForDescricao });
+			ConfigGeralLCG.Location = new System.Drawing.Point(0, 0);
+			ConfigGeralLCG.Name = "ConfigGeralLCG";
+			ConfigGeralLCG.Size = new System.Drawing.Size(1178, 441);
+			// 
+			// ItemForDataCriacao
+			// 
+			ItemForDataCriacao.Control = DataCriacaoDateEdit;
+			ItemForDataCriacao.Location = new System.Drawing.Point(0, 147);
+			ItemForDataCriacao.Name = "ItemForDataCriacao";
+			ItemForDataCriacao.Size = new System.Drawing.Size(589, 26);
+			ItemForDataCriacao.Text = "Data Criação";
+			ItemForDataCriacao.TextSize = new System.Drawing.Size(72, 13);
+			// 
+			// ItemForAtivo
+			// 
+			ItemForAtivo.Control = AtivoCheckEdit;
+			ItemForAtivo.Location = new System.Drawing.Point(0, 123);
+			ItemForAtivo.Name = "ItemForAtivo";
+			ItemForAtivo.Size = new System.Drawing.Size(1178, 24);
+			ItemForAtivo.Text = "Ativo";
+			ItemForAtivo.TextSize = new System.Drawing.Size(0, 0);
+			ItemForAtivo.TextVisible = false;
+			// 
+			// emptySpaceItem1
+			// 
+			emptySpaceItem1.AllowHotTrack = false;
+			emptySpaceItem1.Location = new System.Drawing.Point(0, 173);
+			emptySpaceItem1.Name = "emptySpaceItem1";
+			emptySpaceItem1.Size = new System.Drawing.Size(1178, 268);
+			emptySpaceItem1.TextSize = new System.Drawing.Size(0, 0);
+			// 
+			// ItemForDataAlteracao
+			// 
+			ItemForDataAlteracao.Control = DataAlteracaoDateEdit;
+			ItemForDataAlteracao.Location = new System.Drawing.Point(589, 147);
+			ItemForDataAlteracao.Name = "ItemForDataAlteracao";
+			ItemForDataAlteracao.Size = new System.Drawing.Size(589, 26);
+			ItemForDataAlteracao.Text = "Data Alteração";
+			ItemForDataAlteracao.TextSize = new System.Drawing.Size(72, 13);
+			// 
+			// ItemForIniciarMinimizada
+			// 
+			ItemForIniciarMinimizada.Control = IniciarMinimizadaCheckEdit;
+			ItemForIniciarMinimizada.Location = new System.Drawing.Point(0, 73);
+			ItemForIniciarMinimizada.Name = "ItemForIniciarMinimizada";
+			ItemForIniciarMinimizada.Size = new System.Drawing.Size(589, 24);
+			ItemForIniciarMinimizada.Text = "Iniciar Minimizada";
+			ItemForIniciarMinimizada.TextSize = new System.Drawing.Size(0, 0);
+			ItemForIniciarMinimizada.TextVisible = false;
+			// 
+			// ItemForMedirConsumo
+			// 
+			ItemForMedirConsumo.Control = MedirConsumoCheckEdit;
+			ItemForMedirConsumo.Location = new System.Drawing.Point(0, 97);
+			ItemForMedirConsumo.Name = "ItemForMedirConsumo";
+			ItemForMedirConsumo.Size = new System.Drawing.Size(589, 26);
+			ItemForMedirConsumo.Text = "Medir Consumo";
+			ItemForMedirConsumo.TextSize = new System.Drawing.Size(0, 0);
+			ItemForMedirConsumo.TextVisible = false;
+			// 
+			// ItemForPesoConsumo
+			// 
+			ItemForPesoConsumo.Control = PesoConsumoSpinEdit;
+			ItemForPesoConsumo.Location = new System.Drawing.Point(589, 97);
+			ItemForPesoConsumo.Name = "ItemForPesoConsumo";
+			ItemForPesoConsumo.Size = new System.Drawing.Size(589, 26);
+			ItemForPesoConsumo.Text = "Peso Consumo";
+			ItemForPesoConsumo.TextSize = new System.Drawing.Size(72, 13);
+			// 
+			// ItemForMinimizarAoFechar
+			// 
+			ItemForMinimizarAoFechar.Control = MinimizarAoFecharCheckEdit;
+			ItemForMinimizarAoFechar.Location = new System.Drawing.Point(589, 73);
+			ItemForMinimizarAoFechar.Name = "ItemForMinimizarAoFechar";
+			ItemForMinimizarAoFechar.Size = new System.Drawing.Size(589, 24);
+			ItemForMinimizarAoFechar.Text = "Minimizar Ao Fechar";
+			ItemForMinimizarAoFechar.TextSize = new System.Drawing.Size(0, 0);
+			ItemForMinimizarAoFechar.TextVisible = false;
+			// 
+			// ItemForDescricao
+			// 
+			ItemForDescricao.Control = DescricaoMemoEdit;
+			ItemForDescricao.Location = new System.Drawing.Point(0, 0);
+			ItemForDescricao.Name = "ItemForDescricao";
+			ItemForDescricao.Size = new System.Drawing.Size(1178, 73);
+			ItemForDescricao.Text = "Descrição";
+			ItemForDescricao.TextLocation = DevExpress.Utils.Locations.Top;
+			ItemForDescricao.TextSize = new System.Drawing.Size(72, 13);
+			// 
 			// ConfiguracaoGeralEditorUserControl
 			// 
-			AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
+			AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			Controls.Add(BaseDLC);
 			Controls.Add(ConfigGeralEditorRC);
-			Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
 			Name = "ConfiguracaoGeralEditorUserControl";
-			Size = new System.Drawing.Size(1395, 824);
+			Size = new System.Drawing.Size(1196, 630);
 			((System.ComponentModel.ISupportInitialize)ConfigGeralEditorRC).EndInit();
 			((System.ComponentModel.ISupportInitialize)BaseDLC).EndInit();
 			BaseDLC.ResumeLayout(false);
@@ -382,6 +383,8 @@
 			((System.ComponentModel.ISupportInitialize)IniciarMinimizadaCheckEdit.Properties).EndInit();
 			((System.ComponentModel.ISupportInitialize)MedirConsumoCheckEdit.Properties).EndInit();
 			((System.ComponentModel.ISupportInitialize)MinimizarAoFecharCheckEdit.Properties).EndInit();
+			((System.ComponentModel.ISupportInitialize)DescricaoMemoEdit.Properties).EndInit();
+			((System.ComponentModel.ISupportInitialize)PesoConsumoSpinEdit.Properties).EndInit();
 			((System.ComponentModel.ISupportInitialize)BaseLCG).EndInit();
 			((System.ComponentModel.ISupportInitialize)ConfigGeralLCG).EndInit();
 			((System.ComponentModel.ISupportInitialize)ItemForDataCriacao).EndInit();
@@ -393,8 +396,6 @@
 			((System.ComponentModel.ISupportInitialize)ItemForPesoConsumo).EndInit();
 			((System.ComponentModel.ISupportInitialize)ItemForMinimizarAoFechar).EndInit();
 			((System.ComponentModel.ISupportInitialize)ItemForDescricao).EndInit();
-			((System.ComponentModel.ISupportInitialize)DescricaoMemoEdit.Properties).EndInit();
-			((System.ComponentModel.ISupportInitialize)PesoConsumoSpinEdit.Properties).EndInit();
 			ResumeLayout(false);
 			PerformLayout();
 		}

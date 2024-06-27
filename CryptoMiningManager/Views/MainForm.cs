@@ -11,9 +11,12 @@ using DevExpress.XtraSplashScreen;
 using GestorDados.Helpers;
 using Modelos.Classes;
 using Modelos.Enums;
+using Modelos.EventArgs;
 using Modelos.Interfaces;
 using System;
+using System.Diagnostics;
 using System.Windows.Forms;
+using Utils;
 
 namespace CryptoMiningManager.Views
 {
@@ -26,6 +29,8 @@ namespace CryptoMiningManager.Views
 		private CustomNotifyIcon TaskBarIcon { get; } //Não está implementado no designer para ser implementado no AutoFac como singleton e poder ser alterado onde for preciso
 		private GestaoAutomaticaMineracaoUserControl GestaoAutomaticaMineracaoUC { get; set; }
 		private MineracaoHelper MineracaoHelper { get; }
+		private ToolStripMenuItem AlgoritmosItem { get; set; }
+		private ToolStripMenuItem MineradoresItem { get; set; }
 
 		public ConfiguracaoGeral ConfigGeralAtiva { get; set; }
 
@@ -38,6 +43,14 @@ namespace CryptoMiningManager.Views
 			Scope = scope;
 			TaskBarIcon = notifyIcon;
 			UtilizadorQuerSair = false;
+
+			MineracaoHelper.AlteracaoEstadoMineracao += MineracaoHelper_AlteracaoEstadoMineracao;
+			MineracaoHelper.AlteracaoMinerador += MineracaoHelper_AlteracaoMinerador; ;
+			MineracaoHelper.AlteracaoMoedaMaisRentavel += MineracaoHelper_AlteracaoMoedaMaisRentavel;
+			MineracaoHelper.ErroMinerador += MineracaoHelper_ErroMinerador;
+			MineracaoHelper.OutputMinerador += MineracaoHelper_OutputMinerador;
+			MineracaoHelper.RegistarLogsMineracao += MineracaoHelper_RegistarLogsMineracao;
+			MineracaoHelper.VerificaoRentabilidade += MineracaoHelper_VerificaoRentabilidade;
 		}
 
 		private async void MainForm_Load(object sender, EventArgs e)
@@ -64,9 +77,19 @@ namespace CryptoMiningManager.Views
 					this.Hide();
 
 				ToolStripMenuItem item = TaskBarIcon.AdicionarItem(Taskbar.Mineracao); //TODO: Implementar
-				CustomNotifyIcon.AdicionarSubItem(item, Taskbar_Mineracao.Iniciar, null);
-				CustomNotifyIcon.AdicionarSubItem(item, Taskbar_Mineracao.Parar, null, false);
-				CustomNotifyIcon.AdicionarSubItem(item, Taskbar_Mineracao.Algoritmo, null); //TODO: Implementar //Por agora fica sempre por rentabilidade
+				CustomNotifyIcon.AdicionarSubItem(item, Taskbar_Mineracao.Iniciar, Taskbar_IniciarClick, true);
+				CustomNotifyIcon.AdicionarSubItem(item, Taskbar_Mineracao.Parar, Taskbar_PararClick, false, true);
+
+				AlgoritmosItem = CustomNotifyIcon.AdicionarSubItem(item, Taskbar_Mineracao.Algoritmo, null, true);
+				CustomNotifyIcon.AdicionarSubItems_FromEnum<Algoritmo>(AlgoritmosItem);
+
+				//TODO: Implementar algoritmo por defeito nas configurações
+				if (AlgoritmosItem.DropDownItems[Algoritmo.Rentabilidade.GetDescricaoEnum()] is ToolStripMenuItem rentabilidadeItem)
+					rentabilidadeItem.Checked = true;
+
+				ToggleEventosItems(AlgoritmosItem.DropDownItems, AlgoritmoItem_CheckedChanged, true);
+
+				MineradoresItem = CustomNotifyIcon.AdicionarSubItem(item, Taskbar_Mineracao.Mineradores, null, false);
 
 				TaskBarIcon.AdicionarItem(Taskbar.Configuracoes); //TODO: Implementar
 				TaskBarIcon.AdicionarItem(Taskbar.Sair, (_, _) => { UtilizadorQuerSair = true; this.Close(); }, true);
@@ -127,7 +150,7 @@ namespace CryptoMiningManager.Views
 					if (MineracaoHelper.ProcessoAtivo != null)
 					{
 						if (XtraMessageBox.Show("Existe um processo de mineração ativo, pretende continuar?", this.Text, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
-							await MineracaoHelper.PararTudo();
+							await MineracaoHelper.Parar();
 						else
 							e.Cancel = true;
 					}
@@ -151,7 +174,7 @@ namespace CryptoMiningManager.Views
 				e.Cancel = XtraMessageBox.Show(mensagem, this.Text, MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes;
 
 				if (!e.Cancel && GestaoAutomaticaMineracaoUC != null)
-					await MineracaoHelper.PararTudo();
+					await MineracaoHelper.Parar();
 			}
 			catch (Exception ex)
 			{
@@ -172,13 +195,149 @@ namespace CryptoMiningManager.Views
 				if (DialogResult.Yes == XtraMessageBox.Show("Fechar este separador irá parar o processo de mineração ativo, pretende continuar?",
 					"Atenção", MessageBoxButtons.YesNo, MessageBoxIcon.Warning))
 				{
-					await MineracaoHelper.PararTudo();
+					await MineracaoHelper.Parar();
 					GestaoAutomaticaMineracaoUC = null;
 				}
 				else
 					e.Cancel = true;
 			}
 		}
+
+		#region Eventos MineracaoHelper
+		private void MineracaoHelper_AlteracaoEstadoMineracao(object sender, AlteracaoEstadoMineracaoEventArgs e)
+		{
+			Invoke(() =>
+			{
+				//Dava para usar o CustomNotifyIcon.GetItem_Recursivo para obter ambos os items (Iniciar e Parar), mas assim deve ser mais otimizado em princípio
+				if (CustomNotifyIcon.GetItem_Recursivo(TaskBarIcon.Items, Taskbar.Mineracao) is ToolStripMenuItem mineracaoItem)
+				{
+					mineracaoItem.DropDownItems[Taskbar_Mineracao.Iniciar].Visible = !e.Ativa;
+					mineracaoItem.DropDownItems[Taskbar_Mineracao.Parar].Visible = e.Ativa;
+					AlgoritmosItem.Enabled = !e.Ativa;
+					MineradoresItem.Enabled = !e.Ativa;
+				}
+			});
+		}
+
+		private void MineracaoHelper_AlteracaoMinerador(object sender, AlteracaoMineradorEventArgs e)
+		{
+			//TODO: Por implementar
+		}
+
+		private void MineracaoHelper_AlteracaoMoedaMaisRentavel(object sender, AlteracaoMoedaMaisRentavelEventArgs e)
+		{
+			//TODO: Por implementar
+		}
+
+		private void MineracaoHelper_ErroMinerador(object sender, DataReceivedEventArgs e)
+		{
+			//TODO: Por implementar
+		}
+
+		private void MineracaoHelper_OutputMinerador(object sender, DataReceivedEventArgs e)
+		{
+			//TODO: Por implementar
+		}
+
+		private void MineracaoHelper_RegistarLogsMineracao(object sender, EventArgs e)
+		{
+			//TODO: Por implementar
+		}
+
+		private void MineracaoHelper_VerificaoRentabilidade(object sender, EventArgs e)
+		{
+			//TODO: Por implementar
+		}
+		#endregion
+
+		#region Eventos TaskbarIcon
+		private void AlgoritmoItem_CheckedChanged(object sender, EventArgs e)
+		{
+			UniqueCheckedChanged(sender, AlgoritmosItem.DropDownItems, AlgoritmoItem_CheckedChanged, "algoritmo", itemAlterado =>
+			{
+				switch ((Algoritmo)itemAlterado.Tag)
+				{
+					case Algoritmo.Minerador: //Criar os items de mineradores
+						MineradoresItem.DropDownItems.Clear();
+
+						foreach (Minerador minerador in MineracaoHelper.GetMineradoresAtivosPorMoeda().GetAwaiter().GetResult().Values)
+						{
+							CustomNotifyIcon.AdicionarSubItem(MineradoresItem, minerador.Nome, MineradorItem_CheckedChanged, true, true, minerador);
+						}
+
+						if (MineradoresItem.DropDownItems.Count != 0)
+						{
+							ToolStripMenuItem primeiroMinerador = (ToolStripMenuItem)MineradoresItem.DropDownItems[0];
+							primeiroMinerador.CheckedChanged -= MineradorItem_CheckedChanged;
+							try
+							{
+								primeiroMinerador.Checked = true;
+							}
+							finally
+							{
+								primeiroMinerador.CheckedChanged += MineradorItem_CheckedChanged;
+							}
+						}
+						else
+							CustomNotifyIcon.AdicionarSubItem(MineradoresItem, "Não existem mineradores ativos", null, true).Enabled = false;
+
+						MineradoresItem.Visible = true;
+						break;
+					case Algoritmo.Rentabilidade:
+						MineradoresItem.Visible = false;
+						break;
+					default:
+						break;
+				}
+			});
+
+		}
+
+		private void MineradorItem_CheckedChanged(object sender, EventArgs e)
+		{
+			UniqueCheckedChanged(sender, MineradoresItem.DropDownItems, MineradorItem_CheckedChanged, "minerador");
+		}
+
+		private async void Taskbar_IniciarClick(object sender, EventArgs e)
+		{
+			try
+			{
+				ToolStripItem item = CustomNotifyIcon.GetItem_Recursivo(AlgoritmosItem.DropDownItems, i => i is ToolStripMenuItem item && item.Checked);
+				Algoritmo algoritmo = (Algoritmo)item.Tag;
+
+				switch (algoritmo)
+				{
+					case Algoritmo.Minerador:
+						item = CustomNotifyIcon.GetItem_Recursivo(MineradoresItem.DropDownItems, i => i is ToolStripMenuItem item && item.Checked);
+						await MineracaoHelper.Iniciar(algoritmo, (Minerador)item.Tag);
+						break;
+					case Algoritmo.Rentabilidade:
+						await MineracaoHelper.Iniciar(algoritmo);
+						break;
+					default:
+						throw new NotImplementedException($"Algoritmo {algoritmo.GetDescricaoEnum()} não implementado.");
+				}
+			}
+			catch (Exception ex)
+			{
+				LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro ao iniciar mineração pelo TaskbarIcon");
+				XtraMessageBox.Show(ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+			}
+		}
+
+		private async void Taskbar_PararClick(object sender, EventArgs e)
+		{
+			try
+			{
+				await MineracaoHelper.Parar();
+			}
+			catch (Exception ex)
+			{
+				LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro ao parar mineração pelo TaskbarIcon");
+				XtraMessageBox.Show(ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+			}
+		}
+		#endregion
 
 		//MÉTODOS AUXILIARES
 		/// <summary>
@@ -222,6 +381,60 @@ namespace CryptoMiningManager.Views
 				LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro ao abrir menu {menuText}", controlElement.Text);
 				XtraMessageBox.Show(ex.GetBaseException().Message, $"Não foi possível abrir o menu {controlElement.Text}",
 					MessageBoxButtons.OK, MessageBoxIcon.Error);
+			}
+		}
+
+		private static void ToggleEventosItems(ToolStripItemCollection items, EventHandler eventHandler, bool atribuir, Action<ToolStripMenuItem> acaoExtra = null)
+		{
+			Action<ToolStripMenuItem> acao;
+			if (acaoExtra == null)
+			{
+				acao = atribuir ? item => item.CheckedChanged += eventHandler : item => item.CheckedChanged -= eventHandler;
+			}
+			else
+			{
+				acao = atribuir ? item => { item.CheckedChanged += eventHandler; acaoExtra(item); }
+				: item => { item.CheckedChanged -= eventHandler; acaoExtra(item); };
+			}
+
+			foreach (ToolStripMenuItem algoritmoItem in items)
+			{
+				acao(algoritmoItem);
+			}
+		}
+
+		private static void UniqueCheckedChanged(object sender, ToolStripItemCollection items, EventHandler eventHandler, string entidade, Action<ToolStripMenuItem> onChecked = null)
+		{
+			Action reativarEventos = null;
+			try
+			{
+				if (sender is ToolStripMenuItem itemAlterado)
+				{
+					//Ao ativar um minerador irá desativar todos os outros
+					if (itemAlterado.Checked)
+					{
+						reativarEventos = () => ToggleEventosItems(items, eventHandler, true);
+						ToggleEventosItems(items, eventHandler, false, item => item.Checked = item.Name == itemAlterado.Name);
+
+						onChecked?.Invoke(itemAlterado);
+					}
+					else //Impede-se de desativar o único minerador ativo
+					{
+						itemAlterado.CheckedChanged -= eventHandler;
+						reativarEventos = () => itemAlterado.CheckedChanged += eventHandler;
+
+						itemAlterado.Checked = true;
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro");
+				XtraMessageBox.Show($"Erro ao tratar alteração de {entidade}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+			}
+			finally
+			{
+				reativarEventos?.Invoke();
 			}
 		}
 	}

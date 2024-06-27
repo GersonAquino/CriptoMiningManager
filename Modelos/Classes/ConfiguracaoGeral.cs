@@ -31,6 +31,10 @@ namespace Modelos.Classes
 
 		public string Descricao { get; set; }
 
-		public ConfiguracaoGeral() { }
+        //TODO: Acrescentar Algoritmo por defeito
+
+		//TODO: Por implementar - Define se o GestaoAutomaticaUserControl deve continuar à escuta dos eventos do MineracaoHelper quando a aplicação está a correr em background
+        //public bool AtualizarUIMinimizado { get; set; }
+        public ConfiguracaoGeral() { }
 	}
 }

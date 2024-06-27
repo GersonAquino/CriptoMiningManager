@@ -56,6 +56,7 @@
 		<PackageReference Include="DeepCopy">
 			<Version>1.0.3</Version>
 		</PackageReference>
+		<PackageReference Include="DevExpress.Win.BonusSkins" Version="23.2.6" />
 		<PackageReference Include="DevExpress.Win.Design" Version="23.2.6" />
 		<PackageReference Include="DevExpress.Win.Navigation" Version="23.2.6" />
 		<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />

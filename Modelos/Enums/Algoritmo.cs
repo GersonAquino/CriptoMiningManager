@@ -4,13 +4,14 @@ namespace Modelos.Enums
 {
 	public enum Algoritmo
 	{
-		[Description("Moeda")]
-		Moeda,
+		[Description("Minerador")]
+		Minerador,
 
-		[Description("Mais Rentável")]
-		MaisRentavel,
+		[Description("Rentabilidade")]
+		Rentabilidade,
 
-		[Description("Selecionado")]
-		Selecionado
+		//TODO: Por implementar talvez
+		//[Description("Moeda")]
+		//Moeda
 	}
 }

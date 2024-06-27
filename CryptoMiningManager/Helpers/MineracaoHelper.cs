@@ -19,16 +19,18 @@ namespace CryptoMiningManager.Helpers
 {
 	public class MineracaoHelper
 	{
+		private static Regex EscapedSequences { get; } = new(@"\x1B\[[0-9;]*[mGKH]", RegexOptions.Compiled);
+
 		private IEntidadesHelper<Moeda> MoedasHelper { get; }
+		private IEntidadesHelper<Minerador> MineradoresHelper { get; }
 
 		private CancellationTokenSource CancelarThread { get; set; }
+		private Dictionary<int, Minerador> MineradoresPorMoeda { get; set; }
 		private Minerador MineradorAtivo { get; set; }
-		private Regex EscapedSequences { get; } = new(@"\x1B\[[0-9;]*[mGKH]", RegexOptions.Compiled);
 		private Thread RentabilidadeThread { get; set; }
 
 		private string LocalizacaoLogsMineracao { get; set; }
 
-		public BindingList<Minerador> Mineradores { get; set; }
 		public Comando PreMineracao { get; set; }
 		public Comando PosMineracao { get; set; }
 		public Process ProcessoAtivo { get; set; }
@@ -46,18 +48,18 @@ namespace CryptoMiningManager.Helpers
 		public event EventHandler VerificaoRentabilidade;
 		#endregion
 
-		public MineracaoHelper(IEntidadesHelper<Moeda> moedasHelper, string localizacaoLogsMineracao)
+		public MineracaoHelper(IEntidadesHelper<Moeda> moedasHelper, IEntidadesHelper<Minerador> mineradoresHelper, string localizacaoLogsMineracao)
 		{
 			CancelarThread = null;
 			LocalizacaoLogsMineracao = localizacaoLogsMineracao; //Caso apareça mais algum caso como este (dados da configuração que precisem de ser lidos), talvez faça sentido criar algum tipo de classe estática ou algo parecido
 			MineradorAtivo = null;
+			MineradoresHelper = mineradoresHelper;
+			MineradoresPorMoeda = new();
 			MoedasHelper = moedasHelper;
 			PosMineracao = null;
 			PreMineracao = null;
 			ProcessoAtivo = null;
 			RentabilidadeThread = null;
-
-
 		}
 
 		public async Task Iniciar(Algoritmo algoritmo, Minerador minerador = null)
@@ -78,15 +80,15 @@ namespace CryptoMiningManager.Helpers
 
 			switch (algoritmo)
 			{
-				case Algoritmo.Moeda:
-
-					break;
-				case Algoritmo.MaisRentavel:
+				//case Algoritmo.Moeda:
+				//	break;
+				case Algoritmo.Rentabilidade:
 					CancelarThread = new CancellationTokenSource();
+
 					RentabilidadeThread = new Thread(async () => await MinerarPorRentabilidade(CancelarThread.Token)) { IsBackground = true };
 					RentabilidadeThread.Start();
 					break;
-				case Algoritmo.Selecionado:
+				case Algoritmo.Minerador:
 					if (minerador == null)
 						throw new ArgumentNullException(nameof(minerador));
 
@@ -97,7 +99,7 @@ namespace CryptoMiningManager.Helpers
 			}
 		}
 
-		public async Task PararTudo()
+		public async Task Parar()
 		{
 			await PararProcessoAtivo();
 			PararThreadRentabilidade();
@@ -131,6 +133,22 @@ namespace CryptoMiningManager.Helpers
 		#endregion
 
 		//MÉTODOS AUXILIARES
+		public async Task<Dictionary<int, Minerador>> GetMineradoresAtivosPorMoeda(Dictionary<int, Minerador> mineradores = null)
+		{
+			if (mineradores == null)
+				mineradores = new();
+			else
+				mineradores.Clear();
+
+			foreach (Minerador minerador in (await MineradoresHelper.GetEntidadesComLista("mi.Ativo = 1", "mi.Nome ASC")).Values)
+			{
+				if (minerador.Moeda != null)
+					mineradores.Add(minerador.Moeda.Id, minerador);
+			}
+			mineradores.TrimExcess();
+
+			return mineradores;
+		}
 
 		private Minerador GetMineradorMaisRentavel(List<Moeda> moedas)
 		{
@@ -140,9 +158,6 @@ namespace CryptoMiningManager.Helpers
 
 			Func<Moeda, bool> IsMoedaAtual = MineradorAtivo == null ? m => false :
 				m => m.Id == MineradorAtivo.Moeda.Id;
-
-			Dictionary<int, Minerador> mineradoresPorMoeda = Mineradores.ToDictionary(m => m.Moeda.Id);
-
 			foreach (Moeda moeda in moedas)
 			{
 				//Se se chegar à moeda do MineradorAtual, então não vale a pena continuar a procurar.
@@ -150,7 +165,7 @@ namespace CryptoMiningManager.Helpers
 				if (IsMoedaAtual(moeda))
 					return MineradorAtivo;
 
-				if (mineradoresPorMoeda.TryGetValue(moeda.Id, out Minerador minerador))
+				if (MineradoresPorMoeda.TryGetValue(moeda.Id, out Minerador minerador))
 					return minerador;
 			}
 
@@ -214,6 +229,8 @@ namespace CryptoMiningManager.Helpers
 		{
 			try
 			{
+				await GetMineradoresAtivosPorMoeda(MineradoresPorMoeda);
+
 				LogHelper.EscreveLog(LogLevel.Information, "A iniciar mineração por rentabilidade");
 				while (!cancelar.IsCancellationRequested)
 				{
@@ -292,7 +309,7 @@ namespace CryptoMiningManager.Helpers
 			RentabilidadeThread = null;
 		}
 
-		public string RemoveEscapeSequences(string str)
+		public static string RemoveEscapeSequences(string str)
 		{
 			return str == null ? str : EscapedSequences.Replace(str, "");
 		}

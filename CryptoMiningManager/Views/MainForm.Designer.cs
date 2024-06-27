@@ -77,12 +77,12 @@
 			MainRibbon.OptionsMenuMinWidth = 385;
 			MainRibbon.Pages.AddRange(new DevExpress.XtraBars.Ribbon.RibbonPage[] { GeralRibbonPage });
 			MainRibbon.RepositoryItems.AddRange(new DevExpress.XtraEditors.Repository.RepositoryItem[] { repositoryItemTextEditVersao });
-			MainRibbon.Size = new System.Drawing.Size(1586, 182);
+			MainRibbon.Size = new System.Drawing.Size(1586, 170);
 			MainRibbon.StatusBar = ribbonStatusBar;
 			// 
 			// AppConfigurationBarButtonItem
 			// 
-			AppConfigurationBarButtonItem.Caption = "Configurações da Aplicação";
+			AppConfigurationBarButtonItem.Caption = "Configurações (TODO: Por Implementar)";
 			AppConfigurationBarButtonItem.Id = 1;
 			AppConfigurationBarButtonItem.Name = "AppConfigurationBarButtonItem";
 			// 
@@ -135,11 +135,11 @@
 			// ribbonStatusBar
 			// 
 			ribbonStatusBar.ItemLinks.Add(beiVersao);
-			ribbonStatusBar.Location = new System.Drawing.Point(0, 971);
+			ribbonStatusBar.Location = new System.Drawing.Point(0, 973);
 			ribbonStatusBar.Margin = new System.Windows.Forms.Padding(4);
 			ribbonStatusBar.Name = "ribbonStatusBar";
 			ribbonStatusBar.Ribbon = MainRibbon;
-			ribbonStatusBar.Size = new System.Drawing.Size(1586, 33);
+			ribbonStatusBar.Size = new System.Drawing.Size(1586, 31);
 			// 
 			// DocumentManager
 			// 
@@ -166,12 +166,12 @@
 			FuncionalidadesDockPanel.Controls.Add(dockPanel1_Container);
 			FuncionalidadesDockPanel.Dock = DevExpress.XtraBars.Docking.DockingStyle.Left;
 			FuncionalidadesDockPanel.ID = new System.Guid("e2195159-eed9-4634-ae20-2362dc2a59de");
-			FuncionalidadesDockPanel.Location = new System.Drawing.Point(0, 182);
+			FuncionalidadesDockPanel.Location = new System.Drawing.Point(0, 170);
 			FuncionalidadesDockPanel.Margin = new System.Windows.Forms.Padding(4);
 			FuncionalidadesDockPanel.Name = "FuncionalidadesDockPanel";
 			FuncionalidadesDockPanel.Options.ShowCloseButton = false;
 			FuncionalidadesDockPanel.OriginalSize = new System.Drawing.Size(244, 200);
-			FuncionalidadesDockPanel.Size = new System.Drawing.Size(244, 789);
+			FuncionalidadesDockPanel.Size = new System.Drawing.Size(244, 803);
 			FuncionalidadesDockPanel.Text = "Funcionalidades";
 			// 
 			// dockPanel1_Container
@@ -180,7 +180,7 @@
 			dockPanel1_Container.Location = new System.Drawing.Point(3, 31);
 			dockPanel1_Container.Margin = new System.Windows.Forms.Padding(4);
 			dockPanel1_Container.Name = "dockPanel1_Container";
-			dockPanel1_Container.Size = new System.Drawing.Size(237, 755);
+			dockPanel1_Container.Size = new System.Drawing.Size(237, 769);
 			dockPanel1_Container.TabIndex = 0;
 			// 
 			// FuncionalidadesAccordionControl
@@ -190,7 +190,7 @@
 			FuncionalidadesAccordionControl.Location = new System.Drawing.Point(0, 0);
 			FuncionalidadesAccordionControl.Margin = new System.Windows.Forms.Padding(4);
 			FuncionalidadesAccordionControl.Name = "FuncionalidadesAccordionControl";
-			FuncionalidadesAccordionControl.Size = new System.Drawing.Size(237, 755);
+			FuncionalidadesAccordionControl.Size = new System.Drawing.Size(237, 769);
 			FuncionalidadesAccordionControl.TabIndex = 0;
 			FuncionalidadesAccordionControl.ViewType = DevExpress.XtraBars.Navigation.AccordionControlViewType.HamburgerMenu;
 			// 
