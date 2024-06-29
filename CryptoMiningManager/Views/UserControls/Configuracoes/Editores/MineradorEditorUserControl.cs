@@ -1,4 +1,5 @@
-﻿using DevExpress.XtraBars.Docking2010;
+﻿using CryptoMiningManager.Helpers;
+using DevExpress.XtraBars.Docking2010;
 using DevExpress.XtraEditors;
 using GestorDados.Helpers;
 using Modelos.Classes;
@@ -89,7 +90,8 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes.Editores
 
 					if (this.Parent is DocumentContainer docContainer)
 					{
-						if (XtraMessageBox.Show("Pretende criar novos mineradores?", "Criar novos mineradores", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+						if (Global.ConfirmacoesExtraEditores &&
+							XtraMessageBox.Show("Pretende criar novos mineradores?", "Criar novos mineradores", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
 						{
 							Entidade = new Minerador();
 							MineradorBindingSource.Clear();

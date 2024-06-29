@@ -10,7 +10,6 @@ using Modelos.Exceptions;
 using Modelos.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
@@ -44,13 +43,7 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
 			MineracaoHelper.TempoEntreVerificacoes = 180000; //30 minutos
 			TemporizadorBEI.EditValue = new DateTime(0);
 
-			MineracaoHelper.AlteracaoEstadoMineracao += MineracaoHelper_AlteracaoEstadoMineracao;
-			MineracaoHelper.AlteracaoMinerador += MineracaoHelper_AlteracaoMinerador; ;
-			MineracaoHelper.AlteracaoMoedaMaisRentavel += MineracaoHelper_AlteracaoMoedaMaisRentavel; ;
-			MineracaoHelper.ErroMinerador += MineracaoHelper_ErroMinerador;
-			MineracaoHelper.OutputMinerador += MineracaoHelper_OutputMinerador;
-			MineracaoHelper.RegistarLogsMineracao += MineracaoHelper_RegistarLogsMineracao;
-			MineracaoHelper.VerificaoRentabilidade += MineracaoHelper_VerificaoRentabilidade;
+			ToggleEventosMineracao(true);
 		}
 
 		private async void GestaoAutomaticaMineracaoUserControl_Load(object sender, EventArgs e)
@@ -299,6 +292,30 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
 					PararBBI.Visibility = BarItemVisibility.Never;
 				}
 			});
+		}
+
+		public void ToggleEventosMineracao(bool atribuir)
+		{
+			if (atribuir)
+			{
+				MineracaoHelper.AlteracaoEstadoMineracao += MineracaoHelper_AlteracaoEstadoMineracao;
+				MineracaoHelper.AlteracaoMinerador += MineracaoHelper_AlteracaoMinerador;
+				MineracaoHelper.AlteracaoMoedaMaisRentavel += MineracaoHelper_AlteracaoMoedaMaisRentavel;
+				MineracaoHelper.ErroMinerador += MineracaoHelper_ErroMinerador;
+				MineracaoHelper.OutputMinerador += MineracaoHelper_OutputMinerador;
+				MineracaoHelper.RegistarLogsMineracao += MineracaoHelper_RegistarLogsMineracao;
+				MineracaoHelper.VerificaoRentabilidade += MineracaoHelper_VerificaoRentabilidade;
+			}
+			else
+			{
+				MineracaoHelper.AlteracaoEstadoMineracao -= MineracaoHelper_AlteracaoEstadoMineracao;
+				MineracaoHelper.AlteracaoMinerador -= MineracaoHelper_AlteracaoMinerador;
+				MineracaoHelper.AlteracaoMoedaMaisRentavel -= MineracaoHelper_AlteracaoMoedaMaisRentavel;
+				MineracaoHelper.ErroMinerador -= MineracaoHelper_ErroMinerador;
+				MineracaoHelper.OutputMinerador -= MineracaoHelper_OutputMinerador;
+				MineracaoHelper.RegistarLogsMineracao -= MineracaoHelper_RegistarLogsMineracao;
+				MineracaoHelper.VerificaoRentabilidade -= MineracaoHelper_VerificaoRentabilidade;
+			}
 		}
 	}
 }

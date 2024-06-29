@@ -32,8 +32,6 @@ namespace CryptoMiningManager.Views
 		private ToolStripMenuItem AlgoritmosItem { get; set; }
 		private ToolStripMenuItem MineradoresItem { get; set; }
 
-		public ConfiguracaoGeral ConfigGeralAtiva { get; set; }
-
 		public MainForm(ILifetimeScope scope, IEntidadesHelper<ConfiguracaoGeral> configGeralHelper, CustomNotifyIcon notifyIcon, MineracaoHelper mineracaoHelper)
 		{
 			InitializeComponent();
@@ -44,8 +42,10 @@ namespace CryptoMiningManager.Views
 			TaskBarIcon = notifyIcon;
 			UtilizadorQuerSair = false;
 
+			TaskBarIcon.NotifyIcon.Text = "Inativo";
+
 			MineracaoHelper.AlteracaoEstadoMineracao += MineracaoHelper_AlteracaoEstadoMineracao;
-			MineracaoHelper.AlteracaoMinerador += MineracaoHelper_AlteracaoMinerador; ;
+			MineracaoHelper.AlteracaoMinerador += MineracaoHelper_AlteracaoMinerador;
 			MineracaoHelper.AlteracaoMoedaMaisRentavel += MineracaoHelper_AlteracaoMoedaMaisRentavel;
 			MineracaoHelper.ErroMinerador += MineracaoHelper_ErroMinerador;
 			MineracaoHelper.OutputMinerador += MineracaoHelper_OutputMinerador;
@@ -53,30 +53,31 @@ namespace CryptoMiningManager.Views
 			MineracaoHelper.VerificaoRentabilidade += MineracaoHelper_VerificaoRentabilidade;
 		}
 
+		#region Eventos MainForm
 		private async void MainForm_Load(object sender, EventArgs e)
 		{
 			try
 			{
-				ConfigGeralAtiva = await ConfigGeralHelper.GetEntidade("Ativo = 1");
-				if (ConfigGeralAtiva == null)
+				Global.ConfigGeralAtiva = await ConfigGeralHelper.GetEntidade("Ativo = 1");
+				if (Global.ConfigGeralAtiva == null)
 				{
-					ConfigGeralAtiva = new();
-					ConfigGeralAtiva.Descricao = "Configuração Geral";
-					ConfigGeralAtiva.Ativo = true;
+					Global.ConfigGeralAtiva = new();
+					Global.ConfigGeralAtiva.Descricao = "Configuração Geral";
+					Global.ConfigGeralAtiva.Ativo = true;
 
-					if (!await ConfigGeralHelper.GravarEntidade(ConfigGeralAtiva))
+					if (!await ConfigGeralHelper.GravarEntidade(Global.ConfigGeralAtiva))
 					{
-						ConfigGeralAtiva = null;
+						Global.ConfigGeralAtiva = null;
 						LogHelper.EscreveLog(LogLevel.Error, "Falha ao criar configuração geral base automaticamente! É necessário validar o código! (não houve exceção)");
 						XtraMessageBox.Show("Não foi possível criar uma configuração geral base, por favor considere criar uma manualmente.",
-						"Configuração Geral", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+						"Configuração Geral", MessageBoxButtons.OK, MessageBoxIcon.Error);
 					}
 				}
 
-				if (ConfigGeralAtiva?.IniciarMinimizada == true)
-					this.Hide();
+				if (Global.ConfigGeralAtiva?.IniciarMinimizada == true)
+					MinimizarAplicacao();
 
-				ToolStripMenuItem item = TaskBarIcon.AdicionarItem(Taskbar.Mineracao); //TODO: Implementar
+				ToolStripMenuItem item = TaskBarIcon.AdicionarItem(Taskbar.Mineracao);
 				CustomNotifyIcon.AdicionarSubItem(item, Taskbar_Mineracao.Iniciar, Taskbar_IniciarClick, true);
 				CustomNotifyIcon.AdicionarSubItem(item, Taskbar_Mineracao.Parar, Taskbar_PararClick, false, true);
 
@@ -99,11 +100,72 @@ namespace CryptoMiningManager.Views
 			}
 			catch (Exception ex)
 			{
-				ConfigGeralAtiva = null;
+				Global.ConfigGeralAtiva = null;
 				LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro");
-				XtraMessageBox.Show("Erro ao carregar!", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				XtraMessageBox.Show(text: "Erro ao carregar!", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
 		}
+
+		private async void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+		{
+			try
+			{
+				if (UtilizadorQuerSair)
+				{
+					if (MineracaoHelper.ProcessoAtivo != null)
+					{
+						if (XtraMessageBox.Show("Existe um processo de mineração ativo, pretende continuar?", this.Text, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+							await MineracaoHelper.Parar();
+						else
+							e.Cancel = true;
+					}
+
+					return;
+				}
+
+				if (Global.ConfigGeralAtiva?.MinimizarAoFechar == true && this.Visible)
+				{
+					MinimizarAplicacao();
+					e.Cancel = true;
+					return;
+				}
+
+				string mensagem;
+				if (MineracaoHelper.ProcessoAtivo != null) //TabbedView.Documents.Exists(d => d.Caption == GestaoAutomaticaMineracaoACE.Text) && //Em princípio esta validação não é precisa
+					mensagem = "Existe um processo de mineração ativo, pretende continuar?";
+				else
+					mensagem = "Pretende terminar a aplicação?";
+
+				e.Cancel = XtraMessageBox.Show(mensagem, this.Text, MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes;
+
+				if (!e.Cancel && GestaoAutomaticaMineracaoUC != null)
+					await MineracaoHelper.Parar();
+			}
+			catch (Exception ex)
+			{
+				LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro");
+				XtraMessageBox.Show("Erro ao fechar aplicação (a aplicação fechará na mesma).", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				e.Cancel = false;
+			}
+			finally
+			{
+				UtilizadorQuerSair = false;
+			}
+		}
+
+		private void MainForm_Shown(object sender, EventArgs e)
+		{
+			try
+			{
+				ToggleEventosVisuaisMineracao(true);
+			}
+			catch (Exception ex)
+			{
+				LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro");
+				XtraMessageBox.Show("Erro ao mostrar form.", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+			}
+		} 
+		#endregion
 
 		#region Eventos Click que criam um tab com um UserControl
 		private void ComandosACE_Click(object sender, EventArgs e)
@@ -141,53 +203,6 @@ namespace CryptoMiningManager.Views
 			}
 		}
 
-		private async void MainForm_FormClosing(object sender, FormClosingEventArgs e)
-		{
-			try
-			{
-				if (UtilizadorQuerSair)
-				{
-					if (MineracaoHelper.ProcessoAtivo != null)
-					{
-						if (XtraMessageBox.Show("Existe um processo de mineração ativo, pretende continuar?", this.Text, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
-							await MineracaoHelper.Parar();
-						else
-							e.Cancel = true;
-					}
-
-					return;
-				}
-
-				if (ConfigGeralAtiva?.MinimizarAoFechar == true && this.Visible)
-				{
-					this.Hide();
-					e.Cancel = true;
-					return;
-				}
-
-				string mensagem;
-				if (MineracaoHelper.ProcessoAtivo != null) //TabbedView.Documents.Exists(d => d.Caption == GestaoAutomaticaMineracaoACE.Text) && //Em princípio esta validação não é precisa
-					mensagem = "Existe um processo de mineração ativo, pretende continuar?";
-				else
-					mensagem = "Pretende terminar a aplicação?";
-
-				e.Cancel = XtraMessageBox.Show(mensagem, this.Text, MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes;
-
-				if (!e.Cancel && GestaoAutomaticaMineracaoUC != null)
-					await MineracaoHelper.Parar();
-			}
-			catch (Exception ex)
-			{
-				LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro");
-				XtraMessageBox.Show("Erro ao fechar aplicação (a aplicação fechará na mesma).", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
-				e.Cancel = false;
-			}
-			finally
-			{
-				UtilizadorQuerSair = false;
-			}
-		}
-
 		private async void TabbedView_DocumentClosing(object sender, DocumentCancelEventArgs e)
 		{
 			if (e.Document.Caption == GestaoAutomaticaMineracaoACE.Text && MineracaoHelper.ProcessoAtivo != null)
@@ -211,10 +226,12 @@ namespace CryptoMiningManager.Views
 				//Dava para usar o CustomNotifyIcon.GetItem_Recursivo para obter ambos os items (Iniciar e Parar), mas assim deve ser mais otimizado em princípio
 				if (CustomNotifyIcon.GetItem_Recursivo(TaskBarIcon.Items, Taskbar.Mineracao) is ToolStripMenuItem mineracaoItem)
 				{
-					mineracaoItem.DropDownItems[Taskbar_Mineracao.Iniciar].Visible = !e.Ativa;
+					bool notAtiva = !e.Ativa;
+					mineracaoItem.DropDownItems[Taskbar_Mineracao.Iniciar].Visible = notAtiva;
 					mineracaoItem.DropDownItems[Taskbar_Mineracao.Parar].Visible = e.Ativa;
-					AlgoritmosItem.Enabled = !e.Ativa;
-					MineradoresItem.Enabled = !e.Ativa;
+					AlgoritmosItem.Enabled = notAtiva;
+					MineradoresItem.Enabled = notAtiva;
+					TaskBarIcon.NotifyIcon.Text = e.Ativa ? "Ativo" : "Inativo";
 				}
 			});
 		}
@@ -365,8 +382,8 @@ namespace CryptoMiningManager.Views
 					ILifetimeScope scope = Scope.BeginLifetimeScope();
 					T userControl = scope.Resolve<T>();
 
-					//Fazer o dispose da scope do userControl sem ter de alterar o event handler dos designers
-					userControl.Disposed += (s, e) => scope.Dispose();
+					//Fazer o dispose da scope do userControl sem ter de alterar o event handler dos designers //TODO: Isto fecha separadores "filhos", talvez seja melhor repensar
+					userControl.Disposed += (_, _) => scope.Dispose();
 
 					doc = TabbedView.AddDocument(userControl);
 					TabbedView.Controller.Activate(doc);
@@ -382,6 +399,12 @@ namespace CryptoMiningManager.Views
 				XtraMessageBox.Show(ex.GetBaseException().Message, $"Não foi possível abrir o menu {controlElement.Text}",
 					MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
+		}
+
+		private void MinimizarAplicacao()
+		{
+			this.Hide();
+			ToggleEventosVisuaisMineracao(false);
 		}
 
 		private static void ToggleEventosItems(ToolStripItemCollection items, EventHandler eventHandler, bool atribuir, Action<ToolStripMenuItem> acaoExtra = null)
@@ -403,6 +426,12 @@ namespace CryptoMiningManager.Views
 			}
 		}
 
+		private void ToggleEventosVisuaisMineracao(bool atribuir)
+		{
+			if (Global.ConfigGeralAtiva?.AtualizarUIMinimizado == true)
+				GestaoAutomaticaMineracaoUC?.ToggleEventosMineracao(atribuir);
+		}
+
 		private static void UniqueCheckedChanged(object sender, ToolStripItemCollection items, EventHandler eventHandler, string entidade, Action<ToolStripMenuItem> onChecked = null)
 		{
 			Action reativarEventos = null;
@@ -410,7 +439,7 @@ namespace CryptoMiningManager.Views
 			{
 				if (sender is ToolStripMenuItem itemAlterado)
 				{
-					//Ao ativar um minerador irá desativar todos os outros
+					//Ao ativar um item irá desativar todos os outros
 					if (itemAlterado.Checked)
 					{
 						reativarEventos = () => ToggleEventosItems(items, eventHandler, true);
@@ -418,7 +447,7 @@ namespace CryptoMiningManager.Views
 
 						onChecked?.Invoke(itemAlterado);
 					}
-					else //Impede-se de desativar o único minerador ativo
+					else //Impede-se de desativar o único item ativo
 					{
 						itemAlterado.CheckedChanged -= eventHandler;
 						reativarEventos = () => itemAlterado.CheckedChanged += eventHandler;

@@ -46,11 +46,13 @@ CREATE TABLE ConfiguracoesGerais (
 	Id INTEGER PRIMARY KEY AUTOINCREMENT,
 	Descricao NVARCHAR (200) NOT NULL,
 	
+	AtualizarUIMinimizado BIT NOT NULL DEFAULT 0,
+	ConfirmacoesExtraNosEditores BIT NOT NULL DEFAULT 0,
 	IniciarMinimizada BIT NOT NULL DEFAULT 0,
 	MinimizarAoFechar BIT NOT NULL DEFAULT 0,
 
 	MedirConsumo BIT NOT NULL DEFAULT 0,
-	PesoConsumoWatts INTEGER NOT NULL DEFAULT 0, --Em Watts
+	PesoConsumo INTEGER NOT NULL DEFAULT 0, --Em Watts
 
 	Ativo BIT NOT NULL DEFAULT 0,
 	

@@ -45,7 +45,6 @@ namespace CryptoMiningManager
 				using (ILifetimeScope scope = container.BeginLifetimeScope())
 				{
 					scope.Resolve<CustomNotifyIcon>().NotifyIcon.Icon = Icon.ExtractAssociatedIcon(assembly.Location);
-
 					Application.Run(scope.Resolve<MainForm>());
 				}
 			}

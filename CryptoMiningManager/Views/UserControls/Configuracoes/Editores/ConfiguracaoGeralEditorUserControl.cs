@@ -1,4 +1,4 @@
-﻿using Autofac;
+﻿using CryptoMiningManager.Helpers;
 using DevExpress.XtraBars.Docking2010;
 using DevExpress.XtraEditors;
 using GestorDados.Helpers;
@@ -14,17 +14,15 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes.Editores
 	public partial class ConfiguracaoGeralEditorUserControl : XtraUserControl
 	{
 		private IEntidadesHelper<ConfiguracaoGeral> EntidadesHelper { get; }
-		private ILifetimeScope Scope { get; }
 
 		private ConfiguracaoGeral Entidade { get; set; }
 
-		public ConfiguracaoGeralEditorUserControl(ConfiguracaoGeral entidade, IEntidadesHelper<ConfiguracaoGeral> entidadesHelper, ILifetimeScope scope)
+		public ConfiguracaoGeralEditorUserControl(ConfiguracaoGeral entidade, IEntidadesHelper<ConfiguracaoGeral> entidadesHelper)
 		{
 			InitializeComponent();
 
 			Entidade = entidade;
 			EntidadesHelper = entidadesHelper;
-			Scope = scope;
 
 			ConfigGeralBindingSource.Add(Entidade);
 		}
@@ -47,13 +45,14 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes.Editores
 				if (idGerado != -1)
 				{
 					if (Entidade.Ativo)
-						Scope.Resolve<MainForm>().ConfigGeralAtiva = Entidade;
+						Global.ConfigGeralAtiva = Entidade;
 
 					XtraMessageBox.Show("Configuração Geral gravado com sucesso.", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
 					if (this.Parent is DocumentContainer docContainer)
 					{
-						if (XtraMessageBox.Show("Pretende criar novas configurações gerais?", "Criar novas configurações gerais", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+						if (Global.ConfirmacoesExtraEditores &&
+							XtraMessageBox.Show("Pretende criar novas configurações gerais?", "Criar novas configurações gerais", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
 						{
 							Entidade = new ConfiguracaoGeral();
 							ConfigGeralBindingSource.Clear();

@@ -270,6 +270,7 @@
 			Text = "Crypto Mining Manager";
 			FormClosing += MainForm_FormClosing;
 			Load += MainForm_Load;
+			Shown += MainForm_Shown;
 			((System.ComponentModel.ISupportInitialize)MainRibbon).EndInit();
 			((System.ComponentModel.ISupportInitialize)repositoryItemTextEditVersao).EndInit();
 			((System.ComponentModel.ISupportInitialize)DocumentManager).EndInit();

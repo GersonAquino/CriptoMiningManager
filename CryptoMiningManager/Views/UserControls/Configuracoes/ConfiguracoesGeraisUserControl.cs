@@ -1,5 +1,4 @@
-﻿using Autofac;
-using CryptoMiningManager.Helpers;
+﻿using CryptoMiningManager.Helpers;
 using DevExpress.XtraEditors;
 using DevExpress.XtraSplashScreen;
 using GestorDados.Helpers;
@@ -16,15 +15,13 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes
 	{
 		private ConfiguracoesEntidadesHelper ConfiguracoesEntidadesHelper { get; }
 		private IEntidadesHelper<ConfiguracaoGeral> EntidadesHelper { get; }
-		private ILifetimeScope Scope { get; }
 
-		public ConfiguracoesGeraisUserControl(ConfiguracoesEntidadesHelper configuracoesEntidadesHelper, IEntidadesHelper<ConfiguracaoGeral> entidadesHelper, ILifetimeScope scope)
+		public ConfiguracoesGeraisUserControl(ConfiguracoesEntidadesHelper configuracoesEntidadesHelper, IEntidadesHelper<ConfiguracaoGeral> entidadesHelper)
 		{
 			InitializeComponent();
 
 			ConfiguracoesEntidadesHelper = configuracoesEntidadesHelper;
 			EntidadesHelper = entidadesHelper;
-			Scope = scope;
 		}
 
 		private async void ConfiguracoesGeraisUserControl_Load(object sender, EventArgs e)
@@ -91,7 +88,7 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes
 					ConfigsGeraisGV.DeleteSelectedRows();
 
 					if (configAtivaSelecionada)
-						Scope.Resolve<MainForm>().ConfigGeralAtiva = null;
+						Global.ConfigGeralAtiva = null;
 
 					XtraMessageBox.Show("Configurações gerais eliminadas com sucesso!", "Configurações gerais eliminadas", MessageBoxButtons.OK, MessageBoxIcon.Information);
 				}
