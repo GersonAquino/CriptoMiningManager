@@ -6,10 +6,8 @@ using Modelos.EventArgs;
 using Modelos.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -21,24 +19,25 @@ namespace CryptoMiningManager.Helpers
 	{
 		private static Regex EscapedSequences { get; } = new(@"\x1B\[[0-9;]*[mGKH]", RegexOptions.Compiled);
 
+		private IEntidadesHelper<Comando> ComandosHelper { get; }
 		private IEntidadesHelper<Moeda> MoedasHelper { get; }
 		private IEntidadesHelper<Minerador> MineradoresHelper { get; }
 
 		private CancellationTokenSource CancelarThread { get; set; }
 		private Dictionary<int, Minerador> MineradoresPorMoeda { get; set; }
 		private Minerador MineradorAtivo { get; set; }
+		private Comando PreMineracao { get; set; }
+		private Comando PosMineracao { get; set; }
 		private Thread RentabilidadeThread { get; set; }
 
 		private string LocalizacaoLogsMineracao { get; set; }
 
-		public Comando PreMineracao { get; set; }
-		public Comando PosMineracao { get; set; }
-		public Process ProcessoAtivo { get; set; }
+		public Process ProcessoAtivo { get; private set; }
 
-		public string CaminhoCompletoLogMineracao { get; set; }
-		public int TempoEntreVerificacoes { get; set; }
+		public string CaminhoCompletoLogMineracao { get; private set; }
+		public int TempoEntreVerificacoes { get; set; } = 180000; //TODO: Permitir definir o tempo pelo TaskbarIcon //Por agora ficam 30m
 
-		#region Events
+		#region Eventos
 		public event EventHandler<AlteracaoEstadoMineracaoEventArgs> AlteracaoEstadoMineracao;
 		public event EventHandler<AlteracaoMineradorEventArgs> AlteracaoMinerador;
 		public event EventHandler<AlteracaoMoedaMaisRentavelEventArgs> AlteracaoMoedaMaisRentavel;
@@ -48,9 +47,10 @@ namespace CryptoMiningManager.Helpers
 		public event EventHandler VerificaoRentabilidade;
 		#endregion
 
-		public MineracaoHelper(IEntidadesHelper<Moeda> moedasHelper, IEntidadesHelper<Minerador> mineradoresHelper, string localizacaoLogsMineracao)
+		public MineracaoHelper(IEntidadesHelper<Comando> comandosHelper, IEntidadesHelper<Moeda> moedasHelper, IEntidadesHelper<Minerador> mineradoresHelper, string localizacaoLogsMineracao)
 		{
 			CancelarThread = null;
+			ComandosHelper = comandosHelper;
 			LocalizacaoLogsMineracao = localizacaoLogsMineracao; //Caso apareça mais algum caso como este (dados da configuração que precisem de ser lidos), talvez faça sentido criar algum tipo de classe estática ou algo parecido
 			MineradorAtivo = null;
 			MineradoresHelper = mineradoresHelper;
@@ -174,6 +174,19 @@ namespace CryptoMiningManager.Helpers
 
 		private async Task IniciarMinerador(Minerador minerador)
 		{
+
+			PreMineracao = null;
+			PosMineracao = null;
+			//Atualizar comandos
+			foreach (Comando comando in await ComandosHelper.GetEntidades("Ativo = 1"))
+			{
+				if (comando.PreMineracao)
+					PreMineracao = comando;
+
+				if (comando.PosMineracao)
+					PosMineracao = comando;
+			}
+
 			await PararProcessoAtivo();
 
 			if (PreMineracao != null)

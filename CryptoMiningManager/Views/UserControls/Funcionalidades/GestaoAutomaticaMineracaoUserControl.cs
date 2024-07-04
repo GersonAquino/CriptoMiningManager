@@ -20,18 +20,16 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
 {
 	public partial class GestaoAutomaticaMineracaoUserControl : DevExpress.XtraEditors.XtraUserControl
 	{
-		private IEntidadesHelper<Comando> ComandosHelper { get; }
 		private IEntidadesHelper<Minerador> MineradoresHelper { get; }
 		private IEntidadesHelper<Moeda> MoedasHelper { get; }
 
 		private MineracaoHelper MineracaoHelper { get; }
 		private Semaphore SemaforoLogsMineracao { get; } = new(1, 1);
 
-		public GestaoAutomaticaMineracaoUserControl(IEntidadesHelper<Comando> comandosHelper, IEntidadesHelper<Minerador> mineradoresHelper,
+		public GestaoAutomaticaMineracaoUserControl(IEntidadesHelper<Minerador> mineradoresHelper,
 			IEntidadesHelper<Moeda> moedasHelper, MineracaoHelper mineracaoHelper)
 		{
 			InitializeComponent();
-			ComandosHelper = comandosHelper;
 			MineracaoHelper = mineracaoHelper;
 			MineradoresHelper = mineradoresHelper;
 			MoedasHelper = moedasHelper;
@@ -210,18 +208,6 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
 				{
 					if (registo.Value.Moeda != null)
 						MineradoresBindingSource.Add(registo.Value);
-				}
-
-				MineracaoHelper.PreMineracao = null;
-				MineracaoHelper.PosMineracao = null;
-				//Atualizar comandos
-				foreach (Comando comando in await ComandosHelper.GetEntidades("Ativo = 1"))
-				{
-					if (comando.PreMineracao)
-						MineracaoHelper.PreMineracao = comando;
-
-					if (comando.PosMineracao)
-						MineracaoHelper.PosMineracao = comando;
 				}
 			}
 			catch (Exception ex)
