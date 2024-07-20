@@ -38,8 +38,14 @@ namespace CryptoMiningManager
 
 			try
 			{
-				bool isBackgroundOnly = args?.Length == 1 && args[0].ToLower() == "-backgroundonly"; //TODO: Melhorar a forma de ler parâmetros
-				using (IContainer container = isBackgroundOnly ? ContainerConfig_SemUI(connectionString) : ContainerConfig_ComUI(connectionString)) //TODO: Por agora registam-se todas as classes na mesma, mas devem-se reduzir as classes depois
+				bool isBackgroundOnly = args?.Length == 1 && args[0].ToLower() == "-backgroundonly";
+				if (!isBackgroundOnly)
+				{
+					Application.EnableVisualStyles();
+					Application.SetCompatibleTextRenderingDefault(false);
+				}
+
+				using (IContainer container = isBackgroundOnly ? ContainerConfig_SemUI(connectionString) : ContainerConfig_ComUI(connectionString))
 				using (ILifetimeScope scope = container.BeginLifetimeScope())
 				{
 					scope.Resolve<CustomNotifyIcon>().NotifyIcon.Icon = Icon.ExtractAssociatedIcon(assembly.Location);
@@ -51,12 +57,7 @@ namespace CryptoMiningManager
 						Application.Run(semUi);
 					}
 					else
-					{
-						Application.EnableVisualStyles();
-						Application.SetCompatibleTextRenderingDefault(false);
-
 						Application.Run(scope.Resolve<MainForm>());
-					}
 				}
 			}
 			finally
@@ -123,7 +124,7 @@ namespace CryptoMiningManager
 		{
 			ContainerBuilder builder = ContainerConfig_Base(connectionString);
 
-			builder.RegisterType<SemUIHelper>().SingleInstance(); //TODO: Isto deve passar para um método exclusivo mais tarde
+			builder.RegisterType<SemUIHelper>().SingleInstance();
 
 			return builder.Build();
 		}

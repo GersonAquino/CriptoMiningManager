@@ -28,13 +28,14 @@ namespace CryptoMiningManager.CustomControls
 			NotifyIcon.ContextMenuStrip = new();
 		}
 
-		public ToolStripMenuItem AdicionarItem(string texto, EventHandler eventHandler = null, bool forcarUltimo = false) //, string nome = null, Image imagem = null
+		public ToolStripMenuItem AdicionarItem(string texto, EventHandler eventHandler = null, bool forcarUltimo = false, bool checkbox = false) //, string nome = null, Image imagem = null
 		{
 			if (Items.ContainsKey(texto))
 				throw new ArgumentException($"Item com a chave {texto} já existente.");
 
 			ToolStripMenuItem item = eventHandler == null ? new ToolStripMenuItem(texto) : new(texto, null, eventHandler);
 			item.Name = texto;
+			item.CheckOnClick = checkbox;
 
 			if (forcarUltimo)
 			{

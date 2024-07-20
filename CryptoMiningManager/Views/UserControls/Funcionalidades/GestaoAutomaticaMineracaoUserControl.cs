@@ -36,7 +36,7 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
 
 			//Este método aparentemente vai buscar o DescriptionAttribute sozinho, então já fica com uma Caption decente
 			AlgoritmoRIDG.Items.AddEnum<Algoritmo>();
-			AlgoritmoBEI.EditValue = Algoritmo.Rentabilidade;
+			AlgoritmoBEI.EditValue = Global.ConfigGeralAtiva.Algoritmo ?? Algoritmo.Rentabilidade;
 
 			MineracaoHelper.TempoEntreVerificacoes = 180000; //30 minutos
 			TemporizadorBEI.EditValue = new DateTime(0);

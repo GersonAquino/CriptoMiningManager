@@ -35,6 +35,8 @@
 			ConfigsGeraisGV = new DevExpress.XtraGrid.Views.Grid.GridView();
 			colId = new DevExpress.XtraGrid.Columns.GridColumn();
 			colDescricao = new DevExpress.XtraGrid.Columns.GridColumn();
+			colAtualizarUIMinimizado = new DevExpress.XtraGrid.Columns.GridColumn();
+			colConfirmacoesExtraNosEditores = new DevExpress.XtraGrid.Columns.GridColumn();
 			colIniciarMinimizada = new DevExpress.XtraGrid.Columns.GridColumn();
 			colMedirConsumo = new DevExpress.XtraGrid.Columns.GridColumn();
 			colMinimizarAoFechar = new DevExpress.XtraGrid.Columns.GridColumn();
@@ -49,8 +51,7 @@
 			EliminarBBI = new DevExpress.XtraBars.BarButtonItem();
 			ConfigsGeraisRP = new DevExpress.XtraBars.Ribbon.RibbonPage();
 			OperacoesRPG = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
-			colAtualizarUIMinimizado = new DevExpress.XtraGrid.Columns.GridColumn();
-			colConfirmacoesExtraNosEditores = new DevExpress.XtraGrid.Columns.GridColumn();
+			colAlgoritmo = new DevExpress.XtraGrid.Columns.GridColumn();
 			((System.ComponentModel.ISupportInitialize)ConfigsGeraisGC).BeginInit();
 			((System.ComponentModel.ISupportInitialize)ConfigsGeraisBindingSource).BeginInit();
 			((System.ComponentModel.ISupportInitialize)ConfigsGeraisGV).BeginInit();
@@ -76,7 +77,7 @@
 			// 
 			// ConfigsGeraisGV
 			// 
-			ConfigsGeraisGV.Columns.AddRange(new DevExpress.XtraGrid.Columns.GridColumn[] { colId, colDescricao, colAtualizarUIMinimizado, colConfirmacoesExtraNosEditores, colIniciarMinimizada, colMedirConsumo, colMinimizarAoFechar, colPesoConsumo, colAtivo, colDataCriacao, colDataAlteracao });
+			ConfigsGeraisGV.Columns.AddRange(new DevExpress.XtraGrid.Columns.GridColumn[] { colId, colDescricao, colAtualizarUIMinimizado, colConfirmacoesExtraNosEditores, colIniciarMinimizada, colAlgoritmo, colMedirConsumo, colMinimizarAoFechar, colPesoConsumo, colAtivo, colDataCriacao, colDataAlteracao });
 			ConfigsGeraisGV.CustomizationFormBounds = new System.Drawing.Rectangle(1241, 662, 259, 290);
 			ConfigsGeraisGV.GridControl = ConfigsGeraisGC;
 			ConfigsGeraisGV.Name = "ConfigsGeraisGV";
@@ -108,8 +109,28 @@
 			colDescricao.MinWidth = 17;
 			colDescricao.Name = "colDescricao";
 			colDescricao.Visible = true;
-			colDescricao.VisibleIndex = 2;
+			colDescricao.VisibleIndex = 1;
 			colDescricao.Width = 64;
+			// 
+			// colAtualizarUIMinimizado
+			// 
+			colAtualizarUIMinimizado.Caption = "Atualizar UI Min.";
+			colAtualizarUIMinimizado.FieldName = "AtualizarUIMinimizado";
+			colAtualizarUIMinimizado.Name = "colAtualizarUIMinimizado";
+			colAtualizarUIMinimizado.ToolTip = "Atualizar UI enquanto o programa está minimizado";
+			colAtualizarUIMinimizado.Visible = true;
+			colAtualizarUIMinimizado.VisibleIndex = 2;
+			colAtualizarUIMinimizado.Width = 64;
+			// 
+			// colConfirmacoesExtraNosEditores
+			// 
+			colConfirmacoesExtraNosEditores.Caption = "Confirmações Extra";
+			colConfirmacoesExtraNosEditores.FieldName = "ConfirmacoesExtraNosEditores";
+			colConfirmacoesExtraNosEditores.Name = "colConfirmacoesExtraNosEditores";
+			colConfirmacoesExtraNosEditores.ToolTip = "Mostrar confirmações extras nos editores";
+			colConfirmacoesExtraNosEditores.Visible = true;
+			colConfirmacoesExtraNosEditores.VisibleIndex = 3;
+			colConfirmacoesExtraNosEditores.Width = 64;
 			// 
 			// colIniciarMinimizada
 			// 
@@ -117,7 +138,7 @@
 			colIniciarMinimizada.MinWidth = 17;
 			colIniciarMinimizada.Name = "colIniciarMinimizada";
 			colIniciarMinimizada.Visible = true;
-			colIniciarMinimizada.VisibleIndex = 5;
+			colIniciarMinimizada.VisibleIndex = 4;
 			colIniciarMinimizada.Width = 64;
 			// 
 			// colMedirConsumo
@@ -237,25 +258,13 @@
 			OperacoesRPG.Name = "OperacoesRPG";
 			OperacoesRPG.Text = "Operações";
 			// 
-			// colAtualizarUIMinimizado
+			// colAlgoritmo
 			// 
-			colAtualizarUIMinimizado.Caption = "Atualizar UI Min.";
-			colAtualizarUIMinimizado.FieldName = "AtualizarUIMinimizado";
-			colAtualizarUIMinimizado.Name = "colAtualizarUIMinimizado";
-			colAtualizarUIMinimizado.ToolTip = "Atualizar UI enquanto o programa está minimizado";
-			colAtualizarUIMinimizado.Visible = true;
-			colAtualizarUIMinimizado.VisibleIndex = 3;
-			colAtualizarUIMinimizado.Width = 64;
-			// 
-			// colConfirmacoesExtraNosEditores
-			// 
-			colConfirmacoesExtraNosEditores.Caption = "Confirmações Extra";
-			colConfirmacoesExtraNosEditores.FieldName = "ConfirmacoesExtraNosEditores";
-			colConfirmacoesExtraNosEditores.Name = "colConfirmacoesExtraNosEditores";
-			colConfirmacoesExtraNosEditores.ToolTip = "Mostrar confirmações extras nos editores";
-			colConfirmacoesExtraNosEditores.Visible = true;
-			colConfirmacoesExtraNosEditores.VisibleIndex = 4;
-			colConfirmacoesExtraNosEditores.Width = 64;
+			colAlgoritmo.FieldName = "Algoritmo";
+			colAlgoritmo.Name = "colAlgoritmo";
+			colAlgoritmo.ToolTip = "Algoritmo por defeito";
+			colAlgoritmo.Visible = true;
+			colAlgoritmo.VisibleIndex = 5;
 			// 
 			// ConfiguracoesGeraisUserControl
 			// 
@@ -298,5 +307,6 @@
 		private DevExpress.XtraGrid.Columns.GridColumn colDataAlteracao;
 		private DevExpress.XtraGrid.Columns.GridColumn colAtualizarUIMinimizado;
 		private DevExpress.XtraGrid.Columns.GridColumn colConfirmacoesExtraNosEditores;
+		private DevExpress.XtraGrid.Columns.GridColumn colAlgoritmo;
 	}
 }

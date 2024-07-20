@@ -79,14 +79,16 @@ namespace CryptoMiningManager.Views
 
 				ToolStripMenuItem item = TaskBarIcon.AdicionarItem(Taskbar.Mineracao);
 				CustomNotifyIcon.AdicionarSubItem(item, Taskbar_Mineracao.Iniciar, Taskbar_IniciarClick, true);
-				CustomNotifyIcon.AdicionarSubItem(item, Taskbar_Mineracao.Parar, Taskbar_PararClick, false, true);
+				CustomNotifyIcon.AdicionarSubItem(item, Taskbar_Mineracao.Parar, Taskbar_PararClick, false);
 
 				AlgoritmosItem = CustomNotifyIcon.AdicionarSubItem(item, Taskbar_Mineracao.Algoritmo, null, true);
 				CustomNotifyIcon.AdicionarSubItems_FromEnum<Algoritmo>(AlgoritmosItem);
 
 				//TODO: Implementar algoritmo por defeito nas configurações
-				if (AlgoritmosItem.DropDownItems[Algoritmo.Rentabilidade.GetDescricaoEnum()] is ToolStripMenuItem rentabilidadeItem)
+				if (AlgoritmosItem.DropDownItems[(Global.ConfigGeralAtiva.Algoritmo ?? Algoritmo.Rentabilidade).GetDescricaoEnum()] is ToolStripMenuItem rentabilidadeItem)
 					rentabilidadeItem.Checked = true;
+				else
+					throw new Exception("Houve uma falha ao pré-ativar o algoritmo definido!");
 
 				ToggleEventosItems(AlgoritmosItem.DropDownItems, AlgoritmoItem_CheckedChanged, true);
 

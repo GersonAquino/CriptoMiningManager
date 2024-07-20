@@ -35,6 +35,7 @@ namespace GestorDados.Helpers.Entidades
 			//Por agora subtrai apenas 1, porque descende de Configuracao e todas as classes descendentes dessa só têm o Id como chave primária, não há chaves compostas
 			List<string> colunasList = new(propriedades.Length - 1);
 
+			//Guardar todos os nomes das propriedades que não estejam marcadas como Key ou NotMapped
 			Type key = typeof(KeyAttribute);
 			Type notMapped = typeof(NotMappedAttribute);
 			propriedades.ForEach((p, _) => { if (!p.IsDefined(key) && !p.IsDefined(notMapped)) colunasList.Add(p.Name); });
@@ -125,6 +126,7 @@ namespace GestorDados.Helpers.Entidades
 
 			GravarEntidade_ValidacoesExtra(entidade);
 			await GravarEntidade_ValidacoesExtra_Async(entidade);
+
 			string query;
 			//Inserir caso Id seja um valor inválido mas esperado
 			if (entidade.Id == -1)

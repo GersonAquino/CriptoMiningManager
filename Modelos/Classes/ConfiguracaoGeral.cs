@@ -1,4 +1,6 @@
-﻿using System.ComponentModel;
+﻿using Modelos.Enums;
+using System;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Modelos.Classes
@@ -34,7 +36,13 @@ namespace Modelos.Classes
 
 		public string Descricao { get; set; }
 
-		//TODO: Acrescentar Algoritmo por defeito
+		[NotMapped]
+		public Algoritmo? Algoritmo { get; set; }
+
+		/// <summary>
+		/// Usar <see cref="Algoritmo"/>. Esta propriedade existe para ser usada pelo Dapper
+		/// </summary>
+		public string AlgoritmoPorDefeito { get => Algoritmo?.ToString(); set => Algoritmo = string.IsNullOrWhiteSpace(value) ? null : Enum.Parse<Algoritmo>(value); }
 
 		public ConfiguracaoGeral() { }
 	}

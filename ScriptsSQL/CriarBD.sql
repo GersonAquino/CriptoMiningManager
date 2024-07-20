@@ -54,6 +54,8 @@ CREATE TABLE ConfiguracoesGerais (
 	MedirConsumo BIT NOT NULL DEFAULT 0,
 	PesoConsumo INTEGER NOT NULL DEFAULT 0, --Em Watts
 
+	AlgoritmoPorDefeito NVARCHAR(100) NULL,
+
 	Ativo BIT NOT NULL DEFAULT 0,
 	
 	DataCriacao DateTime NOT NULL, --DEFAULT CURRENT_TIMESTAMP //Isto dá o tempo GMT, não é o tempo local, portanto não serve (ex: fica 1h atrasado no horário de Verão)
