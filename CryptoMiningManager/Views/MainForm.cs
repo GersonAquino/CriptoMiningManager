@@ -84,7 +84,6 @@ namespace CryptoMiningManager.Views
 				AlgoritmosItem = CustomNotifyIcon.AdicionarSubItem(item, Taskbar_Mineracao.Algoritmo, null, true);
 				CustomNotifyIcon.AdicionarSubItems_FromEnum<Algoritmo>(AlgoritmosItem);
 
-				//TODO: Implementar algoritmo por defeito nas configurações
 				if (AlgoritmosItem.DropDownItems[(Global.ConfigGeralAtiva.Algoritmo ?? Algoritmo.Rentabilidade).GetDescricaoEnum()] is ToolStripMenuItem rentabilidadeItem)
 					rentabilidadeItem.Checked = true;
 				else

@@ -10,12 +10,10 @@ namespace Modelos.Classes
 	{
 		public bool IniciarMinimizada { get; set; }
 
-		//TODO: Por implementar - Define se o GestaoAutomaticaUserControl deve continuar à escuta dos eventos do MineracaoHelper quando a aplicação está a correr em background
 		public bool AtualizarUIMinimizado { get; set; }
 
 		/// <summary>
 		/// Se estiver ativo, ao gravar uma entidade, pergunta se pretende criar uma nova entidade (para atualizar o editor)
-		/// <para>TODO: POR IMPLEMENTAR E CRIAR NA BD</para>
 		/// </summary>
 		public bool ConfirmacoesExtraNosEditores { get; set; }
 
