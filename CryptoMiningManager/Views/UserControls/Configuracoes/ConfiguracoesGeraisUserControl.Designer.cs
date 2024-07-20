@@ -38,6 +38,7 @@
 			colAtualizarUIMinimizado = new DevExpress.XtraGrid.Columns.GridColumn();
 			colConfirmacoesExtraNosEditores = new DevExpress.XtraGrid.Columns.GridColumn();
 			colIniciarMinimizada = new DevExpress.XtraGrid.Columns.GridColumn();
+			colAlgoritmo = new DevExpress.XtraGrid.Columns.GridColumn();
 			colMedirConsumo = new DevExpress.XtraGrid.Columns.GridColumn();
 			colMinimizarAoFechar = new DevExpress.XtraGrid.Columns.GridColumn();
 			colPesoConsumo = new DevExpress.XtraGrid.Columns.GridColumn();
@@ -51,7 +52,7 @@
 			EliminarBBI = new DevExpress.XtraBars.BarButtonItem();
 			ConfigsGeraisRP = new DevExpress.XtraBars.Ribbon.RibbonPage();
 			OperacoesRPG = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
-			colAlgoritmo = new DevExpress.XtraGrid.Columns.GridColumn();
+			colAlternarModoEnergia = new DevExpress.XtraGrid.Columns.GridColumn();
 			((System.ComponentModel.ISupportInitialize)ConfigsGeraisGC).BeginInit();
 			((System.ComponentModel.ISupportInitialize)ConfigsGeraisBindingSource).BeginInit();
 			((System.ComponentModel.ISupportInitialize)ConfigsGeraisGV).BeginInit();
@@ -77,7 +78,7 @@
 			// 
 			// ConfigsGeraisGV
 			// 
-			ConfigsGeraisGV.Columns.AddRange(new DevExpress.XtraGrid.Columns.GridColumn[] { colId, colDescricao, colAtualizarUIMinimizado, colConfirmacoesExtraNosEditores, colIniciarMinimizada, colAlgoritmo, colMedirConsumo, colMinimizarAoFechar, colPesoConsumo, colAtivo, colDataCriacao, colDataAlteracao });
+			ConfigsGeraisGV.Columns.AddRange(new DevExpress.XtraGrid.Columns.GridColumn[] { colId, colDescricao, colAlternarModoEnergia, colAtualizarUIMinimizado, colConfirmacoesExtraNosEditores, colIniciarMinimizada, colAlgoritmo, colMedirConsumo, colMinimizarAoFechar, colPesoConsumo, colAtivo, colDataCriacao, colDataAlteracao });
 			ConfigsGeraisGV.CustomizationFormBounds = new System.Drawing.Rectangle(1241, 662, 259, 290);
 			ConfigsGeraisGV.GridControl = ConfigsGeraisGC;
 			ConfigsGeraisGV.Name = "ConfigsGeraisGV";
@@ -110,7 +111,7 @@
 			colDescricao.Name = "colDescricao";
 			colDescricao.Visible = true;
 			colDescricao.VisibleIndex = 1;
-			colDescricao.Width = 64;
+			colDescricao.Width = 130;
 			// 
 			// colAtualizarUIMinimizado
 			// 
@@ -119,8 +120,8 @@
 			colAtualizarUIMinimizado.Name = "colAtualizarUIMinimizado";
 			colAtualizarUIMinimizado.ToolTip = "Atualizar UI enquanto o programa está minimizado";
 			colAtualizarUIMinimizado.Visible = true;
-			colAtualizarUIMinimizado.VisibleIndex = 2;
-			colAtualizarUIMinimizado.Width = 64;
+			colAtualizarUIMinimizado.VisibleIndex = 3;
+			colAtualizarUIMinimizado.Width = 130;
 			// 
 			// colConfirmacoesExtraNosEditores
 			// 
@@ -129,8 +130,8 @@
 			colConfirmacoesExtraNosEditores.Name = "colConfirmacoesExtraNosEditores";
 			colConfirmacoesExtraNosEditores.ToolTip = "Mostrar confirmações extras nos editores";
 			colConfirmacoesExtraNosEditores.Visible = true;
-			colConfirmacoesExtraNosEditores.VisibleIndex = 3;
-			colConfirmacoesExtraNosEditores.Width = 64;
+			colConfirmacoesExtraNosEditores.VisibleIndex = 4;
+			colConfirmacoesExtraNosEditores.Width = 134;
 			// 
 			// colIniciarMinimizada
 			// 
@@ -138,8 +139,17 @@
 			colIniciarMinimizada.MinWidth = 17;
 			colIniciarMinimizada.Name = "colIniciarMinimizada";
 			colIniciarMinimizada.Visible = true;
-			colIniciarMinimizada.VisibleIndex = 4;
-			colIniciarMinimizada.Width = 64;
+			colIniciarMinimizada.VisibleIndex = 5;
+			colIniciarMinimizada.Width = 130;
+			// 
+			// colAlgoritmo
+			// 
+			colAlgoritmo.FieldName = "Algoritmo";
+			colAlgoritmo.Name = "colAlgoritmo";
+			colAlgoritmo.ToolTip = "Algoritmo por defeito";
+			colAlgoritmo.Visible = true;
+			colAlgoritmo.VisibleIndex = 6;
+			colAlgoritmo.Width = 152;
 			// 
 			// colMedirConsumo
 			// 
@@ -148,8 +158,8 @@
 			colMedirConsumo.Name = "colMedirConsumo";
 			colMedirConsumo.ToolTip = "Medir consumo do(s) componente(s) a ser usado(s) na mineração";
 			colMedirConsumo.Visible = true;
-			colMedirConsumo.VisibleIndex = 6;
-			colMedirConsumo.Width = 64;
+			colMedirConsumo.VisibleIndex = 7;
+			colMedirConsumo.Width = 113;
 			// 
 			// colMinimizarAoFechar
 			// 
@@ -159,8 +169,8 @@
 			colMinimizarAoFechar.Name = "colMinimizarAoFechar";
 			colMinimizarAoFechar.ToolTip = "Continua a executar o programa em background ao fechar";
 			colMinimizarAoFechar.Visible = true;
-			colMinimizarAoFechar.VisibleIndex = 7;
-			colMinimizarAoFechar.Width = 64;
+			colMinimizarAoFechar.VisibleIndex = 8;
+			colMinimizarAoFechar.Width = 135;
 			// 
 			// colPesoConsumo
 			// 
@@ -169,8 +179,8 @@
 			colPesoConsumo.Name = "colPesoConsumo";
 			colPesoConsumo.ToolTip = "Peso do consumo (Watts)";
 			colPesoConsumo.Visible = true;
-			colPesoConsumo.VisibleIndex = 8;
-			colPesoConsumo.Width = 64;
+			colPesoConsumo.VisibleIndex = 9;
+			colPesoConsumo.Width = 135;
 			// 
 			// colAtivo
 			// 
@@ -179,8 +189,8 @@
 			colAtivo.MinWidth = 17;
 			colAtivo.Name = "colAtivo";
 			colAtivo.Visible = true;
-			colAtivo.VisibleIndex = 9;
-			colAtivo.Width = 64;
+			colAtivo.VisibleIndex = 10;
+			colAtivo.Width = 143;
 			// 
 			// colDataCriacao
 			// 
@@ -258,13 +268,13 @@
 			OperacoesRPG.Name = "OperacoesRPG";
 			OperacoesRPG.Text = "Operações";
 			// 
-			// colAlgoritmo
+			// colAlternarModoEnergia
 			// 
-			colAlgoritmo.FieldName = "Algoritmo";
-			colAlgoritmo.Name = "colAlgoritmo";
-			colAlgoritmo.ToolTip = "Algoritmo por defeito";
-			colAlgoritmo.Visible = true;
-			colAlgoritmo.VisibleIndex = 5;
+			colAlternarModoEnergia.FieldName = "AlternarModoEnergia";
+			colAlternarModoEnergia.Name = "colAlternarModoEnergia";
+			colAlternarModoEnergia.Visible = true;
+			colAlternarModoEnergia.VisibleIndex = 2;
+			colAlternarModoEnergia.Width = 152;
 			// 
 			// ConfiguracoesGeraisUserControl
 			// 
@@ -308,5 +318,6 @@
 		private DevExpress.XtraGrid.Columns.GridColumn colAtualizarUIMinimizado;
 		private DevExpress.XtraGrid.Columns.GridColumn colConfirmacoesExtraNosEditores;
 		private DevExpress.XtraGrid.Columns.GridColumn colAlgoritmo;
+		private DevExpress.XtraGrid.Columns.GridColumn colAlternarModoEnergia;
 	}
 }

@@ -38,7 +38,7 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
 			AlgoritmoRIDG.Items.AddEnum<Algoritmo>();
 			AlgoritmoBEI.EditValue = Global.ConfigGeralAtiva.Algoritmo ?? Algoritmo.Rentabilidade;
 
-			MineracaoHelper.TempoEntreVerificacoes = 180000; //30 minutos
+			MineracaoHelper.TempoEntreVerificacoes_Rentabilidade = 180000; //30 minutos
 			TemporizadorBEI.EditValue = new DateTime(0);
 
 			ToggleEventosMineracao(true);
@@ -111,7 +111,7 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
 			try
 			{
 				int intervaloVerificacaoRentabilidade = decimal.ToInt32((decimal)IntervaloVerificacaoRentabilidadeBEI.EditValue);
-				MineracaoHelper.TempoEntreVerificacoes = intervaloVerificacaoRentabilidade * 60000; //*1000 por serem milisegundos e *60 para passar a minutos
+				MineracaoHelper.TempoEntreVerificacoes_Rentabilidade = intervaloVerificacaoRentabilidade * 60000; //*1000 por serem milisegundos e *60 para passar a minutos
 			}
 			catch (Exception ex)
 			{

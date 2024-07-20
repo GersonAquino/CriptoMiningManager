@@ -19,23 +19,28 @@ namespace CryptoMiningManager.Helpers
 	{
 		private static Regex EscapedSequences { get; } = new(@"\x1B\[[0-9;]*[mGKH]", RegexOptions.Compiled);
 
+		private bool UtilizadorAtivo { get; set; }
+
 		private IEntidadesHelper<Comando> ComandosHelper { get; }
 		private IEntidadesHelper<Moeda> MoedasHelper { get; }
 		private IEntidadesHelper<Minerador> MineradoresHelper { get; }
 
-		private CancellationTokenSource CancelarThread { get; set; }
+		private CancellationTokenSource CancelarThread_Mineracao { get; set; }
+		private CancellationTokenSource CancelarThread_ModoEnergia { get; set; }
 		private Dictionary<int, Minerador> MineradoresPorMoeda { get; set; }
 		private Minerador MineradorAtivo { get; set; }
 		private Comando PreMineracao { get; set; }
 		private Comando PosMineracao { get; set; }
 		private Thread RentabilidadeThread { get; set; }
+		private Thread AtividadeThread { get; set; }
 
 		private string LocalizacaoLogsMineracao { get; set; }
 
 		public Process ProcessoAtivo { get; private set; }
 
 		public string CaminhoCompletoLogMineracao { get; private set; }
-		public int TempoEntreVerificacoes { get; set; } = 180000; //TODO: Permitir definir o tempo pelo TaskbarIcon //Por agora ficam 30m
+		public int TempoEntreVerificacoes_Rentabilidade { get; set; } = 180000; //TODO: Permitir definir o tempo pelo TaskbarIcon //Por agora ficam 30m
+		public int TempoEntreVerificacoes_Atividade { get; set; } = 120000; //TODO: Permitir alterar este tempo, provavelmente nas configurações gerais //Por agora ficam 2m
 
 		#region Eventos
 		public event EventHandler<AlteracaoEstadoMineracaoEventArgs> AlteracaoEstadoMineracao;
@@ -49,7 +54,8 @@ namespace CryptoMiningManager.Helpers
 
 		public MineracaoHelper(IEntidadesHelper<Comando> comandosHelper, IEntidadesHelper<Moeda> moedasHelper, IEntidadesHelper<Minerador> mineradoresHelper, string localizacaoLogsMineracao)
 		{
-			CancelarThread = null;
+			AtividadeThread = null;
+			CancelarThread_Mineracao = null;
 			ComandosHelper = comandosHelper;
 			LocalizacaoLogsMineracao = localizacaoLogsMineracao; //Caso apareça mais algum caso como este (dados da configuração que precisem de ser lidos), talvez faça sentido criar algum tipo de classe estática ou algo parecido
 			MineradorAtivo = null;
@@ -60,6 +66,7 @@ namespace CryptoMiningManager.Helpers
 			PreMineracao = null;
 			ProcessoAtivo = null;
 			RentabilidadeThread = null;
+			UtilizadorAtivo = true;
 		}
 
 		public async Task Iniciar(Algoritmo algoritmo, Minerador minerador = null)
@@ -83,9 +90,9 @@ namespace CryptoMiningManager.Helpers
 				//case Algoritmo.Moeda:
 				//	break;
 				case Algoritmo.Rentabilidade:
-					CancelarThread = new CancellationTokenSource();
+					CancelarThread_Mineracao = new();
 
-					RentabilidadeThread = new Thread(async () => await MinerarPorRentabilidade(CancelarThread.Token)) { IsBackground = true };
+					RentabilidadeThread = new Thread(async () => await MinerarPorRentabilidade(CancelarThread_Mineracao.Token)) { IsBackground = true };
 					RentabilidadeThread.Start();
 					break;
 				case Algoritmo.Minerador:
@@ -103,6 +110,9 @@ namespace CryptoMiningManager.Helpers
 		{
 			await PararProcessoAtivo();
 			PararThreadRentabilidade();
+
+			UtilizadorAtivo = true;
+			AlterarModoEnergia();
 		}
 
 		#region Output ProcessoAtivo
@@ -133,6 +143,46 @@ namespace CryptoMiningManager.Helpers
 		#endregion
 
 		//MÉTODOS AUXILIARES
+		private void VerificarAtividadeEModoEnergia(CancellationToken cancelar)
+		{
+			try
+			{
+				while (!cancelar.IsCancellationRequested)
+				{
+					if (UtilizadorAtivo)
+					{
+						if (WindowsAPIHelper.GetTempoInativo() >= 120)
+						{
+							UtilizadorAtivo = false;
+							AlterarModoEnergia();
+						}
+					}
+					else if (WindowsAPIHelper.GetTempoInativo() < 120)
+					{
+						UtilizadorAtivo = true;
+						AlterarModoEnergia();
+					}
+
+					Thread.Sleep(TempoEntreVerificacoes_Atividade);
+				}
+			}
+			catch (Exception ex)
+			{
+				LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro");
+				XtraMessageBox.Show("Erro ao alternar modo de energia.", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+			}
+		}
+
+		/// <summary>
+		/// Alterna o modo de energia conforme o estado do utilizador.
+		/// Se <see cref="UtilizadorAtivo"/> == true muda para o modo de Alto Desempenho, caso contrário muda para o modo Poupança de Energia
+		/// </summary>
+		/// <returns></returns>
+		private void AlterarModoEnergia()
+		{
+			WindowsAPIHelper.MudarPlanoEnergia(UtilizadorAtivo ? WindowsAPIHelper.AltoDesempenho : WindowsAPIHelper.PoupancaEnergia);
+		}
+
 		public async Task<Dictionary<int, Minerador>> GetMineradoresAtivosPorMoeda(Dictionary<int, Minerador> mineradores = null)
 		{
 			if (mineradores == null)
@@ -216,7 +266,6 @@ namespace CryptoMiningManager.Helpers
 				RedirectStandardError = true
 			};
 
-
 			if (!ProcessoAtivo.Start())
 				throw new Exception($"Não foi possível iniciar o minerador {minerador}");
 
@@ -229,10 +278,22 @@ namespace CryptoMiningManager.Helpers
 			if (MineradorAtivo != null)
 				LogHelper.EscreveLog(LogLevel.Information, $"A mudar do minerador {MineradorAtivo} para o minerador {minerador}. Moedas: Antes: {MineradorAtivo.Moeda} | Depois: {minerador.Moeda}");
 
-			if (MineradorAtivo?.Id != minerador.Id)
+			//TODO: Validar esta lógica - Acho que ia entrar sempre dentro do if, portanto não parece ser necessário
+			//if (MineradorAtivo?.Id != minerador.Id)
+			//{
+			MineradorAtivo = minerador;
+			AlteracaoMinerador?.Invoke(null, new AlteracaoMineradorEventArgs(MineradorAtivo));
+			//}
+
+			if (MineradorAtivo.CPU)
 			{
-				MineradorAtivo = minerador;
-				AlteracaoMinerador?.Invoke(null, new AlteracaoMineradorEventArgs(MineradorAtivo));
+				PararThreadModoEnergia();
+			}
+			else if (AtividadeThread == null && Global.ConfigGeralAtiva.AlternarModoEnergia)
+			{
+				CancelarThread_ModoEnergia ??= new();
+				AtividadeThread = new Thread(() => VerificarAtividadeEModoEnergia(CancelarThread_ModoEnergia.Token)) { IsBackground = true };
+				AtividadeThread.Start();
 			}
 
 			AlteracaoEstadoMineracao?.Invoke(null, new AlteracaoEstadoMineracaoEventArgs(true));
@@ -255,7 +316,7 @@ namespace CryptoMiningManager.Helpers
 						await IniciarMinerador(minerador);
 
 					VerificaoRentabilidade?.Invoke(null, new EventArgs());
-					Thread.Sleep(TempoEntreVerificacoes);
+					Thread.Sleep(TempoEntreVerificacoes_Rentabilidade);
 				}
 			}
 			catch (ThreadInterruptedException) { }
@@ -270,6 +331,8 @@ namespace CryptoMiningManager.Helpers
 		{
 			if (ProcessoAtivo == null)
 				return;
+
+			PararThreadModoEnergia();
 
 			ProcessoAtivo.Kill(true);
 			ProcessoAtivo.Dispose();
@@ -304,6 +367,15 @@ namespace CryptoMiningManager.Helpers
 			AlteracaoEstadoMineracao?.Invoke(null, new AlteracaoEstadoMineracaoEventArgs(false));
 		}
 
+		private void PararThreadModoEnergia()
+		{
+			if (CancelarThread_ModoEnergia != null)
+			{
+				CancelarThread_ModoEnergia.Cancel();
+				CancelarThread_ModoEnergia = null;
+			}
+		}
+
 		private void PararThreadRentabilidade()
 		{
 			if (RentabilidadeThread == null)
@@ -312,13 +384,13 @@ namespace CryptoMiningManager.Helpers
 			if (RentabilidadeThread.ThreadState == System.Threading.ThreadState.WaitSleepJoin)
 				RentabilidadeThread.Interrupt();
 			else
-				CancelarThread.Cancel();
+				CancelarThread_Mineracao.Cancel();
 
 			if (!RentabilidadeThread.Join(10000))
 				XtraMessageBox.Show("O processo está a levar mais tempo para parar do que o esperado.", "Possível falha", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
-			CancelarThread.Dispose();
-			CancelarThread = null;
+			CancelarThread_Mineracao.Dispose();
+			CancelarThread_Mineracao = null;
 			RentabilidadeThread = null;
 		}
 
