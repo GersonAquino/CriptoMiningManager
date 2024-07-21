@@ -75,7 +75,7 @@ namespace CryptoMiningManager.Views
 				}
 
 				if (Global.ConfigGeralAtiva?.IniciarMinimizada == true)
-					MinimizarAplicacao();
+					this.Hide();
 
 				ToolStripMenuItem item = TaskBarIcon.AdicionarItem(Taskbar.Mineracao);
 				CustomNotifyIcon.AdicionarSubItem(item, Taskbar_Mineracao.Iniciar, Taskbar_IniciarClick, true);
@@ -126,7 +126,7 @@ namespace CryptoMiningManager.Views
 
 				if (Global.ConfigGeralAtiva?.MinimizarAoFechar == true && this.Visible)
 				{
-					MinimizarAplicacao();
+					this.Hide();
 					e.Cancel = true;
 					return;
 				}
@@ -154,18 +154,19 @@ namespace CryptoMiningManager.Views
 			}
 		}
 
-		private void MainForm_Shown(object sender, EventArgs e)
+		private void MainForm_VisibleChanged(object sender, EventArgs e)
 		{
 			try
 			{
-				ToggleEventosVisuaisMineracao(true);
+				ToggleEventosVisuaisMineracao(this.Visible);
 			}
 			catch (Exception ex)
 			{
 				LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro");
-				XtraMessageBox.Show("Erro ao mostrar form.", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				XtraMessageBox.Show($"Erro ao mostrar/esconder form.{Environment.NewLine}{ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
 		}
+
 		#endregion
 
 		#region Eventos Click que criam um tab com um UserControl
@@ -400,12 +401,6 @@ namespace CryptoMiningManager.Views
 				XtraMessageBox.Show(ex.GetBaseException().Message, $"Não foi possível abrir o menu {controlElement.Text}",
 					MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
-		}
-
-		private void MinimizarAplicacao()
-		{
-			this.Hide();
-			ToggleEventosVisuaisMineracao(false);
 		}
 
 		private static void ToggleEventosItems(ToolStripItemCollection items, EventHandler eventHandler, bool atribuir, Action<ToolStripMenuItem> acaoExtra = null)
