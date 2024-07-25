@@ -15,6 +15,7 @@ using Modelos.EventArgs;
 using Modelos.Interfaces;
 using System;
 using System.Diagnostics;
+using System.Reflection;
 using System.Windows.Forms;
 using Utils;
 
@@ -51,6 +52,8 @@ namespace CryptoMiningManager.Views
 			MineracaoHelper.OutputMinerador += MineracaoHelper_OutputMinerador;
 			MineracaoHelper.RegistarLogsMineracao += MineracaoHelper_RegistarLogsMineracao;
 			MineracaoHelper.VerificaoRentabilidade += MineracaoHelper_VerificaoRentabilidade;
+
+			beiVersao.EditValue = Assembly.GetExecutingAssembly().GetName().Version.ToString();
 		}
 
 		#region Eventos MainForm

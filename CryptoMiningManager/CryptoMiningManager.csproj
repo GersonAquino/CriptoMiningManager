@@ -1,9 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<VersionPrefix>1.2.0.0</VersionPrefix>
-		<TargetFramework>net6.0-windows10.0.22621.0</TargetFramework>
+		<TargetFramework>net8.0-windows10.0.22621.0</TargetFramework>
 		<OutputType>WinExe</OutputType>
-		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<GenerateAssemblyInfo>true</GenerateAssemblyInfo>
 		<UseWindowsForms>true</UseWindowsForms>
 		<ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
 		<AssemblyVersion>$(VersionPrefix)</AssemblyVersion>
@@ -11,6 +11,9 @@
 		<ApplicationIcon>Icon.ico</ApplicationIcon>
 		<PackageIcon>Icon.png</PackageIcon>
 		<SignAssembly>False</SignAssembly>
+		<Version>1.2.0.0</Version>
+		<AssemblyVersion>1.2.3.0</AssemblyVersion>
+		<FileVersion>1.2.3.4</FileVersion>
 	</PropertyGroup>
 	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
 		<DebugType>embedded</DebugType>
@@ -25,14 +28,10 @@
 	</ItemGroup>
 	<ItemGroup>
 		<Compile Update="Views\UserControls\Configuracoes\ComandosUserControl.cs" />
-		<Compile Update="Views\UserControls\Configuracoes\Editores\ConfiguracaoGeralEditorUserControl.cs">
-		  <SubType>UserControl</SubType>
-		</Compile>
+		<Compile Update="Views\UserControls\Configuracoes\Editores\ConfiguracaoGeralEditorUserControl.cs" />
 		<Compile Update="Views\UserControls\Configuracoes\Editores\ComandoEditorUserControl.cs" />
 		<Compile Update="Views\UserControls\Configuracoes\Editores\MineradorEditorUserControl.cs" />
-		<Compile Update="Views\UserControls\Configuracoes\ConfiguracoesGeraisUserControl.cs">
-		  <SubType>UserControl</SubType>
-		</Compile>
+		<Compile Update="Views\UserControls\Configuracoes\ConfiguracoesGeraisUserControl.cs" />
 		<Compile Update="Views\UserControls\Configuracoes\MoedasUserControl.cs" />
 		<Compile Update="Views\UserControls\Configuracoes\MineradoresUserControl.cs" />
 		<Compile Update="Views\UserControls\Funcionalidades\GestaoAutomaticaMineracaoUserControl.cs" />
