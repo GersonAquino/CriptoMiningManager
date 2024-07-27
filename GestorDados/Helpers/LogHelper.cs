@@ -12,18 +12,18 @@ namespace GestorDados.Helpers
 {
 	public class LogHelper
 	{
-		private static readonly Semaphore SemaforoFicheiro = new Semaphore(1, 1);
+		private static readonly Semaphore SemaforoFicheiro = new(1, 1);
 
 		/// <summary>
 		/// Instancia o Logger e define como lidar com erros internos (do Serilog)
 		/// </summary>
 		/// <param name="connectionString"></param>
-		public static void StartLogger(string connectionString)
+		public static void StartLogger()
 		{
 			SelfLog.Enable(msg =>
 			{
 				//Espera até 1 minuto para escrever a mensagem
-				if (!SemaforoFicheiro.WaitOne(60000))
+				if (msg.Contains("Sending batch of ") || !SemaforoFicheiro.WaitOne(60000))
 					return;
 
 				try
@@ -56,11 +56,11 @@ namespace GestorDados.Helpers
 				if (msg.Contains("Unable to write batch"))
 				{
 					Log.CloseAndFlush();
-					InstanciarLogger(connectionString);
+					InstanciarLogger();
 				}
 			});
 
-			InstanciarLogger(connectionString);
+			InstanciarLogger();
 		}
 
 		public static void StopLogger()
@@ -153,14 +153,13 @@ namespace GestorDados.Helpers
 		}
 
 		//MÉTODOS AUXILIARES
-		private static void InstanciarLogger(string connectionString)
+		private static void InstanciarLogger()
 		{
 			Log.Logger = new LoggerConfiguration()
 #if DEBUG
 				.MinimumLevel.Debug() //MinimumLevel.Debug() serve para escrever os Log.Debug() na BD tbm, mais nada
 #endif
-				//.ReadFrom.AppSettings()
-				.WriteTo.SQLite(connectionString)
+				.ReadFrom.AppSettings()
 				.CreateLogger();
 		}
 

@@ -59,14 +59,6 @@ namespace GestorDados
 
 		#region Transações
 		///<inheritdoc/>
-		public void IniciarTransacao()
-		{
-			DesfazTransacao();
-
-			Transacao = Conexao.BeginTransaction();
-		}
-
-		///<inheritdoc/>
 		public void DesfazTransacao()
 		{
 			if (Transacao != null)
@@ -74,6 +66,14 @@ namespace GestorDados
 				Transacao.Rollback();
 				Transacao.Dispose();
 			}
+		}
+
+		///<inheritdoc/>
+		public void IniciarTransacao()
+		{
+			DesfazTransacao();
+
+			Transacao = Conexao.BeginTransaction();
 		}
 
 		///<inheritdoc/>
@@ -218,6 +218,7 @@ namespace GestorDados
 		public void Dispose()
 		{
 			FecharConexao();
+			GC.SuppressFinalize(this);
 		}
 
 		//MÉTODOS AUXILIARES

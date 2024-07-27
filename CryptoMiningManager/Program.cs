@@ -9,6 +9,7 @@ using GestorDados.Helpers;
 using Modelos.Interfaces;
 using System;
 using System.Configuration;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
@@ -24,6 +25,7 @@ namespace CryptoMiningManager
 		/// The main entry point for the application.
 		/// </summary>
 		[STAThread]
+		[RequiresAssemblyFiles("Calls System.Reflection.Assembly.Location")]
 		private static async Task Main(string[] args)
 		{
 			#region JIT Improve
@@ -33,19 +35,18 @@ namespace CryptoMiningManager
 			ProfileOptimization.StartProfile(assembly.GetName().Name);
 			#endregion JIT Improve
 
-			string connectionString = ConfigurationManager.ConnectionStrings["CriptoManager"].ConnectionString;
-			LogHelper.StartLogger(connectionString.Split('=', 3)[1]);
+			LogHelper.StartLogger();
 
 			try
 			{
-				bool isBackgroundOnly = args?.Length == 1 && args[0].ToLower() == "-backgroundonly";
+				bool isBackgroundOnly = args?.Length == 1 && args[0].Equals("-backgroundonly", StringComparison.CurrentCultureIgnoreCase);
 				if (!isBackgroundOnly)
 				{
 					Application.EnableVisualStyles();
 					Application.SetCompatibleTextRenderingDefault(false);
 				}
 
-				using (IContainer container = isBackgroundOnly ? ContainerConfig_SemUI(connectionString) : ContainerConfig_ComUI(connectionString))
+				using (IContainer container = isBackgroundOnly ? ContainerConfig_SemUI() : ContainerConfig_ComUI())
 				using (ILifetimeScope scope = container.BeginLifetimeScope())
 				{
 					scope.Resolve<CustomNotifyIcon>().NotifyIcon.Icon = Icon.ExtractAssociatedIcon(assembly.Location);
@@ -66,15 +67,17 @@ namespace CryptoMiningManager
 			}
 		}
 
-		private static ContainerBuilder ContainerConfig_Base(string connectionString)
+		private static ContainerBuilder ContainerConfig_Base()
 		{
+			string connectionString = ConfigurationManager.ConnectionStrings["CriptoManager"].ConnectionString;
+
 			ContainerBuilder builder = new();
 			Type tipoString = typeof(string);
 			//Modelos
 			builder.RegisterAssemblyTypes(Assembly.Load(nameof(Modelos))).Where(t => t.Namespace != null).InstancePerDependency();
 
 			//SQL e dados
-			builder.RegisterType<Dados>().WithParameters(new Parameter[] { new TypedParameter(tipoString, connectionString), TypedParameter.From(true) })
+			builder.RegisterType<Dados>().WithParameters([new TypedParameter(tipoString, connectionString), TypedParameter.From(true)])
 				.As<IDados>().InstancePerLifetimeScope();
 			builder.RegisterAssemblyTypes(Assembly.Load(nameof(GestorDados)))
 				.Where(t => t.Namespace != null && t.Namespace.Contains(nameof(GestorDados.Helpers.Entidades)))
@@ -98,9 +101,9 @@ namespace CryptoMiningManager
 			return builder;
 		}
 
-		private static IContainer ContainerConfig_ComUI(string connectionString)
+		private static IContainer ContainerConfig_ComUI()
 		{
-			ContainerBuilder builder = ContainerConfig_Base(connectionString);
+			ContainerBuilder builder = ContainerConfig_Base();
 
 			//Forms e UserControls
 			builder.RegisterType<MainForm>().SingleInstance();
@@ -120,9 +123,9 @@ namespace CryptoMiningManager
 			return builder.Build();
 		}
 
-		private static IContainer ContainerConfig_SemUI(string connectionString)
+		private static IContainer ContainerConfig_SemUI()
 		{
-			ContainerBuilder builder = ContainerConfig_Base(connectionString);
+			ContainerBuilder builder = ContainerConfig_Base();
 
 			builder.RegisterType<SemUIHelper>().SingleInstance();
 
