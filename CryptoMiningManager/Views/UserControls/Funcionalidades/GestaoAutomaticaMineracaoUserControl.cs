@@ -253,7 +253,7 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
 		private async void TerminarTemporizador()
 		{
 			Temporizador.Enabled = false;
-			await MineracaoHelper.Iniciar((Algoritmo)AlgoritmoBEI.EditValue);
+			await MineracaoHelper.Iniciar((Algoritmo)AlgoritmoBEI.EditValue, MineradoresGV.FocusedRowObject as Minerador);
 		}
 
 		/// <summary>

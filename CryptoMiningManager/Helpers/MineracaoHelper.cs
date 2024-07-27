@@ -12,12 +12,13 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using ThreadState = System.Threading.ThreadState;
 
 namespace CryptoMiningManager.Helpers
 {
-	public class MineracaoHelper
+	public partial class MineracaoHelper
 	{
-		private static Regex EscapedSequences { get; } = new(@"\x1B\[[0-9;]*[mGKH]", RegexOptions.Compiled);
+		private static Regex EscapedSequences { get; } = FiltroOutputMinerador();
 
 		private bool UtilizadorAtivo { get; set; }
 
@@ -56,11 +57,12 @@ namespace CryptoMiningManager.Helpers
 		{
 			AtividadeThread = null;
 			CancelarThread_Mineracao = null;
+			CancelarThread_ModoEnergia = null;
 			ComandosHelper = comandosHelper;
 			LocalizacaoLogsMineracao = localizacaoLogsMineracao; //Caso apareça mais algum caso como este (dados da configuração que precisem de ser lidos), talvez faça sentido criar algum tipo de classe estática ou algo parecido
 			MineradorAtivo = null;
 			MineradoresHelper = mineradoresHelper;
-			MineradoresPorMoeda = new();
+			MineradoresPorMoeda = [];
 			MoedasHelper = moedasHelper;
 			PosMineracao = null;
 			PreMineracao = null;
@@ -96,8 +98,7 @@ namespace CryptoMiningManager.Helpers
 					RentabilidadeThread.Start();
 					break;
 				case Algoritmo.Minerador:
-					if (minerador == null)
-						throw new ArgumentNullException(nameof(minerador));
+					ArgumentNullException.ThrowIfNull(minerador);
 
 					await IniciarMinerador(minerador);
 					break;
@@ -166,6 +167,7 @@ namespace CryptoMiningManager.Helpers
 					Thread.Sleep(TempoEntreVerificacoes_Atividade);
 				}
 			}
+			catch (ThreadInterruptedException) { }
 			catch (Exception ex)
 			{
 				LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro");
@@ -186,7 +188,7 @@ namespace CryptoMiningManager.Helpers
 		public async Task<Dictionary<int, Minerador>> GetMineradoresAtivosPorMoeda(Dictionary<int, Minerador> mineradores = null)
 		{
 			if (mineradores == null)
-				mineradores = new();
+				mineradores = [];
 			else
 				mineradores.Clear();
 
@@ -285,11 +287,7 @@ namespace CryptoMiningManager.Helpers
 			AlteracaoMinerador?.Invoke(null, new AlteracaoMineradorEventArgs(MineradorAtivo));
 			//}
 
-			if (MineradorAtivo.CPU)
-			{
-				PararThreadModoEnergia();
-			}
-			else if (AtividadeThread == null && Global.ConfigGeralAtiva.AlternarModoEnergia)
+			if (!MineradorAtivo.CPU && AtividadeThread == null && Global.ConfigGeralAtiva.AlternarModoEnergia)
 			{
 				CancelarThread_ModoEnergia ??= new();
 				AtividadeThread = new Thread(() => VerificarAtividadeEModoEnergia(CancelarThread_ModoEnergia.Token)) { IsBackground = true };
@@ -369,34 +367,44 @@ namespace CryptoMiningManager.Helpers
 
 		private void PararThreadModoEnergia()
 		{
-			if (CancelarThread_ModoEnergia != null)
-			{
-				CancelarThread_ModoEnergia.Cancel();
-				CancelarThread_ModoEnergia = null;
-			}
+			InterromperThread(AtividadeThread, CancelarThread_ModoEnergia);
+
+			CancelarThread_ModoEnergia = null;
+			AtividadeThread = null;
 		}
 
 		private void PararThreadRentabilidade()
 		{
-			if (RentabilidadeThread == null)
-				return;
+			InterromperThread(RentabilidadeThread, CancelarThread_Mineracao);
 
-			if (RentabilidadeThread.ThreadState == System.Threading.ThreadState.WaitSleepJoin)
-				RentabilidadeThread.Interrupt();
-			else
-				CancelarThread_Mineracao.Cancel();
-
-			if (!RentabilidadeThread.Join(10000))
-				XtraMessageBox.Show("O processo está a levar mais tempo para parar do que o esperado.", "Possível falha", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-
-			CancelarThread_Mineracao.Dispose();
 			CancelarThread_Mineracao = null;
 			RentabilidadeThread = null;
+		}
+
+		#region Métodos Estáticos
+		private static void InterromperThread(Thread thread, CancellationTokenSource cancellationToken)
+		{
+			if (thread == null)
+				return;
+
+			if (thread.ThreadState == ThreadState.WaitSleepJoin)
+				thread.Interrupt();
+			else
+				cancellationToken.Cancel();
+
+			if (!thread.Join(10000))
+				XtraMessageBox.Show("O processo está a levar mais tempo para parar do que o esperado.", "Possível falha", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+			cancellationToken.Dispose();
 		}
 
 		public static string RemoveEscapeSequences(string str)
 		{
 			return str == null ? str : EscapedSequences.Replace(str, "");
 		}
+
+		[GeneratedRegex(@"\x1B\[[0-9;]*[mGKH]", RegexOptions.Compiled)]
+		private static partial Regex FiltroOutputMinerador();
+		#endregion
 	}
 }
