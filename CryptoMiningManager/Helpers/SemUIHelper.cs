@@ -19,8 +19,6 @@ namespace CryptoMiningManager.Helpers
 		private CustomNotifyIcon TaskBarIcon { get; }
 		private MineracaoHelper MineracaoHelper { get; }
 		private SynchronizationContext SyncContext { get; }
-		private ToolStripMenuItem AlgoritmosItem { get; set; }
-		private ToolStripMenuItem MineradoresItem { get; set; }
 
 		public SemUIHelper(CustomNotifyIcon notifyIcon, MineracaoHelper mineracaoHelper, ILifetimeScope scope)
 		{
@@ -60,8 +58,8 @@ namespace CryptoMiningManager.Helpers
 					bool notAtiva = !e.Ativa;
 					mineracaoItem.DropDownItems[Taskbar_Mineracao.Iniciar].Visible = notAtiva;
 					mineracaoItem.DropDownItems[Taskbar_Mineracao.Parar].Visible = e.Ativa;
-					AlgoritmosItem.Enabled = notAtiva;
-					MineradoresItem.Enabled = notAtiva;
+					Global.AlgoritmosItem.Enabled = notAtiva;
+					Global.MineradoresItem.Enabled = notAtiva;
 					TaskBarIcon.NotifyIcon.Text = e.Ativa ? "Ativo" : "Inativo";
 				}
 			}, null);
