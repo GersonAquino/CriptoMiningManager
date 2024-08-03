@@ -1,5 +1,4 @@
 ﻿using CryptoMiningManager.Helpers;
-using DevExpress.XtraEditors;
 using DevExpress.XtraSplashScreen;
 using GestorDados.Helpers;
 using Modelos.Classes;
@@ -54,8 +53,8 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes
 		{
 			try
 			{
-				if (ConfigsGeraisGV.SelectedRowsCount == 0 || XtraMessageBox.Show("Pretende eliminar as configurações gerais selecionadas?",
-					"Eliminar configurações gerais", MessageBoxButtons.YesNo, MessageBoxIcon.Information) != DialogResult.Yes)
+				if (ConfigsGeraisGV.SelectedRowsCount == 0 ||
+					!MessageBoxesHelper.PerguntaSimples("Pretende eliminar as configurações gerais selecionadas?", "Eliminar configurações gerais"))
 					return;
 
 				int[] linhasSelecionadas = ConfigsGeraisGV.GetSelectedRows();
@@ -71,8 +70,8 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes
 
 						if (configGeral.Ativo)
 						{
-							if (XtraMessageBox.Show("Está prestes a eliminar a configuração geral ativa, pretende continuar?",
-							"Configuração geral ativa selecionada", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
+							if (!MessageBoxesHelper.PerguntaSimples("Está prestes a eliminar a configuração geral ativa, pretende continuar?",
+								"Configuração geral ativa selecionada", MessageBoxIcon.Warning))
 								return;
 
 							configAtivaSelecionada = true;
@@ -90,19 +89,19 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes
 					if (configAtivaSelecionada)
 						Global.ConfigGeralAtiva = null;
 
-					XtraMessageBox.Show("Configurações gerais eliminadas com sucesso!", "Configurações gerais eliminadas", MessageBoxButtons.OK, MessageBoxIcon.Information);
+					MessageBoxesHelper.MostraInformacao("Configurações gerais eliminadas com sucesso!", "Configurações gerais eliminadas");
 				}
 				else
 				{
 					//Atualizam-se os dados todos porque não se sabe exatamente quais as entidades eliminadas
 					await AtualizarDados();
-					XtraMessageBox.Show("Alguns configurações gerais não foram eliminadas.", "Configurações gerais eliminadas", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					MessageBoxesHelper.MostraAviso("Alguns configurações gerais não foram eliminadas.", "Configurações gerais eliminadas");
 				}
 			}
 			catch (Exception ex)
 			{
 				LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro ao eliminar os configurações gerais selecionadas.");
-				XtraMessageBox.Show($"Erro ao eliminar os configurações gerais selecionadas.{Environment.NewLine}{ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				MessageBoxesHelper.MostraErro("Erro ao eliminar os configurações gerais selecionadas.", ex: ex);
 			}
 			finally
 			{
@@ -126,7 +125,7 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes
 			catch (Exception ex)
 			{
 				LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro ao carregar dados.");
-				XtraMessageBox.Show(ex.Message, "Erro ao carregar dados", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				MessageBoxesHelper.MostraErro("Erro ao carregar dados!", "Erro ao carregar dados", ex: ex);
 			}
 			finally
 			{

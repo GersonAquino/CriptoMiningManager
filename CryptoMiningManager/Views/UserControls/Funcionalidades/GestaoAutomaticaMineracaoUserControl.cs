@@ -1,6 +1,5 @@
 ﻿using CryptoMiningManager.Helpers;
 using DevExpress.XtraBars;
-using DevExpress.XtraEditors;
 using DevExpress.XtraSplashScreen;
 using GestorDados.Helpers;
 using Modelos.Classes;
@@ -14,7 +13,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace CryptoMiningManager.Views.UserControls.Funcionalidades
 {
@@ -26,8 +24,7 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
 		private MineracaoHelper MineracaoHelper { get; }
 		private Semaphore SemaforoLogsMineracao { get; } = new(1, 1);
 
-		public GestaoAutomaticaMineracaoUserControl(IEntidadesHelper<Minerador> mineradoresHelper,
-			IEntidadesHelper<Moeda> moedasHelper, MineracaoHelper mineracaoHelper)
+		public GestaoAutomaticaMineracaoUserControl(IEntidadesHelper<Minerador> mineradoresHelper, IEntidadesHelper<Moeda> moedasHelper, MineracaoHelper mineracaoHelper)
 		{
 			InitializeComponent();
 			MineracaoHelper = mineracaoHelper;
@@ -61,7 +58,7 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
 			{
 				using (IOverlaySplashScreenHandle splashScreenHandler = SplashScreenManager.ShowOverlayForm(this))
 				{
-					await MineracaoHelper.Parar();
+					await MineracaoHelper.Parar_Async();
 
 					if (TemporizadorBEI.EditValue is DateTime tempo && tempo.TimeOfDay.Ticks != 0)
 					{
@@ -74,12 +71,12 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
 			}
 			catch (CustomException ce)
 			{
-				XtraMessageBox.Show(ce.Message, ce.Detalhes ?? "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				MessageBoxesHelper.MostraAviso(ce.Message, ce.Detalhes ?? "Aviso");
 			}
 			catch (Exception ex)
 			{
 				LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro a ler dados.");
-				XtraMessageBox.Show("Erro a ler dados: " + ex.Message, "Erro a tentar ler dados", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				MessageBoxesHelper.MostraErro("Erro a ler dados:", "Erro a tentar ler dados", ex: ex);
 			}
 		}
 
@@ -93,14 +90,14 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
 						Temporizador.Enabled = false;
 					else
 					{
-						await MineracaoHelper.Parar();
+						await MineracaoHelper.Parar_Async();
 						ExecucaoME.Text = string.Empty;
 					}
 				}
 				catch (Exception ex)
 				{
 					LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro ao parar minerador.");
-					XtraMessageBox.Show("Erro ao parar minerador: " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+					MessageBoxesHelper.MostraErro("Erro ao parar minerador:", ex: ex);
 				}
 			}
 		}
@@ -116,7 +113,7 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
 			catch (Exception ex)
 			{
 				LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro ao alterar intervalo de verificação de rentabilidade.");
-				XtraMessageBox.Show("Erro ao alterar intervalo de verificação de rentabilidade: " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				MessageBoxesHelper.MostraErro("Erro ao alterar intervalo de verificação de rentabilidade:", ex: ex);
 			}
 		}
 
@@ -213,7 +210,7 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
 			catch (Exception ex)
 			{
 				LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro ao atualizar lista de mineradores.");
-				XtraMessageBox.Show("Erro ao atualizar lista de mineradores: " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				MessageBoxesHelper.MostraErro("Erro ao atualizar lista de mineradores:", ex: ex);
 			}
 			finally
 			{
@@ -233,7 +230,7 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
 				streamWriter.Close();
 			}
 
-			Invoke(() => ExecucaoME.Clear());
+			Invoke(ExecucaoME.Clear);
 			SemaforoLogsMineracao.Release();
 		}
 

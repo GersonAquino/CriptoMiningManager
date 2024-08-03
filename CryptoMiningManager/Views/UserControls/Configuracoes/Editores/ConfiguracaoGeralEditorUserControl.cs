@@ -7,7 +7,6 @@ using Modelos.Enums;
 using Modelos.Exceptions;
 using Modelos.Interfaces;
 using System;
-using System.Windows.Forms;
 
 namespace CryptoMiningManager.Views.UserControls.Configuracoes.Editores
 {
@@ -47,12 +46,12 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes.Editores
 					if (Entidade.Ativo)
 						Global.ConfigGeralAtiva = Entidade;
 
-					XtraMessageBox.Show("Configuração Geral gravado com sucesso.", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+					MessageBoxesHelper.MostraInformacao("Configuração Geral gravado com sucesso.", "Sucesso");
 
 					if (this.Parent is DocumentContainer docContainer)
 					{
 						if (Global.ConfirmacoesExtraEditores &&
-							XtraMessageBox.Show("Pretende criar novas configurações gerais?", "Criar novas configurações gerais", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+							MessageBoxesHelper.PerguntaSimples("Pretende criar novas configurações gerais?", "Criar novas configurações gerais"))
 						{
 							Entidade = new ConfiguracaoGeral();
 							ConfigGeralBindingSource.Clear();
@@ -68,16 +67,16 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes.Editores
 					}
 				}
 				else
-					XtraMessageBox.Show("Configuração Geral não gravada!", "Falhou", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					MessageBoxesHelper.MostraAviso("Configuração Geral não gravada!", "Falhou");
 			}
 			catch (CustomException ce)
 			{
-				XtraMessageBox.Show(ce.Message, string.IsNullOrWhiteSpace(ce.Detalhes) ? "Aviso" : ce.Detalhes, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				MessageBoxesHelper.MostraAviso(ce.Message, string.IsNullOrWhiteSpace(ce.Detalhes) ? "Aviso" : ce.Detalhes);
 			}
 			catch (Exception ex)
 			{
 				LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro ao gravar dados.");
-				XtraMessageBox.Show($"Erro ao gravar dados!{Environment.NewLine}{ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				MessageBoxesHelper.MostraErro("Erro ao gravar dados!", ex: ex);
 			}
 		}
 	}

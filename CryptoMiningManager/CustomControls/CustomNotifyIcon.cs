@@ -1,4 +1,7 @@
-﻿using System;
+﻿using CryptoMiningManager.Helpers;
+using GestorDados.Helpers;
+using Modelos.Enums;
+using System;
 using System.ComponentModel;
 using System.Windows.Forms;
 using Utils;
@@ -66,7 +69,6 @@ namespace CryptoMiningManager.CustomControls
 			return item;
 		}
 
-
 		public static void AdicionarSubItems_FromEnum<T>(ToolStripMenuItem itemPai) where T : struct, Enum
 		{
 			T[] valoresBase = Enum.GetValues<T>();
@@ -118,6 +120,60 @@ namespace CryptoMiningManager.CustomControls
 			}
 
 			return null;
+		}
+
+		public static void ToggleEventosItems(ToolStripItemCollection items, EventHandler eventHandler, bool atribuir, Action<ToolStripMenuItem> acaoExtra = null)
+		{
+			Action<ToolStripMenuItem> acao;
+			if (acaoExtra == null)
+			{
+				acao = atribuir ? item => item.CheckedChanged += eventHandler : item => item.CheckedChanged -= eventHandler;
+			}
+			else
+			{
+				acao = atribuir ? item => { item.CheckedChanged += eventHandler; acaoExtra(item); }
+				: item => { item.CheckedChanged -= eventHandler; acaoExtra(item); };
+			}
+
+			foreach (ToolStripMenuItem algoritmoItem in items)
+			{
+				acao(algoritmoItem);
+			}
+		}
+
+		public static void UniqueCheckedChanged(object sender, ToolStripItemCollection items, EventHandler eventHandler, string entidade, Action<ToolStripMenuItem> onChecked = null)
+		{
+			Action reativarEventos = null;
+			try
+			{
+				if (sender is ToolStripMenuItem itemAlterado)
+				{
+					//Ao ativar um item irá desativar todos os outros
+					if (itemAlterado.Checked)
+					{
+						reativarEventos = () => CustomNotifyIcon.ToggleEventosItems(items, eventHandler, true);
+						CustomNotifyIcon.ToggleEventosItems(items, eventHandler, false, item => item.Checked = item.Name == itemAlterado.Name);
+
+						onChecked?.Invoke(itemAlterado);
+					}
+					else //Impede-se de desativar o único item ativo
+					{
+						itemAlterado.CheckedChanged -= eventHandler;
+						reativarEventos = () => itemAlterado.CheckedChanged += eventHandler;
+
+						itemAlterado.Checked = true;
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro");
+				MessageBoxesHelper.MostraErro($"Erro ao tratar alteração de {entidade}", ex: ex);
+			}
+			finally
+			{
+				reativarEventos?.Invoke();
+			}
 		}
 	}
 }

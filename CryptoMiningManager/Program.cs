@@ -1,5 +1,4 @@
 ﻿using Autofac;
-using Autofac.Core;
 using CryptoMiningManager.CustomControls;
 using CryptoMiningManager.Helpers;
 using CryptoMiningManager.Views;
@@ -47,7 +46,7 @@ namespace CryptoMiningManager
 				}
 
 				using (IContainer container = isBackgroundOnly ? ContainerConfig_SemUI() : ContainerConfig_ComUI())
-				using (ILifetimeScope scope = container.BeginLifetimeScope())
+				await using (ILifetimeScope scope = container.BeginLifetimeScope())
 				{
 					scope.Resolve<CustomNotifyIcon>().NotifyIcon.Icon = Icon.ExtractAssociatedIcon(assembly.Location);
 					if (isBackgroundOnly)
@@ -83,12 +82,13 @@ namespace CryptoMiningManager
 				.Where(t => t.Namespace != null && t.Namespace.Contains(nameof(GestorDados.Helpers.Entidades)))
 				.AsImplementedInterfaces().InstancePerLifetimeScope();
 
-			//Base Helpers
+			//Helpers Base
 			builder.RegisterType<JsonHelper>().As<IJsonHelper>().SingleInstance();
 			builder.RegisterType<HttpHelper>().WithParameter(new TypedParameter(tipoString, ConfigurationManager.AppSettings["URLRentabilidade"]))
 				.As<IHttpHelper>().InstancePerLifetimeScope();
+			builder.RegisterType<Inicializador>().SingleInstance();
 
-			//Mining Helpers
+			//Helpers Mineração
 			//TODO: Passar LocalizacaoLogsMineracao para Configurações Gerais, ou talvez criar Configurações Mineração e meter lá o URLRentabilidade também
 			builder.RegisterType<MineracaoHelper>().WithParameter(new TypedParameter(tipoString, ConfigurationManager.AppSettings["LocalizacaoLogsMineracao"])).SingleInstance();
 

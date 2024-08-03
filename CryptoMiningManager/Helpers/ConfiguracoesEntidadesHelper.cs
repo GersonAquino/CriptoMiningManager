@@ -55,7 +55,7 @@ namespace CryptoMiningManager.Helpers
 			catch (Exception ex)
 			{
 				LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro ao abrir menu {menuCaption}", caption);
-				XtraMessageBox.Show(ex.GetBaseException().Message, $"Não foi possível abrir o menu {caption}", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				MessageBoxesHelper.MostraErro("Erro ao abrir editor!", $"Não foi possível abrir o menu {caption}", ex);
 			}
 			finally
 			{
@@ -84,7 +84,7 @@ namespace CryptoMiningManager.Helpers
 			catch (Exception ex)
 			{
 				LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro ao tratar duplo clique.");
-				XtraMessageBox.Show($"Erro ao tratar duplo clique!{Environment.NewLine}{ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				MessageBoxesHelper.MostraErro("Erro ao tratar duplo clique!", ex: ex);
 			}
 		}
 
@@ -116,12 +116,12 @@ namespace CryptoMiningManager.Helpers
 			}
 			catch (CustomException ce)
 			{
-				XtraMessageBox.Show(ce.Message, "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				MessageBoxesHelper.MostraAviso(ce.Message);
 			}
 			catch (Exception ex)
 			{
 				LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro ao abrir editor da(s) linha(s) selecionada(s).");
-				XtraMessageBox.Show($"Erro ao abrir editor da(s) linha(s) selecionada(s).{Environment.NewLine}{ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				MessageBoxesHelper.MostraErro("Erro ao abrir editor da(s) linha(s) selecionada(s).", ex: ex);
 			}
 		}
 

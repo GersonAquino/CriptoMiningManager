@@ -1,5 +1,4 @@
 ﻿using CryptoMiningManager.Helpers;
-using DevExpress.XtraEditors;
 using DevExpress.XtraSplashScreen;
 using GestorDados.Helpers;
 using Modelos.Classes;
@@ -7,7 +6,6 @@ using Modelos.Enums;
 using Modelos.Interfaces;
 using System;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace CryptoMiningManager.Views.UserControls.Configuracoes
 {
@@ -54,8 +52,7 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes
 		{
 			try
 			{
-				if (ComandosGV.SelectedRowsCount == 0 ||
-					XtraMessageBox.Show("Pretende eliminar os comandos selecionados?", "Eliminar comandos", MessageBoxButtons.YesNo, MessageBoxIcon.Information) != DialogResult.Yes)
+				if (ComandosGV.SelectedRowsCount == 0 || !MessageBoxesHelper.PerguntaSimples("Pretende eliminar os comandos selecionados?", "Eliminar comandos"))
 					return;
 
 				int[] linhasSelecionadas = ComandosGV.GetSelectedRows();
@@ -71,19 +68,19 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes
 				{
 					ComandosGV.DeleteSelectedRows();
 
-					XtraMessageBox.Show("Comandos eliminados com sucesso!", "Comandos eliminados", MessageBoxButtons.OK, MessageBoxIcon.Information);
+					MessageBoxesHelper.MostraInformacao("Comandos eliminados com sucesso!", "Comandos eliminados");
 				}
 				else
 				{
 					//Atualizam-se os dados todos porque não se sabe exatamente quais as entidades eliminadas
 					await AtualizarDados();
-					XtraMessageBox.Show("Alguns comandos não foram eliminados.", "Comandos eliminados", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					MessageBoxesHelper.MostraAviso("Alguns comandos não foram eliminados.", "Comandos eliminados");
 				}
 			}
 			catch (Exception ex)
 			{
 				LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro ao eliminar os comandos selecionados.");
-				XtraMessageBox.Show($"Erro ao eliminar os comandos selecionados.{Environment.NewLine}{ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				MessageBoxesHelper.MostraErro($"Erro ao eliminar os comandos selecionados.{Environment.NewLine}{ex.Message}", ex: ex);
 			}
 			finally
 			{
@@ -107,7 +104,7 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes
 			catch (Exception ex)
 			{
 				LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro ao carregar dados.");
-				XtraMessageBox.Show(ex.Message, "Erro ao carregar dados", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				MessageBoxesHelper.MostraErro("Erro ao carregar dados!", "Erro ao carregar dados", ex: ex);
 			}
 			finally
 			{

@@ -13,5 +13,16 @@ namespace Modelos.Classes
 
 		[NotMapped]
 		public string ComandosCMD { get => "/C " + Comandos.Replace(Environment.NewLine, " & "); }
+
+		public override string ToString()
+		{
+			string tipoComando;
+			if (PreMineracao)
+				tipoComando = PosMineracao ? " (pré-mineração e pós-mineração)" : " (pré-mineração)";
+			else
+				tipoComando = PosMineracao ? " (pós-mineração)" : string.Empty;
+
+			return $"{Id}{tipoComando}";
+		}
 	}
 }

@@ -1,5 +1,5 @@
-﻿using DeepCopy;
-using DevExpress.XtraEditors;
+﻿using CryptoMiningManager.Helpers;
+using DeepCopy;
 using DevExpress.XtraSplashScreen;
 using GestorDados.Helpers;
 using Modelos.Classes;
@@ -8,7 +8,6 @@ using Modelos.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace CryptoMiningManager.Views.UserControls.Configuracoes
 {
@@ -52,13 +51,13 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes
 					if (moedasAlterar.Count != 0)
 						EntidadesHelper.GravarEntidades(moedasAlterar);
 
-					XtraMessageBox.Show("Alterações gravadas com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+					MessageBoxesHelper.MostraInformacao("Alterações gravadas com sucesso!", "Sucesso");
 				}
 			}
 			catch (Exception ex)
 			{
 				LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro");
-				XtraMessageBox.Show("Erro ao validar alterações!", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				MessageBoxesHelper.MostraErro("Erro ao validar alterações!", "Erro");
 			}
 		}
 
@@ -86,7 +85,7 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes
 			catch (Exception ex)
 			{
 				LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro ao carregar dados.");
-				XtraMessageBox.Show(ex.Message, "Erro ao carregar dados", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				MessageBoxesHelper.MostraErro("Erro ao carregar dados!", "Erro ao carregar dados", ex: ex);
 			}
 			finally
 			{

@@ -57,7 +57,7 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes.Editores
 			catch (Exception ex)
 			{
 				LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro");
-				XtraMessageBox.Show("Erro ao carregar editor de minerador!", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				MessageBoxesHelper.MostraErro("Erro ao carregar editor de minerador!", ex: ex);
 			}
 		}
 
@@ -75,8 +75,7 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes.Editores
 				}
 
 				if (!File.Exists(Entidade.Localizacao) &&
-					XtraMessageBox.Show("Inseriu uma localização inválida. Isto pode originar erros, pretender continuar?.",
-					"Localização inexistente", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
+					!MessageBoxesHelper.PerguntaSimples("Inseriu uma localização inválida. Isto pode originar erros, pretender continuar?.", "Localização inexistente", MessageBoxIcon.Warning))
 				{
 					LocalizacaoButtonEdit.Focus();
 					return;
@@ -86,12 +85,11 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes.Editores
 
 				if (idGerado != -1)
 				{
-					XtraMessageBox.Show("Minerador gravado com sucesso.", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+					MessageBoxesHelper.MostraInformacao("Minerador gravado com sucesso.", "Sucesso");
 
 					if (this.Parent is DocumentContainer docContainer)
 					{
-						if (Global.ConfirmacoesExtraEditores &&
-							XtraMessageBox.Show("Pretende criar novos mineradores?", "Criar novos mineradores", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+						if (Global.ConfirmacoesExtraEditores && MessageBoxesHelper.PerguntaSimples("Pretende criar novos mineradores?", "Criar novos mineradores"))
 						{
 							Entidade = new Minerador();
 							MineradorBindingSource.Clear();
@@ -107,16 +105,16 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes.Editores
 					}
 				}
 				else
-					XtraMessageBox.Show("Minerador não gravado!", "Falhou", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					MessageBoxesHelper.MostraAviso("Minerador não gravado!", "Falhou");
 			}
 			catch (CustomException ce)
 			{
-				XtraMessageBox.Show(ce.Message, string.IsNullOrWhiteSpace(ce.Detalhes) ? "Aviso" : ce.Detalhes, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				MessageBoxesHelper.MostraAviso(ce.Message, string.IsNullOrWhiteSpace(ce.Detalhes) ? "Aviso" : ce.Detalhes);
 			}
 			catch (Exception ex)
 			{
 				LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro ao gravar dados.");
-				XtraMessageBox.Show($"Erro ao gravar dados!{Environment.NewLine}{ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				MessageBoxesHelper.MostraErro("Erro ao gravar dados!", ex: ex);
 			}
 		}
 
@@ -145,7 +143,7 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes.Editores
 			catch (Exception ex)
 			{
 				LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro ao selecionar localização.");
-				XtraMessageBox.Show($"Erro ao selecionar localização!{Environment.NewLine}{ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				MessageBoxesHelper.MostraErro("Erro ao selecionar localização!", ex: ex);
 			}
 		}
 	}

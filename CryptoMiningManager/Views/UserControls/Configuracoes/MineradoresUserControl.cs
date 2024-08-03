@@ -1,5 +1,4 @@
 ﻿using CryptoMiningManager.Helpers;
-using DevExpress.XtraEditors;
 using DevExpress.XtraSplashScreen;
 using GestorDados.Helpers;
 using Modelos.Classes;
@@ -8,7 +7,6 @@ using Modelos.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace CryptoMiningManager.Views.UserControls.Configuracoes
 {
@@ -55,8 +53,7 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes
 		{
 			try
 			{
-				if (MineradoresGV.SelectedRowsCount == 0 ||
-					XtraMessageBox.Show("Pretende eliminar os mineradores selecionados?", "Eliminar mineradores", MessageBoxButtons.YesNo, MessageBoxIcon.Information) != DialogResult.Yes)
+				if (MineradoresGV.SelectedRowsCount == 0 || !MessageBoxesHelper.PerguntaSimples("Pretende eliminar os mineradores selecionados?", "Eliminar mineradores"))
 					return;
 
 				int[] linhasSelecionadas = MineradoresGV.GetSelectedRows();
@@ -72,19 +69,19 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes
 				{
 					MineradoresGV.DeleteSelectedRows();
 
-					XtraMessageBox.Show("Mineradores eliminados com sucesso!", "Mineradores eliminados", MessageBoxButtons.OK, MessageBoxIcon.Information);
+					MessageBoxesHelper.MostraInformacao("Mineradores eliminados com sucesso!", "Mineradores eliminados");
 				}
 				else
 				{
 					//Atualizam-se os dados todos porque não se sabe exatamente quais as entidades eliminadas
 					await AtualizarDados();
-					XtraMessageBox.Show("Alguns mineradores não foram eliminados.", "Mineradores eliminados", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					MessageBoxesHelper.MostraAviso("Alguns mineradores não foram eliminados.", "Mineradores eliminados");
 				}
 			}
 			catch (Exception ex)
 			{
 				LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro ao eliminar os mineradores selecionados.");
-				XtraMessageBox.Show($"Erro ao eliminar os mineradores selecionados.{Environment.NewLine}{ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				MessageBoxesHelper.MostraErro("Erro ao eliminar os mineradores selecionados", ex: ex);
 			}
 			finally
 			{
@@ -108,7 +105,7 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes
 			catch (Exception ex)
 			{
 				LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro ao carregar dados.");
-				XtraMessageBox.Show(ex.Message, "Erro ao carregar dados", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				MessageBoxesHelper.MostraErro("Erro ao carregar dados!", "Erro ao carregar dados", ex: ex);
 			}
 			finally
 			{
