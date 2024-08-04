@@ -11,8 +11,9 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes
 {
 	public partial class ComandosUserControl : DevExpress.XtraEditors.XtraUserControl
 	{
-		private ConfiguracoesEntidadesHelper ConfiguracoesEntidadesHelper { get; }
 		private IEntidadesHelper<Comando> EntidadesHelper { get; }
+
+		private ConfiguracoesEntidadesHelper ConfiguracoesEntidadesHelper { get; }
 
 		public ComandosUserControl(ConfiguracoesEntidadesHelper configuracoesEntidadesHelper, IEntidadesHelper<Comando> entidadesHelper)
 		{

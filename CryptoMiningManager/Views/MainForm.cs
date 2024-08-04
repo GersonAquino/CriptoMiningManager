@@ -22,14 +22,17 @@ namespace CryptoMiningManager.Views
 		private ILifetimeScope Scope { get; }
 
 		private bool UtilizadorQuerSair { get; set; }
+
+		private ConfiguracoesEntidadesHelper ConfiguracoesEntidadesHelper { get; }
 		private GestaoAutomaticaMineracaoUserControl GestaoAutomaticaMineracaoUC { get; set; }
 		private CustomNotifyIcon TaskBarIcon { get; }
 		private MineracaoHelper MineracaoHelper { get; }
 
-		public MainForm(ILifetimeScope scope, CustomNotifyIcon notifyIcon, MineracaoHelper mineracaoHelper)
+		public MainForm(ILifetimeScope scope, CustomNotifyIcon notifyIcon, MineracaoHelper mineracaoHelper, ConfiguracoesEntidadesHelper configuracoesEntidadesHelper)
 		{
 			InitializeComponent();
 
+			ConfiguracoesEntidadesHelper = configuracoesEntidadesHelper;
 			MineracaoHelper = mineracaoHelper;
 			Scope = scope;
 			TaskBarIcon = notifyIcon;
@@ -52,16 +55,18 @@ namespace CryptoMiningManager.Views
 			using (ILifetimeScope scope = Scope.BeginLifetimeScope())
 			{
 				await scope.Resolve<Inicializador>().Inicializar((_, _) => { UtilizadorQuerSair = true; this.Close(); });
-
-				TaskBarIcon.NotifyIcon.DoubleClick += (object sender, EventArgs e) => this.Show();
-
-				TaskBarIcon.NotifyIcon.Visible = true;
-
-				if (Global.ConfigGeralAtiva?.IniciarMinimizada == true)
-					this.Hide();
-				else
-					Global.AppVisivel = true;
 			}
+
+			TaskBarIcon.AdicionarItem(Taskbar.Configuracoes, ConfiguracoesItem_Click); //TODO: Implementar
+
+			TaskBarIcon.NotifyIcon.DoubleClick += (_, _) => this.Show();
+
+			TaskBarIcon.NotifyIcon.Visible = true;
+
+			if (Global.ConfigGeralAtiva?.IniciarMinimizada == true)
+				this.Hide();
+			else
+				Global.AppVisivel = true;
 		}
 
 		private async void MainForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -154,6 +159,28 @@ namespace CryptoMiningManager.Views
 		}
 		#endregion
 
+		#region Eventos TaskbarIcon
+		private void ConfiguracoesItem_Click(object sender, EventArgs e)
+		{
+			try
+			{
+				if (Global.ConfigGeralAtiva == null)
+				{
+					MessageBoxesHelper.MostraAviso("Não existe configuração geral ativa, considere criar uma!");
+					return;
+				}
+
+				this.Show();
+
+				ConfiguracoesEntidadesHelper.AbrirEditorUC("Configuração Geral Ativa", this, Global.ConfigGeralAtiva);
+			}
+			catch (Exception ex)
+			{
+				LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro");
+				MessageBoxesHelper.MostraErro("Erro ao abrir configurações!", ex: ex);
+			}
+		}
+		#endregion
 		private void DocumentManager_DocumentActivate(object sender, DocumentEventArgs e)
 		{
 			if (this.Ribbon.MergedPages.Count != 0)

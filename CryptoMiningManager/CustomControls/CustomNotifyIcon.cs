@@ -46,7 +46,7 @@ namespace CryptoMiningManager.CustomControls
 				UltimoItem = item;
 			}
 			else if (UltimoItem != null)
-				Items.Insert(Items.Count - 2, item);
+				Items.Insert(Items.Count - 1, item);
 			else
 				Items.Add(item);
 

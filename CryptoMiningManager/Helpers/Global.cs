@@ -1,4 +1,5 @@
 ﻿using Modelos.Classes;
+using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace CryptoMiningManager.Helpers
@@ -14,5 +15,7 @@ namespace CryptoMiningManager.Helpers
 
 		internal static ToolStripMenuItem AlgoritmosItem { get; set; }
 		internal static ToolStripMenuItem MineradoresItem { get; set; }
+
+		internal static Dictionary<string, ToolStripMenuItem> TaskbarItems { get; } = new Dictionary<string, ToolStripMenuItem>(5);
 	}
 }

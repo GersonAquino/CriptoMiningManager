@@ -27,13 +27,13 @@ namespace CryptoMiningManager.Helpers
 		}
 
 		/// <summary>
-		/// Abre um separador com o editor adequado no modo de criação (nova entidade)
+		/// Abre um separador com o editor adequado
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="caption"></param>
 		/// <param name="entidadeAEditar"></param>
 		/// <param name="activeControl">Control para apresentar a animação de loading</param>
-		public void AbrirEditorUC<T>(string caption, Control activeControl = null, T entidadeAEditar = null) where T : class
+		internal void AbrirEditorUC<T>(string caption, Control activeControl = null, T entidadeAEditar = null) where T : class
 		{
 			IOverlaySplashScreenHandle splashScreenHandler = activeControl == null ? null : SplashScreenManager.ShowOverlayForm(activeControl);
 			try
@@ -70,7 +70,7 @@ namespace CryptoMiningManager.Helpers
 		/// <param name="e"></param>
 		/// <param name="gridView"></param>
 		/// <param name="activeControl"></param>
-		public void DuploCliqueEntidade<T>(EventArgs e, GridView gridView, Control activeControl = null) where T : Configuracao
+		internal void DuploCliqueEntidade<T>(EventArgs e, GridView gridView, Control activeControl = null) where T : Configuracao
 		{
 			try
 			{
@@ -94,7 +94,7 @@ namespace CryptoMiningManager.Helpers
 		/// <typeparam name="T"></typeparam>
 		/// <param name="gridView"></param>
 		/// <param name="activeControl"></param>
-		public void EditarEntidade<T>(GridView gridView, Control activeControl = null) where T : Configuracao
+		internal void EditarEntidade<T>(GridView gridView, Control activeControl = null) where T : Configuracao
 		{
 			try
 			{

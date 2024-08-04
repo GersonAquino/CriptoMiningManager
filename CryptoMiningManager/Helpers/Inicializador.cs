@@ -63,7 +63,6 @@ namespace CryptoMiningManager.Helpers
 
 				Global.MineradoresItem = CustomNotifyIcon.AdicionarSubItem(item, Taskbar_Mineracao.Mineradores, null, false);
 
-				TaskBarIcon.AdicionarItem(Taskbar.Configuracoes); //TODO: Implementar
 				TaskBarIcon.AdicionarItem(Taskbar.Sair, taskbarSairClick, true);
 			}
 			catch (Exception ex)
