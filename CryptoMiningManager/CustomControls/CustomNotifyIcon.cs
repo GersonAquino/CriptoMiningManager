@@ -66,6 +66,7 @@ namespace CryptoMiningManager.CustomControls
 			item.Tag = tag;
 			item.Visible = visible;
 			itemPai.DropDownItems.Add(item);
+
 			return item;
 		}
 
@@ -151,8 +152,8 @@ namespace CryptoMiningManager.CustomControls
 					//Ao ativar um item irá desativar todos os outros
 					if (itemAlterado.Checked)
 					{
-						reativarEventos = () => CustomNotifyIcon.ToggleEventosItems(items, eventHandler, true);
-						CustomNotifyIcon.ToggleEventosItems(items, eventHandler, false, item => item.Checked = item.Name == itemAlterado.Name);
+						reativarEventos = () => ToggleEventosItems(items, eventHandler, true);
+						ToggleEventosItems(items, eventHandler, false, item => item.Checked = item.Name == itemAlterado.Name);
 
 						onChecked?.Invoke(itemAlterado);
 					}

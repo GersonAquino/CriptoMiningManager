@@ -108,8 +108,7 @@ namespace GestorDados.Helpers.Entidades
 		///<inheritdoc/>
 		public virtual async Task<List<T>> GravarEntidades(IEnumerable<T> entidades = null)
 		{
-			if (entidades == null)
-				throw new ArgumentNullException(nameof(entidades));
+			ArgumentNullException.ThrowIfNull(entidades);
 
 			List<T> entidadesList = entidades.ToList();
 			entidadesList.ForEach(e => e.DataAlteracao = DateTime.Now);
@@ -125,7 +124,10 @@ namespace GestorDados.Helpers.Entidades
 				throw new ArgumentException($"{Descricao} tem Id inválido ({entidade.Id}).");
 
 			GravarEntidade_ValidacoesExtra(entidade);
-			await GravarEntidade_ValidacoesExtra_Async(entidade);
+
+			Task task = GravarEntidade_ValidacoesExtra_Async(entidade);
+			if (task != null)
+				await task;
 
 			string query;
 			//Inserir caso Id seja um valor inválido mas esperado

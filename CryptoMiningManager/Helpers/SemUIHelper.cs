@@ -51,19 +51,20 @@ namespace CryptoMiningManager.Helpers
 		#region Eventos MineracaoHelper
 		private void MineracaoHelper_AlteracaoEstadoMineracao(object sender, AlteracaoEstadoMineracaoEventArgs e)
 		{
-			SyncContext.Post(_ =>
-			{ //Dava para usar o CustomNotifyIcon.GetItem_Recursivo para obter ambos os items (Iniciar e Parar), mas assim deve ser mais otimizado em princípio
-				if (CustomNotifyIcon.GetItem_Recursivo(TaskBarIcon.Items, Taskbar.Mineracao) is ToolStripMenuItem mineracaoItem)
-				{
-					bool notAtiva = !e.Ativa;
-					mineracaoItem.DropDownItems[Taskbar_Mineracao.Iniciar].Visible = notAtiva;
-					mineracaoItem.DropDownItems[Taskbar_Mineracao.Parar].Visible = e.Ativa;
-					Global.AlgoritmosItem.Enabled = notAtiva;
-					Global.MineradoresItem.Enabled = notAtiva;
-					TaskBarIcon.NotifyIcon.Text = e.Ativa ? "Ativo" : "Inativo";
-				}
-			}, null);
+			SyncContext.Post(_ => Inicializador.TratarAlteracaoEstadoMineracao(e, TaskBarIcon), null);
+		}
 
+		private void TratarAlteracaoEstadoMineracao(AlteracaoEstadoMineracaoEventArgs e)
+		{
+			if (CustomNotifyIcon.GetItem_Recursivo(TaskBarIcon.Items, Taskbar.Mineracao) is not ToolStripMenuItem mineracaoItem)
+				return;
+
+			bool notAtiva = !e.Ativa;
+			mineracaoItem.DropDownItems[Taskbar_Mineracao.Iniciar].Visible = notAtiva;
+			mineracaoItem.DropDownItems[Taskbar_Mineracao.Parar].Visible = e.Ativa;
+			Global.AlgoritmosTB.Enabled = notAtiva;
+			Global.MineradoresRB.Enabled = notAtiva;
+			TaskBarIcon.NotifyIcon.Text = e.Ativa ? "Ativo" : "Inativo";
 		}
 
 		private void MineracaoHelper_AlteracaoMinerador(object sender, AlteracaoMineradorEventArgs e)

@@ -3,6 +3,7 @@ using CryptoMiningManager.CustomControls;
 using GestorDados.Helpers;
 using Modelos.Classes;
 using Modelos.Enums;
+using Modelos.EventArgs;
 using Modelos.Interfaces;
 using System;
 using System.Threading.Tasks;
@@ -51,17 +52,17 @@ namespace CryptoMiningManager.Helpers
 				CustomNotifyIcon.AdicionarSubItem(item, Taskbar_Mineracao.Iniciar, Taskbar_IniciarClick, true);
 				CustomNotifyIcon.AdicionarSubItem(item, Taskbar_Mineracao.Parar, Taskbar_PararClick, false);
 
-				Global.AlgoritmosItem = CustomNotifyIcon.AdicionarSubItem(item, Taskbar_Mineracao.Algoritmo, null, true);
-				CustomNotifyIcon.AdicionarSubItems_FromEnum<Algoritmo>(Global.AlgoritmosItem);
+				Global.AlgoritmosTB = CustomNotifyIcon.AdicionarSubItem(item, Taskbar_Mineracao.Algoritmo, null, true);
+				CustomNotifyIcon.AdicionarSubItems_FromEnum<Algoritmo>(Global.AlgoritmosTB);
 
-				if (Global.AlgoritmosItem.DropDownItems[(Global.ConfigGeralAtiva.Algoritmo ?? Algoritmo.Rentabilidade).GetDescricaoEnum()] is ToolStripMenuItem rentabilidadeItem)
+				if (Global.AlgoritmosTB.DropDownItems[(Global.ConfigGeralAtiva.Algoritmo ?? Algoritmo.Rentabilidade).GetDescricaoEnum()] is ToolStripMenuItem rentabilidadeItem)
 					rentabilidadeItem.Checked = true;
 				else
 					throw new Exception("Houve uma falha ao pré-ativar o algoritmo definido!");
 
-				CustomNotifyIcon.ToggleEventosItems(Global.AlgoritmosItem.DropDownItems, AlgoritmoItem_CheckedChanged, true);
+				CustomNotifyIcon.ToggleEventosItems(Global.AlgoritmosTB.DropDownItems, AlgoritmoItem_CheckedChanged, true);
 
-				Global.MineradoresItem = CustomNotifyIcon.AdicionarSubItem(item, Taskbar_Mineracao.Mineradores, null, false);
+				Global.MineradoresRB = CustomNotifyIcon.AdicionarSubItem(item, Taskbar_Mineracao.Mineradores, null, false);
 
 				TaskBarIcon.AdicionarItem(Taskbar.Sair, taskbarSairClick, true);
 			}
@@ -76,21 +77,21 @@ namespace CryptoMiningManager.Helpers
 		#region Eventos TaskbarIcon
 		private void AlgoritmoItem_CheckedChanged(object sender, EventArgs e)
 		{
-			CustomNotifyIcon.UniqueCheckedChanged(sender, Global.AlgoritmosItem.DropDownItems, AlgoritmoItem_CheckedChanged, "algoritmo", itemAlterado =>
+			CustomNotifyIcon.UniqueCheckedChanged(sender, Global.AlgoritmosTB.DropDownItems, AlgoritmoItem_CheckedChanged, "algoritmo", async itemAlterado => //Isto ser async pode ou não causar erros, não tenho 100% certeza
 			{
 				switch ((Algoritmo)itemAlterado.Tag)
 				{
 					case Algoritmo.Minerador: //Criar os items de mineradores
-						Global.MineradoresItem.DropDownItems.Clear();
+						Global.MineradoresRB.DropDownItems.Clear();
 
-						foreach (Minerador minerador in MineracaoHelper.GetMineradoresAtivosPorMoeda().GetAwaiter().GetResult().Values)
+						foreach (Minerador minerador in (await MineracaoHelper.GetMineradoresAtivosPorMoeda()).Values)
 						{
-							CustomNotifyIcon.AdicionarSubItem(Global.MineradoresItem, minerador.Nome, MineradorItem_CheckedChanged, true, true, minerador);
+							CustomNotifyIcon.AdicionarSubItem(Global.MineradoresRB, minerador.Nome, MineradorItem_CheckedChanged, true, true, minerador);
 						}
 
-						if (Global.MineradoresItem.DropDownItems.Count != 0)
+						if (Global.MineradoresRB.DropDownItems.Count != 0)
 						{
-							ToolStripMenuItem primeiroMinerador = (ToolStripMenuItem)Global.MineradoresItem.DropDownItems[0];
+							ToolStripMenuItem primeiroMinerador = (ToolStripMenuItem)Global.MineradoresRB.DropDownItems[0];
 							primeiroMinerador.CheckedChanged -= MineradorItem_CheckedChanged;
 							try
 							{
@@ -102,12 +103,12 @@ namespace CryptoMiningManager.Helpers
 							}
 						}
 						else
-							CustomNotifyIcon.AdicionarSubItem(Global.MineradoresItem, "Não existem mineradores ativos", null, true).Enabled = false;
+							CustomNotifyIcon.AdicionarSubItem(Global.MineradoresRB, "Não existem mineradores ativos", null, true).Enabled = false;
 
-						Global.MineradoresItem.Visible = true;
+						Global.MineradoresRB.Visible = true;
 						break;
 					case Algoritmo.Rentabilidade:
-						Global.MineradoresItem.Visible = false;
+						Global.MineradoresRB.Visible = false;
 						break;
 					default:
 						break;
@@ -118,20 +119,20 @@ namespace CryptoMiningManager.Helpers
 
 		private void MineradorItem_CheckedChanged(object sender, EventArgs e)
 		{
-			CustomNotifyIcon.UniqueCheckedChanged(sender, Global.MineradoresItem.DropDownItems, MineradorItem_CheckedChanged, "minerador");
+			CustomNotifyIcon.UniqueCheckedChanged(sender, Global.MineradoresRB.DropDownItems, MineradorItem_CheckedChanged, "minerador");
 		}
 
 		private async void Taskbar_IniciarClick(object sender, EventArgs e)
 		{
 			try
 			{
-				ToolStripItem item = CustomNotifyIcon.GetItem_Recursivo(Global.AlgoritmosItem.DropDownItems, i => i is ToolStripMenuItem item && item.Checked);
+				ToolStripItem item = CustomNotifyIcon.GetItem_Recursivo(Global.AlgoritmosTB.DropDownItems, i => i is ToolStripMenuItem item && item.Checked);
 				Algoritmo algoritmo = (Algoritmo)item.Tag;
 
 				switch (algoritmo)
 				{
 					case Algoritmo.Minerador:
-						item = CustomNotifyIcon.GetItem_Recursivo(Global.MineradoresItem.DropDownItems, i => i is ToolStripMenuItem item && item.Checked);
+						item = CustomNotifyIcon.GetItem_Recursivo(Global.MineradoresRB.DropDownItems, i => i is ToolStripMenuItem item && item.Checked);
 						await MineracaoHelper.Iniciar(algoritmo, (Minerador)item.Tag);
 						break;
 					case Algoritmo.Rentabilidade:
@@ -161,5 +162,20 @@ namespace CryptoMiningManager.Helpers
 			}
 		}
 		#endregion
+
+		//Métodos auxiliares
+		internal static void TratarAlteracaoEstadoMineracao(AlteracaoEstadoMineracaoEventArgs e, CustomNotifyIcon taskBarIcon)
+		{
+			//Dava para usar o CustomNotifyIcon.GetItem_Recursivo para obter ambos os items (Iniciar e Parar), mas assim deve ser mais otimizado em princípio
+			if (CustomNotifyIcon.GetItem_Recursivo(taskBarIcon.Items, Taskbar.Mineracao) is not ToolStripMenuItem mineracaoItem)
+				return;
+
+			bool notAtiva = !e.Ativa;
+			mineracaoItem.DropDownItems[Taskbar_Mineracao.Iniciar].Visible = notAtiva;
+			mineracaoItem.DropDownItems[Taskbar_Mineracao.Parar].Visible = e.Ativa;
+			Global.AlgoritmosTB.Enabled = notAtiva;
+			Global.MineradoresRB.Enabled = notAtiva;
+			taskBarIcon.NotifyIcon.Text = e.Ativa ? "Ativo" : "Inativo";
+		}
 	}
 }

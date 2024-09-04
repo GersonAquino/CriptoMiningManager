@@ -1,5 +1,4 @@
 ﻿using Modelos.Classes;
-using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace CryptoMiningManager.Helpers
@@ -13,9 +12,14 @@ namespace CryptoMiningManager.Helpers
 		internal static ConfiguracaoGeral ConfigGeralAtiva { get; set; }
 		internal static bool ConfirmacoesExtraEditores { get => ConfigGeralAtiva?.ConfirmacoesExtraNosEditores == true; }
 
-		internal static ToolStripMenuItem AlgoritmosItem { get; set; }
-		internal static ToolStripMenuItem MineradoresItem { get; set; }
+		/// <summary>
+		/// Item Algoritmos do TaskbarIcon
+		/// </summary>
+		internal static ToolStripMenuItem AlgoritmosTB { get; set; }
 
-		internal static Dictionary<string, ToolStripMenuItem> TaskbarItems { get; } = new Dictionary<string, ToolStripMenuItem>(5);
+		/// <summary>
+		/// Item Mineradores do TaskbarIcon
+		/// </summary>
+		internal static ToolStripMenuItem MineradoresRB { get; set; }
 	}
 }

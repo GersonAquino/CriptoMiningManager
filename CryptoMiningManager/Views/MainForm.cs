@@ -194,6 +194,7 @@ namespace CryptoMiningManager.Views
 		{
 			if (e.Document.Caption == GestaoAutomaticaMineracaoACE.Text && MineracaoHelper.ProcessoAtivo != null)
 			{
+				//TODO: Visto que é possível inicial a mineração pela taskbar, isto já não faz sentido, deve-se adaptar o GestaoAutomaticaMineracaoUserControl para saber se há mineração ativa ou não quando é aberto
 				if (MessageBoxesHelper.PerguntaSimples("Fechar este separador irá parar o processo de mineração ativo, pretende continuar?", "Atenção", MessageBoxIcon.Warning))
 				{
 					await MineracaoHelper.Parar_Async();
@@ -207,22 +208,8 @@ namespace CryptoMiningManager.Views
 		#region Eventos MineracaoHelper
 		private void MineracaoHelper_AlteracaoEstadoMineracao(object sender, AlteracaoEstadoMineracaoEventArgs e)
 		{
-			if (this.IsDisposed)
-				return;
-
-			Invoke(() =>
-			{
-				//Dava para usar o CustomNotifyIcon.GetItem_Recursivo para obter ambos os items (Iniciar e Parar), mas assim deve ser mais otimizado em princípio
-				if (CustomNotifyIcon.GetItem_Recursivo(TaskBarIcon.Items, Taskbar.Mineracao) is ToolStripMenuItem mineracaoItem)
-				{
-					bool notAtiva = !e.Ativa;
-					mineracaoItem.DropDownItems[Taskbar_Mineracao.Iniciar].Visible = notAtiva;
-					mineracaoItem.DropDownItems[Taskbar_Mineracao.Parar].Visible = e.Ativa;
-					Global.AlgoritmosItem.Enabled = notAtiva;
-					Global.MineradoresItem.Enabled = notAtiva;
-					TaskBarIcon.NotifyIcon.Text = e.Ativa ? "Ativo" : "Inativo";
-				}
-			});
+			if (!this.IsDisposed)
+				Invoke(() => Inicializador.TratarAlteracaoEstadoMineracao(e, TaskBarIcon));
 		}
 
 		private void MineracaoHelper_AlteracaoMinerador(object sender, AlteracaoMineradorEventArgs e)
