@@ -76,12 +76,13 @@ namespace CryptoMiningManager
 				.Where(t => t.Namespace != null && t.Namespace.Contains(nameof(GestorDados.Helpers.Entidades)))
 				.AsImplementedInterfaces().InstancePerLifetimeScope();
 
-			//Base Helpers
+			//Helpers Base
 			builder.RegisterType<JsonHelper>().As<IJsonHelper>().SingleInstance();
 			builder.RegisterType<HttpHelper>().WithParameter(new TypedParameter(tipoString, ConfigurationManager.AppSettings["URLRentabilidade"]))
 				.As<IHttpHelper>().InstancePerLifetimeScope();
+			builder.RegisterType<Inicializador>().SingleInstance();
 
-			//Mining Helpers
+			//Helpers Mineração
 			//TODO: Passar LocalizacaoLogsMineracao para Configurações Gerais, ou talvez criar Configurações Mineração e meter lá o URLRentabilidade também
 			builder.RegisterType<MineracaoHelper>().WithParameter(new TypedParameter(tipoString, ConfigurationManager.AppSettings["LocalizacaoLogsMineracao"])).SingleInstance();
 

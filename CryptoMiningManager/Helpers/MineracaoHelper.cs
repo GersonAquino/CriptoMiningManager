@@ -1,5 +1,4 @@
-﻿using DevExpress.XtraEditors;
-using GestorDados.Helpers;
+﻿using GestorDados.Helpers;
 using Modelos.Classes;
 using Modelos.Enums;
 using Modelos.EventArgs;
@@ -11,13 +10,15 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 using ThreadState = System.Threading.ThreadState;
 
 namespace CryptoMiningManager.Helpers
 {
-	public partial class MineracaoHelper
+	public partial class MineracaoHelper : IDisposable, IAsyncDisposable
 	{
+		[GeneratedRegex(@"\x1B\[[0-9;]*[mGKH]", RegexOptions.Compiled)]
+		private static partial Regex FiltroOutputMinerador();
+
 		private static Regex EscapedSequences { get; } = FiltroOutputMinerador();
 
 		private bool UtilizadorAtivo { get; set; }
@@ -108,13 +109,19 @@ namespace CryptoMiningManager.Helpers
 			}
 		}
 
-		public async Task Parar()
+		public void Parar()
 		{
-			await PararProcessoAtivo();
+			PararProcessoAtivo();
 			PararThreadRentabilidade();
 
 			UtilizadorAtivo = true;
 			AlterarModoEnergia();
+		}
+
+		public async Task Parar_Async()
+		{
+			await PararProcessoAtivo_Async();
+			Parar_Base();
 		}
 
 		#region Output ProcessoAtivo
@@ -144,38 +151,19 @@ namespace CryptoMiningManager.Helpers
 		}
 		#endregion
 
-		//MÉTODOS AUXILIARES
-		private void VerificarAtividadeEModoEnergia(CancellationToken cancelar)
+		public void Dispose()
 		{
-			try
-			{
-				while (!cancelar.IsCancellationRequested)
-				{
-					if (UtilizadorAtivo)
-					{
-						if (WindowsAPIHelper.GetTempoInativo() >= 120)
-						{
-							UtilizadorAtivo = false;
-							AlterarModoEnergia();
-						}
-					}
-					else if (WindowsAPIHelper.GetTempoInativo() < 120)
-					{
-						UtilizadorAtivo = true;
-						AlterarModoEnergia();
-					}
-
-					Thread.Sleep(TempoEntreVerificacoes_Atividade);
-				}
-			}
-			catch (ThreadInterruptedException) { }
-			catch (Exception ex)
-			{
-				LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro");
-				XtraMessageBox.Show("Erro ao alternar modo de energia.", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
-			}
+			Parar();
+			GC.SuppressFinalize(this);
 		}
 
+		public async ValueTask DisposeAsync()
+		{
+			await Parar_Async();
+			GC.SuppressFinalize(this);
+		}
+
+		//MÉTODOS AUXILIARES
 		/// <summary>
 		/// Alterna o modo de energia conforme o estado do utilizador.
 		/// Se <see cref="UtilizadorAtivo"/> == true muda para o modo de Alto Desempenho, caso contrário muda para o modo Poupança de Energia
@@ -240,7 +228,7 @@ namespace CryptoMiningManager.Helpers
 					PosMineracao = comando;
 			}
 
-			await PararProcessoAtivo();
+			await PararProcessoAtivo_Async();
 
 			if (PreMineracao != null)
 			{
@@ -322,11 +310,35 @@ namespace CryptoMiningManager.Helpers
 			catch (Exception ex)
 			{
 				LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro ao verificar rentabilidade.");
-				XtraMessageBox.Show("Erro ao verificar rentabilidade: " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				MessageBoxesHelper.MostraErro("Erro ao verificar rentabilidade:", ex: ex);
 			}
 		}
 
-		private async Task PararProcessoAtivo()
+		private void Parar_Base()
+		{
+			PararThreadRentabilidade();
+
+			UtilizadorAtivo = true;
+			AlterarModoEnergia();
+		}
+
+		private void PararProcessoAtivo()
+		{
+			PararProcessoAtivo_Base();
+
+			ExecutarComandoCMD(PosMineracao);
+			AlteracaoEstadoMineracao?.Invoke(null, new AlteracaoEstadoMineracaoEventArgs(false));
+		}
+
+		private async Task PararProcessoAtivo_Async()
+		{
+			PararProcessoAtivo_Base();
+
+			await ExecutarComandoCMD_Async(PosMineracao);
+			AlteracaoEstadoMineracao?.Invoke(null, new AlteracaoEstadoMineracaoEventArgs(false));
+		}
+
+		private void PararProcessoAtivo_Base()
 		{
 			if (ProcessoAtivo == null)
 				return;
@@ -347,24 +359,6 @@ namespace CryptoMiningManager.Helpers
 			{
 				LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro ao guardar logs de mineração.");
 			}
-
-			if (PosMineracao != null)
-			{
-				using (Process processo = new())
-				{
-					processo.StartInfo = new("cmd.exe", PosMineracao.ComandosCMD)
-					{
-						CreateNoWindow = true,
-						UseShellExecute = false
-					};
-
-					if (processo.Start())
-						await processo.WaitForExitAsync();
-					else
-						LogHelper.EscreveLog(LogLevel.Warning, "Não foi possível iniciar o comando pós-mineração {idComando}", PosMineracao.Id);
-				}
-			}
-			AlteracaoEstadoMineracao?.Invoke(null, new AlteracaoEstadoMineracaoEventArgs(false));
 		}
 
 		private void PararThreadModoEnergia()
@@ -383,30 +377,120 @@ namespace CryptoMiningManager.Helpers
 			RentabilidadeThread = null;
 		}
 
+		private void VerificarAtividadeEModoEnergia(CancellationToken cancelar)
+		{
+			try
+			{
+				while (!cancelar.IsCancellationRequested)
+				{
+					if (UtilizadorAtivo)
+					{
+						if (WindowsAPIHelper.GetTempoInativo() >= 120)
+						{
+							UtilizadorAtivo = false;
+							AlterarModoEnergia();
+						}
+					}
+					else if (WindowsAPIHelper.GetTempoInativo() < 120)
+					{
+						UtilizadorAtivo = true;
+						AlterarModoEnergia();
+					}
+
+					Thread.Sleep(TempoEntreVerificacoes_Atividade);
+				}
+			}
+			catch (ThreadInterruptedException) { }
+			catch (Exception ex)
+			{
+				LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro");
+				MessageBoxesHelper.MostraErro("Erro ao alternar modo de energia.", ex: ex);
+			}
+		}
+
 		#region Métodos Estáticos
-		private static void InterromperThread(Thread thread, CancellationTokenSource cancellationToken)
+		/// <summary>
+		/// Executa um <see cref="Comando"/> sem apresentar a janela do CMD
+		/// </summary>
+		/// <param name="comando"></param>
+		/// <returns></returns>
+		private static void ExecutarComandoCMD(Comando comando)
+		{
+			if (comando == null)
+				return;
+
+			using (Process processo = new())
+			{
+				processo.StartInfo = new("cmd.exe", comando.ComandosCMD)
+				{
+					CreateNoWindow = true,
+					UseShellExecute = false
+				};
+
+				if (processo.Start())
+					processo.WaitForExit();
+				else
+					LogHelper.EscreveLog(LogLevel.Warning, "Não foi possível iniciar o comando {Comando}", comando);
+			}
+		}
+		/// <summary>
+		/// Executa um <see cref="Comando"/> sem apresentar a janela do CMD
+		/// </summary>
+		/// <param name="comando"></param>
+		/// <returns></returns>
+		private static async Task ExecutarComandoCMD_Async(Comando comando)
+		{
+			if (comando == null)
+				return;
+
+			using (Process processo = new())
+			{
+				processo.StartInfo = new("cmd.exe", comando.ComandosCMD)
+				{
+					CreateNoWindow = true,
+					UseShellExecute = false
+				};
+
+				if (processo.Start())
+					await processo.WaitForExitAsync();
+				else
+					LogHelper.EscreveLog(LogLevel.Warning, "Não foi possível iniciar o comando {Comando}", comando);
+			}
+		}
+
+		/// <summary>
+		/// Interrompe a <paramref name="thread"/> usando o método <see cref="Thread.Interrupt"/> caso esta esteja com o estado <see cref="ThreadState.WaitSleepJoin"/> 
+		/// ou utilizando o método <see cref="CancellationTokenSource.Cancel"/> caso contrário.
+		/// <para><b>NOTA IMPORTANTE:</b> Não usar <paramref name="cancellationToken"/> posteriormente! Será feito o Dispose do mesmo de forma assíncrona.</para>
+		/// </summary>
+		/// <param name="thread"></param>
+		/// <param name="cancellationToken"></param>
+		/// <returns><see cref="Task"/> que irá fazer <see cref="Thread.Join"/> e fazer o Dispose do <paramref name="cancellationToken"/></returns>
+		private static Task InterromperThread(Thread thread, CancellationTokenSource cancellationToken)
 		{
 			if (thread == null)
-				return;
+				return null;
 
 			if (thread.ThreadState == ThreadState.WaitSleepJoin)
 				thread.Interrupt();
 			else
 				cancellationToken.Cancel();
 
-			if (!thread.Join(10000))
-				XtraMessageBox.Show("O processo está a levar mais tempo para parar do que o esperado.", "Possível falha", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+			return Task.Run(() =>
+			{
+				thread.Join(); //TODO: Validar se isto pode causar algum tipo de problema
+				cancellationToken.Dispose();
+			});
 
-			cancellationToken.Dispose();
+			//if (!thread.Join(10000))
+			//	MessageBoxesHelper.MostraAviso("O processo está a levar mais tempo para parar do que o esperado.", "Possível falha");
+
 		}
 
 		public static string RemoveEscapeSequences(string str)
 		{
 			return str == null ? str : EscapedSequences.Replace(str, "");
 		}
-
-		[GeneratedRegex(@"\x1B\[[0-9;]*[mGKH]", RegexOptions.Compiled)]
-		private static partial Regex FiltroOutputMinerador();
 		#endregion
 	}
 }

@@ -47,8 +47,8 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes.Editores
 				if (string.IsNullOrWhiteSpace(Entidade.LocalizacaoLogsMineracao))
 				{
 					Entidade.LocalizacaoLogsMineracao = null;
-					if (XtraMessageBox.Show($"{ItemForLocalizacaoLogsMineracao.Text} está vazio, isto fará com que não sejam gravados logs! Pretende continuar?",
-						"Aviso", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
+					if (!MessageBoxesHelper.PerguntaSimples($"{ItemForLocalizacaoLogsMineracao.Text} está vazio, isto fará com que não sejam gravados logs! Pretende continuar?",
+						"Aviso", MessageBoxIcon.Warning))
 						return;
 				}
 
@@ -59,12 +59,12 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes.Editores
 					if (Entidade.Ativo)
 						Global.ConfigGeralAtiva = Entidade;
 
-					XtraMessageBox.Show("Configuração Geral gravada com sucesso.", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+					MessageBoxesHelper.MostraInformacao("Configuração Geral gravada com sucesso.", "Sucesso");
 
 					if (this.Parent is DocumentContainer docContainer)
 					{
 						if (Global.ConfirmacoesExtraEditores &&
-							XtraMessageBox.Show("Pretende criar novas configurações gerais?", "Criar novas configurações gerais", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+							MessageBoxesHelper.PerguntaSimples("Pretende criar novas configurações gerais?", "Criar novas configurações gerais"))
 						{
 							Entidade = new ConfiguracaoGeral();
 							ConfigGeralBindingSource.Clear();
@@ -80,16 +80,16 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes.Editores
 					}
 				}
 				else
-					XtraMessageBox.Show("Configuração Geral não gravada!", "Falhou", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					MessageBoxesHelper.MostraAviso("Configuração Geral não gravada!", "Falhou");
 			}
 			catch (CustomException ce)
 			{
-				XtraMessageBox.Show(ce.Message, string.IsNullOrWhiteSpace(ce.Detalhes) ? "Aviso" : ce.Detalhes, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				MessageBoxesHelper.MostraAviso(ce.Message, string.IsNullOrWhiteSpace(ce.Detalhes) ? "Aviso" : ce.Detalhes);
 			}
 			catch (Exception ex)
 			{
 				LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro ao gravar dados.");
-				XtraMessageBox.Show($"Erro ao gravar dados!{Environment.NewLine}{ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				MessageBoxesHelper.MostraErro("Erro ao gravar dados!", ex: ex);
 			}
 		}
 
@@ -116,7 +116,7 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes.Editores
 			catch (Exception ex)
 			{
 				LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro ao definir localização dos logs de mineração!");
-				XtraMessageBox.Show(ex.GetBaseException().Message, $"Erro ao definir localização dos logs de mineração!{Environment.NewLine}{ex.Message}", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				MessageBoxesHelper.MostraErro("Erro ao definir localização dos logs de mineração!", ex: ex);
 			}
 		}
 	}

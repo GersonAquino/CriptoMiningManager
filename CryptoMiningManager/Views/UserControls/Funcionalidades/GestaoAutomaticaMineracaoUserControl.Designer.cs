@@ -15,6 +15,7 @@
         {
             if (disposing && (components != null))
             {
+				ToggleEventosMineracao(false);
                 components.Dispose();
             }
             base.Dispose(disposing);

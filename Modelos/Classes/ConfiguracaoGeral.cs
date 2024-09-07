@@ -11,8 +11,8 @@ namespace Modelos.Classes
 		[NotMapped]
 		public Algoritmo? Algoritmo { get; set; }
 
-        public bool AlternarModoEnergia { get; set; }
-        public bool AtualizarUIMinimizado { get; set; }
+		public bool AlternarModoEnergia { get; set; }
+		public bool AtualizarUIMinimizado { get; set; }
 
 		/// <summary>
 		/// Se estiver ativo, ao gravar uma entidade, pergunta se pretende criar uma nova entidade (para atualizar o editor)
@@ -42,8 +42,8 @@ namespace Modelos.Classes
 		public string AlgoritmoPorDefeito { get => Algoritmo?.ToString(); set => Algoritmo = string.IsNullOrWhiteSpace(value) ? null : Enum.Parse<Algoritmo>(value); }
 
 		public string Descricao { get; set; }
-        public string LocalizacaoLogsMineracao { get; set; }
+		public string LocalizacaoLogsMineracao { get; set; }
 
-        public ConfiguracaoGeral() { }
+		public ConfiguracaoGeral() { }
 	}
 }

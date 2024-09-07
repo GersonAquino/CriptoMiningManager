@@ -50,7 +50,7 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes.Editores
 
 					if (this.Parent is DocumentContainer docContainer)
 					{
-						if (Global.ConfirmacoesExtraEditores && 
+						if (Global.ConfirmacoesExtraEditores &&
 							XtraMessageBox.Show("Pretende criar novos comandos?", "Criar novos comandos", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
 						{
 							Entidade = new Comando();

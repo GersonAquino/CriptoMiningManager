@@ -27,13 +27,13 @@ namespace CryptoMiningManager.Helpers
 		}
 
 		/// <summary>
-		/// Abre um separador com o editor adequado no modo de criação (nova entidade)
+		/// Abre um separador com o editor adequado
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="caption"></param>
 		/// <param name="entidadeAEditar"></param>
 		/// <param name="activeControl">Control para apresentar a animação de loading</param>
-		public void AbrirEditorUC<T>(string caption, Control activeControl = null, T entidadeAEditar = null) where T : class
+		internal void AbrirEditorUC<T>(string caption, Control activeControl = null, T entidadeAEditar = null) where T : class
 		{
 			IOverlaySplashScreenHandle splashScreenHandler = activeControl == null ? null : SplashScreenManager.ShowOverlayForm(activeControl);
 			try
@@ -55,7 +55,7 @@ namespace CryptoMiningManager.Helpers
 			catch (Exception ex)
 			{
 				LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro ao abrir menu {menuCaption}", caption);
-				XtraMessageBox.Show(ex.GetBaseException().Message, $"Não foi possível abrir o menu {caption}", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				MessageBoxesHelper.MostraErro("Erro ao abrir editor!", $"Não foi possível abrir o menu {caption}", ex);
 			}
 			finally
 			{
@@ -70,7 +70,7 @@ namespace CryptoMiningManager.Helpers
 		/// <param name="e"></param>
 		/// <param name="gridView"></param>
 		/// <param name="activeControl"></param>
-		public void DuploCliqueEntidade<T>(EventArgs e, GridView gridView, Control activeControl = null) where T : Configuracao
+		internal void DuploCliqueEntidade<T>(EventArgs e, GridView gridView, Control activeControl = null) where T : Configuracao
 		{
 			try
 			{
@@ -84,7 +84,7 @@ namespace CryptoMiningManager.Helpers
 			catch (Exception ex)
 			{
 				LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro ao tratar duplo clique.");
-				XtraMessageBox.Show($"Erro ao tratar duplo clique!{Environment.NewLine}{ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				MessageBoxesHelper.MostraErro("Erro ao tratar duplo clique!", ex: ex);
 			}
 		}
 
@@ -94,7 +94,7 @@ namespace CryptoMiningManager.Helpers
 		/// <typeparam name="T"></typeparam>
 		/// <param name="gridView"></param>
 		/// <param name="activeControl"></param>
-		public void EditarEntidade<T>(GridView gridView, Control activeControl = null) where T : Configuracao
+		internal void EditarEntidade<T>(GridView gridView, Control activeControl = null) where T : Configuracao
 		{
 			try
 			{
@@ -116,12 +116,12 @@ namespace CryptoMiningManager.Helpers
 			}
 			catch (CustomException ce)
 			{
-				XtraMessageBox.Show(ce.Message, "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				MessageBoxesHelper.MostraAviso(ce.Message);
 			}
 			catch (Exception ex)
 			{
 				LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro ao abrir editor da(s) linha(s) selecionada(s).");
-				XtraMessageBox.Show($"Erro ao abrir editor da(s) linha(s) selecionada(s).{Environment.NewLine}{ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				MessageBoxesHelper.MostraErro("Erro ao abrir editor da(s) linha(s) selecionada(s).", ex: ex);
 			}
 		}
 

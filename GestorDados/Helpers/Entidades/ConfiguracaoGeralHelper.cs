@@ -1,7 +1,6 @@
 ﻿using Modelos.Classes;
 using Modelos.Exceptions;
 using Modelos.Interfaces;
-using System.Threading.Tasks;
 
 namespace GestorDados.Helpers.Entidades
 {
