@@ -1,6 +1,7 @@
 ﻿using CryptoMiningManager.Helpers;
 using DevExpress.XtraBars.Docking2010;
 using DevExpress.XtraEditors;
+using DevExpress.XtraEditors.Controls;
 using GestorDados.Helpers;
 using Modelos.Classes;
 using Modelos.Enums;
@@ -24,6 +25,9 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes.Editores
 			Entidade = entidade;
 			EntidadesHelper = entidadesHelper;
 
+			if (Entidade.Id == -1 && string.IsNullOrWhiteSpace(Entidade.LocalizacaoLogsMineracao))
+				Entidade.LocalizacaoLogsMineracao = "LogsMineração";
+
 			ConfigGeralBindingSource.Add(Entidade);
 		}
 
@@ -40,6 +44,14 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes.Editores
 					throw new CustomException("Descrição não deve ficar vazia!");
 				}
 
+				if (string.IsNullOrWhiteSpace(Entidade.LocalizacaoLogsMineracao))
+				{
+					Entidade.LocalizacaoLogsMineracao = null;
+					if (XtraMessageBox.Show($"{ItemForLocalizacaoLogsMineracao.Text} está vazio, isto fará com que não sejam gravados logs! Pretende continuar?",
+						"Aviso", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
+						return;
+				}
+
 				int idGerado = await EntidadesHelper.GravarEntidade_GetIdGerado(Entidade);
 
 				if (idGerado != -1)
@@ -47,7 +59,7 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes.Editores
 					if (Entidade.Ativo)
 						Global.ConfigGeralAtiva = Entidade;
 
-					XtraMessageBox.Show("Configuração Geral gravado com sucesso.", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+					XtraMessageBox.Show("Configuração Geral gravada com sucesso.", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
 					if (this.Parent is DocumentContainer docContainer)
 					{
@@ -78,6 +90,33 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes.Editores
 			{
 				LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro ao gravar dados.");
 				XtraMessageBox.Show($"Erro ao gravar dados!{Environment.NewLine}{ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+			}
+		}
+
+		private void LocalizacaoLogsMineracaoBE_ButtonClick(object sender, ButtonPressedEventArgs e)
+		{
+			try
+			{
+				string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+				using (FolderBrowserDialog fbd = new() { SelectedPath = baseDirectory })
+				{
+					if (fbd.ShowDialog() != DialogResult.OK)
+						return;
+
+					//Se o caminho escolhido começar no caminho da aplicação usa-se o caminho relativo
+					if (fbd.SelectedPath.StartsWith(baseDirectory))
+						LocalizacaoLogsMineracaoBE.EditValue = fbd.SelectedPath[baseDirectory.Length..]; //Substring(baseDirectory.Length)
+					else
+						LocalizacaoLogsMineracaoBE.EditValue = fbd.SelectedPath;
+
+					//Por alguma razão, alterar diretamente a Entidade não resulta aqui, portanto altera-se o EditValue do ButtonEdit e força-se a escrita imediata no Binding
+					LocalizacaoLogsMineracaoBE.DataBindings["EditValue"].WriteValue();
+				}
+			}
+			catch (Exception ex)
+			{
+				LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro ao definir localização dos logs de mineração!");
+				XtraMessageBox.Show(ex.GetBaseException().Message, $"Erro ao definir localização dos logs de mineração!{Environment.NewLine}{ex.Message}", MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
 		}
 	}

@@ -18,7 +18,15 @@ namespace Modelos.Interfaces
 		/// <param name="condicoes"></param>
 		/// <param name="ordenacao"></param>
 		/// <returns></returns>
-		Task<T> GetEntidade(string condicoes, string ordenacao = null);
+		T GetEntidade(string condicoes, string ordenacao = null);
+
+		/// <summary>
+		/// Obtém a primeira entidade (<typeparamref name="T"/>) que cumpra as <paramref name="condicoes"/> definidas
+		/// </summary>
+		/// <param name="condicoes"></param>
+		/// <param name="ordenacao"></param>
+		/// <returns></returns>
+		Task<T> GetEntidadeAsync(string condicoes, string ordenacao = null);
 
 		/// <summary>
 		/// Obtém todas entidades (<typeparamref name="T"/>)
@@ -50,7 +58,14 @@ namespace Modelos.Interfaces
 		/// </summary>
 		/// <param name="entidade"></param>
 		/// <returns></returns>
-		Task<bool> GravarEntidade(T entidade);
+		bool GravarEntidade(T entidade);
+
+		/// <summary>
+		/// Grava a entidade (<typeparamref name="T"/>) na base de dados
+		/// </summary>
+		/// <param name="entidade"></param>
+		/// <returns></returns>
+		Task<bool> GravarEntidadeAsync(T entidade);
 
 		/// <summary>
 		/// Grava a entidade (<typeparamref name="T"/>) na base de dados.

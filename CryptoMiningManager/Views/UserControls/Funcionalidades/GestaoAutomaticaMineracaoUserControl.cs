@@ -143,22 +143,28 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
 
 		private void MineracaoHelper_ErroMinerador(object sender, DataReceivedEventArgs e)
 		{
-			ExecucaoME.AppendLine("ERRO: " + MineracaoHelper.RemoveEscapeSequences(e.Data));
-			ScrollFim();
+			Invoke(() =>
+			{
+				ExecucaoME.AppendLine("ERRO: " + MineracaoHelper.RemoveEscapeSequences(e.Data));
+				ScrollFim();
+			});
 		}
 
 		private void MineracaoHelper_OutputMinerador(object sender, DataReceivedEventArgs e)
 		{
-			if (ExecucaoME.Text.Length > 50000)
-				EscreverLogsMineracao();
+			Invoke(() =>
+			{
+				if (ExecucaoME.Text.Length > 50000)
+					EscreverLogsMineracao();
 
-			ExecucaoME.AppendLine(MineracaoHelper.RemoveEscapeSequences(e.Data));
-			ScrollFim();
+				ExecucaoME.AppendLine(MineracaoHelper.RemoveEscapeSequences(e.Data));
+				ScrollFim();
+			});
 		}
 
 		private void MineracaoHelper_RegistarLogsMineracao(object sender, EventArgs e)
 		{
-			EscreverLogsMineracao();
+			Invoke(EscreverLogsMineracao);
 		}
 
 		private void MineracaoHelper_VerificaoRentabilidade(object sender, EventArgs e)
@@ -222,6 +228,9 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
 			}
 		}
 
+		/// <summary>
+		/// Este método deve ser executado na Thread principal da UI
+		/// </summary>
 		private void EscreverLogsMineracao()
 		{
 			//O semáforo garante que nunca se vai tentar escrever no ficheiro 2 vezes (ou mais) em simultâneo
@@ -233,18 +242,18 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
 				streamWriter.Close();
 			}
 
-			Invoke(() => ExecucaoME.Clear());
+			ExecucaoME.Clear();
 			SemaforoLogsMineracao.Release();
 		}
 
+		/// <summary>
+		/// Este método deve ser executado na Thread principal da UI
+		/// </summary>
 		private void ScrollFim()
 		{
-			Invoke(() =>
-			{
-				ExecucaoME.SelectionStart = ExecucaoME.Text.Length;
-				ExecucaoME.SelectionLength = 0;
-				ExecucaoME.ScrollToCaret();
-			});
+			ExecucaoME.SelectionStart = ExecucaoME.Text.Length;
+			ExecucaoME.SelectionLength = 0;
+			ExecucaoME.ScrollToCaret();
 		}
 
 		/// <summary>

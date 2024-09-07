@@ -88,6 +88,18 @@ namespace GestorDados
 		#endregion
 
 		///<inheritdoc/>
+		public int ExecuteOpen(string query)
+		{
+			return Conexao.Execute(query, transaction: Transacao);
+		}
+
+		///<inheritdoc/>
+		public int ExecuteOpen<T>(string query, T parametros)
+		{
+			return Conexao.Execute(query, parametros, transaction: Transacao);
+		}
+
+		///<inheritdoc/>
 		public async Task<int> ExecuteOpenAsync(string query)
 		{
 			return await Conexao.ExecuteAsync(query, transaction: Transacao);
@@ -97,6 +109,16 @@ namespace GestorDados
 		public async Task<int> ExecuteOpenAsync<T>(string query, T parametros)
 		{
 			return await Conexao.ExecuteAsync(query, parametros, transaction: Transacao);
+		}
+
+		public T ExecuteScalarOpen<T>(string query)
+		{
+			return Conexao.ExecuteScalar<T>(query, transaction: Transacao);
+		}
+
+		public T ExecuteScalarOpen<T, P>(string query, P parametros)
+		{
+			return Conexao.ExecuteScalar<T>(query, parametros, Transacao);
 		}
 
 		///<inheritdoc/>
@@ -109,6 +131,12 @@ namespace GestorDados
 		public async Task<T> ExecuteScalarOpenAsync<T, P>(string query, P parametros)
 		{
 			return await Conexao.ExecuteScalarAsync<T>(query, parametros, Transacao);
+		}
+
+		///<inheritdoc/>
+		public T GetValorOpen<T>(string query)
+		{
+			return Conexao.QueryFirstOrDefault<T>(query, transaction: Transacao);
 		}
 
 		///<inheritdoc/>

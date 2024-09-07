@@ -1,5 +1,4 @@
 ﻿using Autofac;
-using Autofac.Core;
 using CryptoMiningManager.CustomControls;
 using CryptoMiningManager.Helpers;
 using CryptoMiningManager.Views;
@@ -14,7 +13,6 @@ using System.Drawing;
 using System.IO;
 using System.Reflection;
 using System.Runtime;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace CryptoMiningManager
@@ -26,7 +24,7 @@ namespace CryptoMiningManager
 		/// </summary>
 		[STAThread]
 		[RequiresAssemblyFiles("Calls System.Reflection.Assembly.Location")]
-		private static async Task Main(string[] args)
+		private static void Main(string[] args) //private static async Task Main(string[] args) //Não pode ser async porque vai contra o [STAThread] e provoca erros ao usar o Drag&Drop no XtraFolderBrowserDialog
 		{
 			#region JIT Improve
 			Assembly assembly = Assembly.GetExecutingAssembly();
@@ -51,12 +49,7 @@ namespace CryptoMiningManager
 				{
 					scope.Resolve<CustomNotifyIcon>().NotifyIcon.Icon = Icon.ExtractAssociatedIcon(assembly.Location);
 					if (isBackgroundOnly)
-					{
-						SemUIHelper semUi = scope.Resolve<SemUIHelper>();
-						await semUi.Inicializar();
-
-						Application.Run(semUi);
-					}
+						Application.Run(scope.Resolve<SemUIHelper>());
 					else
 						Application.Run(scope.Resolve<MainForm>());
 				}

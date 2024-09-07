@@ -43,20 +43,18 @@ namespace CryptoMiningManager.Helpers
 			//MineracaoHelper.OutputMinerador += MineracaoHelper_OutputMinerador;
 			//MineracaoHelper.RegistarLogsMineracao += MineracaoHelper_RegistarLogsMineracao;
 			//MineracaoHelper.VerificaoRentabilidade += MineracaoHelper_VerificaoRentabilidade;
-		}
 
-		public async Task Inicializar()
-		{
+			//Inicializar configurações e opções do TaskBarIcon
 			try
 			{
-				Global.ConfigGeralAtiva = await ConfigGeralHelper.GetEntidade("Ativo = 1");
+				Global.ConfigGeralAtiva = ConfigGeralHelper.GetEntidade("Ativo = 1");
 				if (Global.ConfigGeralAtiva == null)
 				{
 					Global.ConfigGeralAtiva = new();
 					Global.ConfigGeralAtiva.Descricao = "Configuração Geral";
 					Global.ConfigGeralAtiva.Ativo = true;
 
-					if (!await ConfigGeralHelper.GravarEntidade(Global.ConfigGeralAtiva))
+					if (!ConfigGeralHelper.GravarEntidade(Global.ConfigGeralAtiva))
 					{
 						Global.ConfigGeralAtiva = null;
 						LogHelper.EscreveLog(LogLevel.Error, "Falha ao criar configuração geral base automaticamente! É necessário validar o código! (não houve exceção)");

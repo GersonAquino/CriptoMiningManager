@@ -9,7 +9,7 @@ namespace GestorDados.Helpers.Entidades
 	{
 		public ComandoHelper(IDados dados) : base(dados) { }
 
-		protected override async Task GravarEntidade_ValidacoesExtra_Async(Comando entidade)
+		protected override void GravarEntidade_ValidacoesExtra(Comando entidade)
 		{
 			if (entidade.Ativo)
 			{
@@ -29,7 +29,7 @@ namespace GestorDados.Helpers.Entidades
 				string query = QueryHelper.Select("Id", Tabela,
 					$"Ativo = 1 {tipoComando}{(entidade.Id != -1 ? $" AND Id != {entidade.Id}" : "")}", limit: 1);
 
-				int? idExistente = await Dados.ExecuteScalarOpenAsync<int?>(query);
+				int? idExistente = Dados.ExecuteScalarOpen<int?>(query);
 				if (idExistente.HasValue)
 					throw new CustomException("Já existe um comando ativo com as definições de Pré/Pós-Mineracao.", "Comando ativo do mesmo tipo já existente");
 			}

@@ -35,8 +35,6 @@ namespace CryptoMiningManager.Helpers
 		private Thread RentabilidadeThread { get; set; }
 		private Thread AtividadeThread { get; set; }
 
-		private string LocalizacaoLogsMineracao { get; set; }
-
 		public Process ProcessoAtivo { get; private set; }
 
 		public string CaminhoCompletoLogMineracao { get; private set; }
@@ -53,13 +51,12 @@ namespace CryptoMiningManager.Helpers
 		public event EventHandler VerificaoRentabilidade;
 		#endregion
 
-		public MineracaoHelper(IEntidadesHelper<Comando> comandosHelper, IEntidadesHelper<Moeda> moedasHelper, IEntidadesHelper<Minerador> mineradoresHelper, string localizacaoLogsMineracao)
+		public MineracaoHelper(IEntidadesHelper<Comando> comandosHelper, IEntidadesHelper<Moeda> moedasHelper, IEntidadesHelper<Minerador> mineradoresHelper)
 		{
 			AtividadeThread = null;
 			CancelarThread_Mineracao = null;
 			CancelarThread_ModoEnergia = null;
 			ComandosHelper = comandosHelper;
-			LocalizacaoLogsMineracao = localizacaoLogsMineracao; //Caso apareça mais algum caso como este (dados da configuração que precisem de ser lidos), talvez faça sentido criar algum tipo de classe estática ou algo parecido
 			MineradorAtivo = null;
 			MineradoresHelper = mineradoresHelper;
 			MineradoresPorMoeda = [];
@@ -76,15 +73,19 @@ namespace CryptoMiningManager.Helpers
 			//await PararProcessoAtivo();
 			//PararThreadRentabilidade();
 
-			if (!Directory.Exists(LocalizacaoLogsMineracao))
-				Directory.CreateDirectory(LocalizacaoLogsMineracao);
-
-			int i = 1;
-			string nomeBase = $"Log_{DateTime.Now:yyyy-MM-dd HH-mm-ss}";
-			CaminhoCompletoLogMineracao = Path.Combine(LocalizacaoLogsMineracao, $"{nomeBase}.txt");
-			while (File.Exists(CaminhoCompletoLogMineracao))
+			string localizacaoLogsMineracao = Global.ConfigGeralAtiva?.LocalizacaoLogsMineracao;
+			if (!string.IsNullOrWhiteSpace(localizacaoLogsMineracao))
 			{
-				CaminhoCompletoLogMineracao = Path.Combine(LocalizacaoLogsMineracao, $"{nomeBase}_{i++}.txt");
+				if (!Directory.Exists(localizacaoLogsMineracao))
+					Directory.CreateDirectory(localizacaoLogsMineracao);
+
+				int i = 1;
+				string nomeBase = $"Log_{DateTime.Now:yyyy-MM-dd HH-mm-ss}";
+				CaminhoCompletoLogMineracao = Path.Combine(localizacaoLogsMineracao, $"{nomeBase}.txt");
+				while (File.Exists(CaminhoCompletoLogMineracao))
+				{
+					CaminhoCompletoLogMineracao = Path.Combine(localizacaoLogsMineracao, $"{nomeBase}_{i++}.txt");
+				}
 			}
 
 			switch (algoritmo)
@@ -313,7 +314,7 @@ namespace CryptoMiningManager.Helpers
 					if (minerador != null && MineradorAtivo?.Id != minerador.Id)
 						await IniciarMinerador(minerador);
 
-					VerificaoRentabilidade?.Invoke(null, new EventArgs());
+					VerificaoRentabilidade?.Invoke(null, EventArgs.Empty);
 					Thread.Sleep(TempoEntreVerificacoes_Rentabilidade);
 				}
 			}
@@ -339,7 +340,8 @@ namespace CryptoMiningManager.Helpers
 
 			try
 			{
-				RegistarLogsMineracao?.Invoke(null, new EventArgs());
+				if (!string.IsNullOrEmpty(CaminhoCompletoLogMineracao))
+					RegistarLogsMineracao?.Invoke(null, EventArgs.Empty);
 			}
 			catch (Exception ex)
 			{

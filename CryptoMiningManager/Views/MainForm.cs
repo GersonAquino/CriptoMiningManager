@@ -61,14 +61,14 @@ namespace CryptoMiningManager.Views
 		{
 			try
 			{
-				Global.ConfigGeralAtiva = await ConfigGeralHelper.GetEntidade("Ativo = 1");
+				Global.ConfigGeralAtiva = await ConfigGeralHelper.GetEntidadeAsync("Ativo = 1");
 				if (Global.ConfigGeralAtiva == null)
 				{
 					Global.ConfigGeralAtiva = new();
 					Global.ConfigGeralAtiva.Descricao = "Configuração Geral";
 					Global.ConfigGeralAtiva.Ativo = true;
 
-					if (!await ConfigGeralHelper.GravarEntidade(Global.ConfigGeralAtiva))
+					if (!await ConfigGeralHelper.GravarEntidadeAsync(Global.ConfigGeralAtiva))
 					{
 						Global.ConfigGeralAtiva = null;
 						LogHelper.EscreveLog(LogLevel.Error, "Falha ao criar configuração geral base automaticamente! É necessário validar o código! (não houve exceção)");

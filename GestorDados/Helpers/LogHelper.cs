@@ -34,11 +34,13 @@ namespace GestorDados.Helpers
 						try
 						{
 							StringBuilder sbPropriedades = new();
-							foreach (object propriedade in SetPropriedades())
+							object[] propriedades = SetPropriedades();
+							for (int i = 0; i < propriedades.Length; i++)
 							{
-								sbPropriedades.Append($"{propriedade} ");
+								sbPropriedades.Append(propriedades[i]).Append(' ');
 							}
-							streamWriter.WriteLine($"{sbPropriedades}{Environment.NewLine}{msg}{Environment.NewLine}");
+
+							streamWriter.WriteLine(sbPropriedades.AppendLine().AppendLine(msg));
 						}
 						catch (Exception ex)
 						{

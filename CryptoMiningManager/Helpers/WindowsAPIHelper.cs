@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 
 namespace CryptoMiningManager.Helpers
 {
-	public static class WindowsAPIHelper
+	public static partial class WindowsAPIHelper
 	{
 		[StructLayout(LayoutKind.Sequential)]
 		private struct LASTINPUTINFO
@@ -13,14 +13,15 @@ namespace CryptoMiningManager.Helpers
 			internal uint dwTime;
 		}
 
-		[DllImport("user32.dll")]
-		private static extern bool GetLastInputInfo(ref LASTINPUTINFO plii);
+		[LibraryImport("user32.dll")]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		private static partial bool GetLastInputInfo(ref LASTINPUTINFO plii);
 
-		[DllImport("kernel32.dll")]
-		private static extern uint GetTickCount();
+		[LibraryImport("kernel32.dll")]
+		private static partial uint GetTickCount();
 
-		[DllImport("powrprof.dll", SetLastError = true)]
-		private static extern uint PowerSetActiveScheme(IntPtr UserRootPowerKey, ref Guid SchemeGuid);
+		[LibraryImport("powrprof.dll", SetLastError = true)]
+		private static partial uint PowerSetActiveScheme(IntPtr UserRootPowerKey, ref Guid SchemeGuid);
 
 		//Planos de energia
 		internal static readonly Guid PoupancaEnergia = new("a1841308-3541-4fab-bc81-f71556f20b4a"); // Power Saver

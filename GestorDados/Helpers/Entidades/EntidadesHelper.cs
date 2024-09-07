@@ -40,7 +40,7 @@ namespace GestorDados.Helpers.Entidades
 			Type notMapped = typeof(NotMappedAttribute);
 			propriedades.ForEach((p, _) => { if (!p.IsDefined(key) && !p.IsDefined(notMapped)) colunasList.Add(p.Name); });
 
-			ColunasSemId = colunasList.ToArray();
+			ColunasSemId = [.. colunasList]; //toArray()
 		}
 
 		///<inheritdoc/>
@@ -52,7 +52,15 @@ namespace GestorDados.Helpers.Entidades
 		}
 
 		///<inheritdoc/>
-		public virtual async Task<T> GetEntidade(string condicoes = null, string ordenacao = null)
+		public virtual T GetEntidade(string condicoes = null, string ordenacao = null)
+		{
+			string query = QueryHelper.Select("*", Tabela, condicoes, ordenacao, limit: 1);
+
+			return Dados.GetValorOpen<T>(query);
+		}
+
+		///<inheritdoc/>
+		public virtual async Task<T> GetEntidadeAsync(string condicoes = null, string ordenacao = null)
 		{
 			string query = QueryHelper.Select("*", Tabela, condicoes, ordenacao, limit: 1);
 
@@ -88,28 +96,36 @@ namespace GestorDados.Helpers.Entidades
 		}
 
 		///<inheritdoc/>
-		public virtual async Task<bool> GravarEntidade(T entidade)
+		public virtual bool GravarEntidade(T entidade)
 		{
 			if (entidade.Id == -1)
-				return await GravarEntidadeNova(entidade) > 0;
+				return GravarEntidadeNova(entidade) > 0;
 
-			return await Dados.ExecuteOpenAsync(await GravarEntidade_QueryBase(entidade), entidade) == 1;
+			return Dados.ExecuteOpen(GravarEntidade_QueryBase(entidade), entidade) == 1;
+		}
+
+		///<inheritdoc/>
+		public virtual async Task<bool> GravarEntidadeAsync(T entidade)
+		{
+			if (entidade.Id == -1)
+				return await GravarEntidadeNovaAsync(entidade) > 0;
+
+			return await Dados.ExecuteOpenAsync(GravarEntidade_QueryBase(entidade), entidade) == 1;
 		}
 
 		///<inheritdoc/>
 		public virtual async Task<int> GravarEntidade_GetIdGerado(T entidade)
 		{
 			if (entidade.Id == -1)
-				return await GravarEntidadeNova(entidade);
+				return await GravarEntidadeNovaAsync(entidade);
 
-			return await GravarEntidade(entidade) ? entidade.Id : -1;
+			return await GravarEntidadeAsync(entidade) ? entidade.Id : -1;
 		}
 
 		///<inheritdoc/>
 		public virtual async Task<List<T>> GravarEntidades(IEnumerable<T> entidades = null)
 		{
-			if (entidades == null)
-				throw new ArgumentNullException(nameof(entidades));
+			ArgumentNullException.ThrowIfNull(entidades);
 
 			List<T> entidadesList = entidades.ToList();
 			entidadesList.ForEach(e => e.DataAlteracao = DateTime.Now);
@@ -119,13 +135,12 @@ namespace GestorDados.Helpers.Entidades
 		}
 
 		//MÉTODOS AUXILIARES
-		protected virtual async Task<string> GravarEntidade_QueryBase(T entidade)
+		protected virtual string GravarEntidade_QueryBase(T entidade)
 		{
 			if (entidade.Id < -1)
 				throw new ArgumentException($"{Descricao} tem Id inválido ({entidade.Id}).");
 
 			GravarEntidade_ValidacoesExtra(entidade);
-			await GravarEntidade_ValidacoesExtra_Async(entidade);
 
 			string query;
 			//Inserir caso Id seja um valor inválido mas esperado
@@ -146,7 +161,6 @@ namespace GestorDados.Helpers.Entidades
 		//Estes métodos servem apenas para ser feito o override deles caso necessário.
 		//Não foram marcados como abstratos para não obrigar a implementação deles em subclasses que não precisam.
 		protected virtual void GravarEntidade_ValidacoesExtra(T entidade) { }
-		protected virtual Task GravarEntidade_ValidacoesExtra_Async(T entidade) { return null; }
 		#endregion
 
 		/// <summary>
@@ -154,9 +168,23 @@ namespace GestorDados.Helpers.Entidades
 		/// </summary>
 		/// <param name="entidade"></param>
 		/// <returns>Id da entidade gerada</returns>
-		private async Task<int> GravarEntidadeNova(T entidade)
+		private int GravarEntidadeNova(T entidade)
 		{
-			string query = await GravarEntidade_QueryBase(entidade) + "; SELECT LAST_INSERT_ROWID();";
+			string query = GravarEntidade_QueryBase(entidade) + "; SELECT LAST_INSERT_ROWID();";
+
+			entidade.Id = Dados.ExecuteScalarOpen<int, T>(query, entidade);
+
+			return entidade.Id;
+		}
+
+		/// <summary>
+		/// Grava uma entidade (<typeparamref name="T"/>) nova e atualiza o Id da mesma
+		/// </summary>
+		/// <param name="entidade"></param>
+		/// <returns>Id da entidade gerada</returns>
+		private async Task<int> GravarEntidadeNovaAsync(T entidade)
+		{
+			string query = GravarEntidade_QueryBase(entidade) + "; SELECT LAST_INSERT_ROWID();";
 
 			entidade.Id = await Dados.ExecuteScalarOpenAsync<int, T>(query, entidade);
 

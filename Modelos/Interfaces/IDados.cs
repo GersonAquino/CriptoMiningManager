@@ -24,8 +24,23 @@ namespace Modelos.Interfaces
 		/// </summary>
 		/// <param name="query"></param>
 		/// <returns></returns>
-		Task<int> ExecuteOpenAsync(string query);
+		int ExecuteOpen(string query);
 
+		/// <summary>
+		/// Executa um comando SQL e devolve o número de linhas afetadas
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="query"></param>
+		/// <param name="parametros"></param>
+		/// <returns></returns>
+		int ExecuteOpen<T>(string query, T parametros);
+
+		/// <summary>
+		/// Executa um comando SQL e devolve o número de linhas afetadas
+		/// </summary>
+		/// <param name="query"></param>
+		/// <returns></returns>
+		Task<int> ExecuteOpenAsync(string query);
 
 		/// <summary>
 		/// Executa um comando SQL e devolve o número de linhas afetadas
@@ -35,6 +50,23 @@ namespace Modelos.Interfaces
 		/// <param name="parametros"></param>
 		/// <returns></returns>
 		Task<int> ExecuteOpenAsync<T>(string query, T parametros);
+
+		/// <summary>
+		/// Devolve o valor da primeira coluna devolvida pela <paramref name="query"/>
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="query"></param>
+		/// <returns></returns>
+		T ExecuteScalarOpen<T>(string query);
+
+		/// <summary>
+		/// Devolve o valor da primeira coluna devolvida pela <paramref name="query"/>
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="query"></param>
+		/// <param name="parametros"></param>
+		/// <returns></returns>
+		T ExecuteScalarOpen<T, P>(string query, P parametros);
 
 		/// <summary>
 		/// Devolve o valor da primeira coluna devolvida pela <paramref name="query"/>
@@ -57,6 +89,8 @@ namespace Modelos.Interfaces
 		/// Desfaz a <see cref="Transacao"/> e fecha a <see cref="Conexao"/>
 		/// </summary>
 		void FecharConexao();
+
+		T GetValorOpen<T>(string query);
 
 		Task<T> GetValorOpenAsync<T>(string query);
 

@@ -42,7 +42,8 @@ namespace Modelos.Classes
 		public string AlgoritmoPorDefeito { get => Algoritmo?.ToString(); set => Algoritmo = string.IsNullOrWhiteSpace(value) ? null : Enum.Parse<Algoritmo>(value); }
 
 		public string Descricao { get; set; }
+        public string LocalizacaoLogsMineracao { get; set; }
 
-		public ConfiguracaoGeral() { }
+        public ConfiguracaoGeral() { }
 	}
 }

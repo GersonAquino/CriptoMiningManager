@@ -124,7 +124,7 @@ namespace CryptoMiningManager.Views.UserControls.Configuracoes.Editores
 		{
 			try
 			{
-				using (OpenFileDialog ofd = new OpenFileDialog()
+				using (OpenFileDialog ofd = new()
 				{
 					CheckFileExists = true,
 					Filter = "cmd files (*.bat)|*.bat|powershell files (*.ps1)|*.ps1|All files (*.*)|*.*",

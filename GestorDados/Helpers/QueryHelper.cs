@@ -16,7 +16,7 @@ namespace GestorDados.Helpers
 		}
 
 		/// <summary>
-		/// Constroi um comando SQL com um INSERT e parâmetros para o Dapper ou SqlParameters
+		/// Constrói um comando SQL com um INSERT e parâmetros para o Dapper ou SqlParameters
 		/// </summary>
 		/// <param name="tabela"></param>
 		/// <param name="colunas"></param>
@@ -65,7 +65,7 @@ namespace GestorDados.Helpers
 		}
 
 		/// <summary>
-		/// Constroi um comando SQL com um UPDATE e parâmetros para o Dapper ou SqlParameters
+		/// Constrói um comando SQL com um UPDATE e parâmetros para o Dapper ou SqlParameters
 		/// </summary>
 		/// <param name="tabela"></param>
 		/// <param name="condicoes"></param>
