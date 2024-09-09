@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "CriptoMiningManager": {
+      "commandName": "Project"
+    },
+    "BackgroundOnly": {
+      "commandName": "Project",
+      "commandLineArgs": "-BackgroundOnly"
+    }
+  }
+}

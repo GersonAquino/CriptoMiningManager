@@ -18,7 +18,7 @@ namespace Modelos.Classes
 		public ListaMoedas coins { get; set; }
 
 		/// <summary>
-		/// Pega em todas as propriedades do tipo <see cref="Moeda"/> em <see cref="coins"/> e passa-as para um <see cref="IEnumerable{T}"/> de <see cref="Moeda"/>
+		/// Pega em todas as propriedades do tipo <see cref="Moeda"/> em <see cref="coins"/> e passa-as para uma <see cref="List{T}"/> de <see cref="Moeda"/>
 		/// </summary>
 		/// <returns></returns>
 		public List<Moeda> GetMoedas()

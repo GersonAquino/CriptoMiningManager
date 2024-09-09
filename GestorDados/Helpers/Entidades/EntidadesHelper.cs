@@ -83,7 +83,8 @@ namespace GestorDados.Helpers.Entidades
 			DynamicParameters parametrosDapper = new();
 			for (int i = 0; i < parametros.Length; i++)
 			{
-				parametrosDapper.Add(parametros[i].parametro, parametros[i].valor);
+				(string parametro, object valor) = parametros[i];
+				parametrosDapper.Add(parametro, valor);
 			}
 
 			return await Dados.QueryOpenAsync<T>(query, parametrosDapper);
