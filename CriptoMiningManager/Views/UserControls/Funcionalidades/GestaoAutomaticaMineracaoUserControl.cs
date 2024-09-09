@@ -36,9 +36,19 @@ namespace CriptoMiningManager.Views.UserControls.Funcionalidades
 			AlgoritmoBEI.EditValue = Global.ConfigGeralAtiva.Algoritmo ?? Algoritmo.Rentabilidade;
 
 			MineracaoHelper.TempoEntreVerificacoes_Rentabilidade = 180000; //30 minutos
-			TemporizadorBEI.EditValue = new DateTime(0);
+			TemporizadorBEI.EditValue = DateTime.MinValue;
 
 			ToggleEventosMineracao(true);
+
+			//Altera a visibilidade dos botões caso já haja um processo de mineração ativo
+			if (MineracaoHelper.ProcessoAtivo != null)
+			{
+				IniciarBBI.Visibility = BarItemVisibility.Never;
+				PararBBI.Visibility = BarItemVisibility.Always;
+
+				MineradorAtivoTE.Text = MineracaoHelper.MineradorAtivo.Nome;
+				MoedaAtualTE.Text = MineracaoHelper.MineradorAtivo.Moeda.Nome;
+			}
 		}
 
 		private async void GestaoAutomaticaMineracaoUserControl_Load(object sender, EventArgs e)

@@ -57,7 +57,7 @@ namespace CriptoMiningManager.Views
 				await scope.Resolve<Inicializador>().InicializarAsync((_, _) => { UtilizadorQuerSair = true; this.Close(); });
 			}
 
-			TaskBarIcon.AdicionarItem(Taskbar.Configuracoes, ConfiguracoesItem_Click); //TODO: Implementar
+			TaskBarIcon.AdicionarItem(Taskbar.Configuracoes, ConfiguracoesItem_Click);
 
 			TaskBarIcon.NotifyIcon.DoubleClick += (_, _) => this.Show();
 
@@ -93,16 +93,15 @@ namespace CriptoMiningManager.Views
 					return;
 				}
 
-				string mensagem;
 				if (MineracaoHelper.ProcessoAtivo != null)
-					mensagem = "Existe um processo de mineração ativo, pretende continuar?";
+				{
+					if (MessageBoxesHelper.PerguntaSimples("Existe um processo de mineração ativo, pretende continuar?", this.Text))
+						await MineracaoHelper.Parar_Async();
+					else
+						e.Cancel = true;
+				}
 				else
-					mensagem = "Pretende terminar a aplicação?";
-
-				e.Cancel = !MessageBoxesHelper.PerguntaSimples(mensagem, this.Text);
-
-				if (!e.Cancel && GestaoAutomaticaMineracaoUC != null)
-					await MineracaoHelper.Parar_Async();
+					e.Cancel = MessageBoxesHelper.PerguntaSimples("Pretende terminar a aplicação?", this.Text);
 			}
 			catch (Exception ex)
 			{
@@ -112,7 +111,8 @@ namespace CriptoMiningManager.Views
 			}
 			finally
 			{
-				UtilizadorQuerSair = false;
+				if (e.Cancel)
+					UtilizadorQuerSair = false;
 			}
 		}
 
@@ -187,21 +187,6 @@ namespace CriptoMiningManager.Views
 			{
 				this.Ribbon.SelectPage(this.Ribbon.MergedPages[0]);
 				this.Ribbon.SelectedPage = this.Ribbon.MergedPages[0];
-			}
-		}
-
-		private async void TabbedView_DocumentClosing(object sender, DocumentCancelEventArgs e)
-		{
-			if (e.Document.Caption == GestaoAutomaticaMineracaoACE.Text && MineracaoHelper.ProcessoAtivo != null)
-			{
-				//TODO: Visto que é possível inicial a mineração pela taskbar, isto já não faz sentido, deve-se adaptar o GestaoAutomaticaMineracaoUserControl para saber se há mineração ativa ou não quando é aberto
-				if (MessageBoxesHelper.PerguntaSimples("Fechar este separador irá parar o processo de mineração ativo, pretende continuar?", "Atenção", MessageBoxIcon.Warning))
-				{
-					await MineracaoHelper.Parar_Async();
-					GestaoAutomaticaMineracaoUC = null;
-				}
-				else
-					e.Cancel = true;
 			}
 		}
 

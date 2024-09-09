@@ -83,7 +83,6 @@ namespace CriptoMiningManager
 			builder.RegisterType<Inicializador>().SingleInstance();
 
 			//Helpers Mineração
-			//TODO: Passar LocalizacaoLogsMineracao para Configurações Gerais, ou talvez criar Configurações Mineração e meter lá o URLRentabilidade também
 			builder.RegisterType<MineracaoHelper>().SingleInstance();
 
 			//Taskbar Icon

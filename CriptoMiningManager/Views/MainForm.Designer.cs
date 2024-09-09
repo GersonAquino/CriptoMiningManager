@@ -77,7 +77,7 @@
 			MainRibbon.OptionsMenuMinWidth = 385;
 			MainRibbon.Pages.AddRange(new DevExpress.XtraBars.Ribbon.RibbonPage[] { GeralRibbonPage });
 			MainRibbon.RepositoryItems.AddRange(new DevExpress.XtraEditors.Repository.RepositoryItem[] { repositoryItemTextEditVersao });
-			MainRibbon.Size = new System.Drawing.Size(1586, 170);
+			MainRibbon.Size = new System.Drawing.Size(1586, 174);
 			MainRibbon.StatusBar = ribbonStatusBar;
 			// 
 			// AppConfigurationBarButtonItem
@@ -150,10 +150,6 @@
 			DocumentManager.ViewCollection.AddRange(new DevExpress.XtraBars.Docking2010.Views.BaseView[] { TabbedView });
 			DocumentManager.DocumentActivate += DocumentManager_DocumentActivate;
 			// 
-			// TabbedView
-			// 
-			TabbedView.DocumentClosing += TabbedView_DocumentClosing;
-			// 
 			// dockManager
 			// 
 			dockManager.AutoHideSpeed = 4;
@@ -166,12 +162,12 @@
 			FuncionalidadesDockPanel.Controls.Add(dockPanel1_Container);
 			FuncionalidadesDockPanel.Dock = DevExpress.XtraBars.Docking.DockingStyle.Left;
 			FuncionalidadesDockPanel.ID = new System.Guid("e2195159-eed9-4634-ae20-2362dc2a59de");
-			FuncionalidadesDockPanel.Location = new System.Drawing.Point(0, 170);
+			FuncionalidadesDockPanel.Location = new System.Drawing.Point(0, 174);
 			FuncionalidadesDockPanel.Margin = new System.Windows.Forms.Padding(4);
 			FuncionalidadesDockPanel.Name = "FuncionalidadesDockPanel";
 			FuncionalidadesDockPanel.Options.ShowCloseButton = false;
 			FuncionalidadesDockPanel.OriginalSize = new System.Drawing.Size(244, 200);
-			FuncionalidadesDockPanel.Size = new System.Drawing.Size(244, 803);
+			FuncionalidadesDockPanel.Size = new System.Drawing.Size(244, 799);
 			FuncionalidadesDockPanel.Text = "Funcionalidades";
 			// 
 			// dockPanel1_Container
@@ -180,7 +176,7 @@
 			dockPanel1_Container.Location = new System.Drawing.Point(3, 31);
 			dockPanel1_Container.Margin = new System.Windows.Forms.Padding(4);
 			dockPanel1_Container.Name = "dockPanel1_Container";
-			dockPanel1_Container.Size = new System.Drawing.Size(237, 769);
+			dockPanel1_Container.Size = new System.Drawing.Size(237, 765);
 			dockPanel1_Container.TabIndex = 0;
 			// 
 			// FuncionalidadesAccordionControl
@@ -190,7 +186,7 @@
 			FuncionalidadesAccordionControl.Location = new System.Drawing.Point(0, 0);
 			FuncionalidadesAccordionControl.Margin = new System.Windows.Forms.Padding(4);
 			FuncionalidadesAccordionControl.Name = "FuncionalidadesAccordionControl";
-			FuncionalidadesAccordionControl.Size = new System.Drawing.Size(237, 769);
+			FuncionalidadesAccordionControl.Size = new System.Drawing.Size(237, 765);
 			FuncionalidadesAccordionControl.TabIndex = 0;
 			FuncionalidadesAccordionControl.ViewType = DevExpress.XtraBars.Navigation.AccordionControlViewType.HamburgerMenu;
 			// 
@@ -261,7 +257,7 @@
 			Controls.Add(FuncionalidadesDockPanel);
 			Controls.Add(ribbonStatusBar);
 			Controls.Add(MainRibbon);
-			Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			Font = new System.Drawing.Font("Segoe UI", 9.75F);
 			IconOptions.Icon = (System.Drawing.Icon)resources.GetObject("MainForm.IconOptions.Icon");
 			Margin = new System.Windows.Forms.Padding(4);
 			Name = "MainForm";

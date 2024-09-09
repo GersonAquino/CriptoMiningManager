@@ -30,12 +30,12 @@ namespace CriptoMiningManager.Helpers
 		private CancellationTokenSource CancelarThread_Mineracao { get; set; }
 		private CancellationTokenSource CancelarThread_ModoEnergia { get; set; }
 		private Dictionary<int, Minerador> MineradoresPorMoeda { get; set; }
-		private Minerador MineradorAtivo { get; set; }
 		private Comando PreMineracao { get; set; }
 		private Comando PosMineracao { get; set; }
 		private Thread RentabilidadeThread { get; set; }
 		private Thread AtividadeThread { get; set; }
 
+		public Minerador MineradorAtivo { get; private set; }
 		public Process ProcessoAtivo { get; private set; }
 
 		public string CaminhoCompletoLogMineracao { get; private set; }
