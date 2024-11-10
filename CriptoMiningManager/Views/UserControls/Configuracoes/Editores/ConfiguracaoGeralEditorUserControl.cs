@@ -24,7 +24,7 @@ namespace CriptoMiningManager.Views.UserControls.Configuracoes.Editores
 		{
 			InitializeComponent();
 
-			EditarConfigAtiva = Entidade.CompararPorId(Global.ConfigGeralAtiva);
+			EditarConfigAtiva = Entidade?.CompararPorId(Global.ConfigGeralAtiva) == true;
 			Entidade = EditarConfigAtiva ? Global.ConfigGeralAtiva : entidade;
 			EntidadesHelper = entidadesHelper;
 
