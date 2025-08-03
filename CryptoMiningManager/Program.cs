@@ -40,11 +40,9 @@ namespace CryptoMiningManager
 
 			try
 			{
-				using (IContainer container = ContainerConfig(connectionString))
-				using (ILifetimeScope scope = container.BeginLifetimeScope())
-				{
-					Application.Run(scope.Resolve<MainForm>());
-				}
+				using IContainer container = ContainerConfig(connectionString);
+				using ILifetimeScope scope = container.BeginLifetimeScope();
+				Application.Run(scope.Resolve<MainForm>());
 			}
 			finally
 			{

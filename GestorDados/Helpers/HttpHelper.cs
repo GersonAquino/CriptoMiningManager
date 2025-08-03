@@ -36,16 +36,12 @@ namespace GestorDados.Helpers
 			if (string.IsNullOrWhiteSpace(uri))
 				uri = URLBase;
 
-			using (HttpClient client = new())
-			{
-				DefinirHeaders(client, headers);
+			using HttpClient client = new();
+			DefinirHeaders(client, headers);
 
-				using (HttpResponseMessage respostaHttp = await client.GetAsync(uri.TrimStart()))
-				using (Stream stream = await respostaHttp.Content.ReadAsStreamAsync())
-				{
-					return await jsonHelper.DeserializeAsync<T>(stream);
-				}
-			}
+			using HttpResponseMessage respostaHttp = await client.GetAsync(uri.TrimStart());
+			using Stream stream = await respostaHttp.Content.ReadAsStreamAsync();
+			return await jsonHelper.DeserializeAsync<T>(stream);
 		}
 
 		public async Task<T> PedidoGETHttpSingle<T>(string uri, params (string Header, string Valor)[] headers) where T : class
@@ -53,16 +49,12 @@ namespace GestorDados.Helpers
 			if (string.IsNullOrWhiteSpace(uri))
 				uri = URLBase;
 
-			using (HttpClient client = new())
-			{
-				DefinirHeaders(client, headers);
+			using HttpClient client = new();
+			DefinirHeaders(client, headers);
 
-				using (HttpResponseMessage respostaHttp = await client.GetAsync(uri.TrimStart()))
-				using (Stream stream = await respostaHttp.Content.ReadAsStreamAsync())
-				{
-					return await jsonHelper.DeserializeSingleAsync<T>(stream);
-				}
-			}
+			using HttpResponseMessage respostaHttp = await client.GetAsync(uri.TrimStart());
+			using Stream stream = await respostaHttp.Content.ReadAsStreamAsync();
+			return await jsonHelper.DeserializeSingleAsync<T>(stream);
 		}
 
 		//Descrição na interface
@@ -72,10 +64,8 @@ namespace GestorDados.Helpers
 				uri = URLBase;
 
 			string contentType = !string.IsNullOrWhiteSpace(contentTypeHeader) ? contentTypeHeader : "text/plain";
-			using (HttpContent content = new StringContent(body, Encoding.UTF8, contentType))
-			{
-				return await PedidoPOSTHttpBase<T>(uri, content, requestHeaders);
-			}
+			using HttpContent content = new StringContent(body, Encoding.UTF8, contentType);
+			return await PedidoPOSTHttpBase<T>(uri, content, requestHeaders);
 		}
 
 		//Descrição na interface
@@ -84,28 +74,22 @@ namespace GestorDados.Helpers
 			if (string.IsNullOrWhiteSpace(uri))
 				uri = URLBase;
 
-			using (HttpContent content = new FormUrlEncodedContent(parameters))
-			{
-				return await PedidoPOSTHttpBase<T>(uri, content, requestHeaders);
-			}
+			using HttpContent content = new FormUrlEncodedContent(parameters);
+			return await PedidoPOSTHttpBase<T>(uri, content, requestHeaders);
 		}
 
 		//FUNÇÕES AUXILIARES
 		private async Task<T> PedidoPOSTHttpBase<T>(string uri, HttpContent content, params (string Header, string Valor)[] requestHeaders) where T : class
 		{
-			using (HttpClient client = new())
-			{
-				DefinirHeaders(client, requestHeaders);
+			using HttpClient client = new();
+			DefinirHeaders(client, requestHeaders);
 
-				if (!uri.StartsWith("http"))
-					uri = "http://" + uri;
+			if (!uri.StartsWith("http"))
+				uri = "http://" + uri;
 
-				using (HttpResponseMessage respostaHttp = await client.PostAsync(uri.TrimStart(), content))
-				using (Stream stream = await respostaHttp.Content.ReadAsStreamAsync())
-				{
-					return jsonHelper.Deserialize<T>(stream);
-				}
-			}
+			using HttpResponseMessage respostaHttp = await client.PostAsync(uri.TrimStart(), content);
+			using Stream stream = await respostaHttp.Content.ReadAsStreamAsync();
+			return jsonHelper.Deserialize<T>(stream);
 		}
 
 		private static void DefinirHeaders(HttpClient client, (string Header, string Valor)[] headers)

@@ -28,7 +28,7 @@ namespace Modelos.Classes
 
 			PropertyInfo[] propriedades = coins.GetType().GetProperties();
 
-			List<Moeda> moedas = new List<Moeda>(propriedades.Length);
+			List<Moeda> moedas = new(propriedades.Length);
 			foreach (PropertyInfo propriedade in propriedades)
 			{
 				if (propriedade.GetValue(coins) is Moeda moeda)

@@ -77,19 +77,17 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
 		{
 			try
 			{
-				using (IOverlaySplashScreenHandle splashScreenHandler = SplashScreenManager.ShowOverlayForm(this))
-				{
-					await PararProcessoAtivo();
-					PararThreadRentabilidade();
+				using IOverlaySplashScreenHandle splashScreenHandler = SplashScreenManager.ShowOverlayForm(this);
+				await PararProcessoAtivo();
+				PararThreadRentabilidade();
 
-					if (TemporizadorBEI.EditValue is DateTime tempo && tempo.TimeOfDay.Ticks != 0)
-					{
-						ToggleBotoesIniciar_Parar(false);
-						Temporizador.Enabled = true;
-					}
-					else
-						IniciarMineracao();
+				if (TemporizadorBEI.EditValue is DateTime tempo && tempo.TimeOfDay.Ticks != 0)
+				{
+					ToggleBotoesIniciar_Parar(false);
+					Temporizador.Enabled = true;
 				}
+				else
+					IniciarMineracao();
 			}
 			catch (CustomException ce)
 			{
@@ -104,17 +102,15 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
 
 		private async void PararBBI_ItemClick(object sender, ItemClickEventArgs e)
 		{
-			using (IOverlaySplashScreenHandle splashScreenHandler = SplashScreenManager.ShowOverlayForm(this))
+			using IOverlaySplashScreenHandle splashScreenHandler = SplashScreenManager.ShowOverlayForm(this);
+			try
 			{
-				try
-				{
-					await PararTudo();
-				}
-				catch (Exception ex)
-				{
-					LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro ao parar minerador.");
-					XtraMessageBox.Show("Erro ao parar minerador: " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
-				}
+				await PararTudo();
+			}
+			catch (Exception ex)
+			{
+				LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro ao parar minerador.");
+				XtraMessageBox.Show("Erro ao parar minerador: " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
 		}
 		#endregion
@@ -316,30 +312,29 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
 
 			if (PreMineracao != null)
 			{
-				using (Process processo = new())
+				using Process processo = new();
+				processo.StartInfo = new("cmd.exe", PreMineracao.ComandosCMD)
 				{
-					processo.StartInfo = new("cmd.exe", PreMineracao.ComandosCMD)
-					{
-						CreateNoWindow = true,
-						UseShellExecute = false
-					};
+					CreateNoWindow = true,
+					UseShellExecute = false
+				};
 
-					if (processo.Start())
-						await processo.WaitForExitAsync();
-					else
-						Invoke(() => LogHelper.EscreveLog(LogLevel.Warning, "Não foi possível iniciar o comando pré-mineração {idComando}", PreMineracao.Id));
-				}
+				if (processo.Start())
+					await processo.WaitForExitAsync();
+				else
+					Invoke(() => LogHelper.EscreveLog(LogLevel.Warning, "Não foi possível iniciar o comando pré-mineração {idComando}", PreMineracao.Id));
 			}
 
 
-			ProcessoAtivo = new();
-
-			ProcessoAtivo.StartInfo = new(minerador.Localizacao, minerador.Parametros)
+			ProcessoAtivo = new()
 			{
-				CreateNoWindow = true,
-				UseShellExecute = false,
-				RedirectStandardOutput = true,
-				RedirectStandardError = true
+				StartInfo = new(minerador.Localizacao, minerador.Parametros)
+				{
+					CreateNoWindow = true,
+					UseShellExecute = false,
+					RedirectStandardOutput = true,
+					RedirectStandardError = true
+				}
 			};
 
 
@@ -392,7 +387,7 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
 			catch (Exception ex)
 			{
 				LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro ao verificar rentabilidade.");
-				XtraMessageBox.Show("Erro ao verificar rentabilidade: " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				XtraMessageBox.Show($"Erro ao verificar rentabilidade: {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
 		}
 
@@ -417,19 +412,17 @@ namespace CryptoMiningManager.Views.UserControls.Funcionalidades
 
 			if (PosMineracao != null)
 			{
-				using (Process processo = new())
+				using Process processo = new();
+				processo.StartInfo = new("cmd.exe", PosMineracao.ComandosCMD)
 				{
-					processo.StartInfo = new("cmd.exe", PosMineracao.ComandosCMD)
-					{
-						CreateNoWindow = true,
-						UseShellExecute = false
-					};
+					CreateNoWindow = true,
+					UseShellExecute = false
+				};
 
-					if (processo.Start())
-						await processo.WaitForExitAsync();
-					else
-						Invoke(() => LogHelper.EscreveLog(LogLevel.Warning, "Não foi possível iniciar o comando pós-mineração {idComando}", PosMineracao.Id));
-				}
+				if (processo.Start())
+					await processo.WaitForExitAsync();
+				else
+					Invoke(() => LogHelper.EscreveLog(LogLevel.Warning, "Não foi possível iniciar o comando pós-mineração {idComando}", PosMineracao.Id));
 			}
 
 			ToggleBotoesIniciar_Parar(true);
