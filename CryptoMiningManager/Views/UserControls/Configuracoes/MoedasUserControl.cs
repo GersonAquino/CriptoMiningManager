@@ -10,89 +10,86 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace CryptoMiningManager.Views.UserControls.Configuracoes
+namespace CryptoMiningManager.Views.UserControls.Configuracoes;
+
+internal partial class MoedasUserControl : DevExpress.XtraEditors.XtraUserControl
 {
-	internal partial class MoedasUserControl : DevExpress.XtraEditors.XtraUserControl
+	private readonly IEntidadesHelper<Moeda> EntidadesHelper;
+
+	private Dictionary<int, Moeda> MoedasOriginais;
+
+	public MoedasUserControl(IEntidadesHelper<Moeda> entidadesHelper)
 	{
-		private readonly IEntidadesHelper<Moeda> EntidadesHelper;
+		InitializeComponent();
 
-		private Dictionary<int, Moeda> MoedasOriginais;
+		EntidadesHelper = entidadesHelper;
+	}
 
-		public MoedasUserControl(IEntidadesHelper<Moeda> entidadesHelper)
+	private async void MineradoresUserControl_Load(object sender, EventArgs e)
+	{
+		await AtualizarDados();
+		MoedasGV.BestFitColumns(true);
+	}
+
+	private async void AtualizarBBI_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
+	{
+		await AtualizarDados();
+	}
+
+	private void GravarBBI_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
+	{
+		try
 		{
-			InitializeComponent();
+			using IOverlaySplashScreenHandle splashScreenHandler = SplashScreenManager.ShowOverlayForm(MoedasGC);
+			List<Moeda> moedasAlterar = new();
+			foreach (Moeda moeda in MoedasBindingSource.List)
+			{
+				if (MoedasOriginais[moeda.Id].Nome != moeda.Nome)
+					moedasAlterar.Add(moeda);
+			}
 
-			EntidadesHelper = entidadesHelper;
+			if (moedasAlterar.Count != 0)
+				EntidadesHelper.GravarEntidades(moedasAlterar);
+
+			XtraMessageBox.Show("Alterações gravadas com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
 		}
-
-		private async void MineradoresUserControl_Load(object sender, EventArgs e)
+		catch (Exception ex)
 		{
-			await AtualizarDados();
-			MoedasGV.BestFitColumns(true);
+			LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro");
+			XtraMessageBox.Show("Erro ao validar alterações!", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
 		}
+	}
 
-		private async void AtualizarBBI_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
+	//FUNÇÕES AUXILIARES
+	private async Task AtualizarDados()
+	{
+		IOverlaySplashScreenHandle splashScreenHandler = SplashScreenManager.ShowOverlayForm(MoedasGC);
+		MoedasGV.BeginDataUpdate();
+		try
 		{
-			await AtualizarDados();
+			List<Moeda> moedas = await EntidadesHelper.GravarEntidades();
+
+			MoedasBindingSource.Clear();
+			MoedasOriginais = new Dictionary<int, Moeda>(moedas.Count);
+
+			moedas.ForEach(m =>
+			{
+				MoedasBindingSource.Add(m);
+				Moeda copia = DeepCopier.Copy(m);
+				MoedasOriginais.Add(copia.Id, copia);
+			});
+
+			return;
 		}
-
-		private void GravarBBI_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
+		catch (Exception ex)
 		{
-			try
-			{
-				using (IOverlaySplashScreenHandle splashScreenHandler = SplashScreenManager.ShowOverlayForm(MoedasGC))
-				{
-					List<Moeda> moedasAlterar = new();
-					foreach (Moeda moeda in MoedasBindingSource.List)
-					{
-						if (MoedasOriginais[moeda.Id].Nome != moeda.Nome)
-							moedasAlterar.Add(moeda);
-					}
-
-					if (moedasAlterar.Count != 0)
-						EntidadesHelper.GravarEntidades(moedasAlterar);
-
-					XtraMessageBox.Show("Alterações gravadas com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
-				}
-			}
-			catch (Exception ex)
-			{
-				LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro");
-				XtraMessageBox.Show("Erro ao validar alterações!", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
-			}
+			LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro ao carregar dados.");
+			XtraMessageBox.Show(ex.Message, "Erro ao carregar dados", MessageBoxButtons.OK, MessageBoxIcon.Error);
 		}
-
-		//FUNÇÕES AUXILIARES
-		private async Task AtualizarDados()
+		finally
 		{
-			IOverlaySplashScreenHandle splashScreenHandler = SplashScreenManager.ShowOverlayForm(MoedasGC);
-			MoedasGV.BeginDataUpdate();
-			try
-			{
-				List<Moeda> moedas = await EntidadesHelper.GravarEntidades();
-
-				MoedasBindingSource.Clear();
-				MoedasOriginais = new Dictionary<int, Moeda>(moedas.Count);
-
-				moedas.ForEach(m =>
-				{
-					MoedasBindingSource.Add(m);
-					Moeda copia = DeepCopier.Copy(m);
-					MoedasOriginais.Add(copia.Id, copia);
-				});
-
-				return;
-			}
-			catch (Exception ex)
-			{
-				LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro ao carregar dados.");
-				XtraMessageBox.Show(ex.Message, "Erro ao carregar dados", MessageBoxButtons.OK, MessageBoxIcon.Error);
-			}
-			finally
-			{
-				MoedasGV.EndDataUpdate();
-				splashScreenHandler.Dispose();
-			}
+			MoedasGV.EndDataUpdate();
+			splashScreenHandler.Dispose();
 		}
 	}
 }

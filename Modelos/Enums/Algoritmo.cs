@@ -1,16 +1,15 @@
 ﻿using System.ComponentModel;
 
-namespace Modelos.Enums
+namespace Modelos.Enums;
+
+public enum Algoritmo
 {
-	public enum Algoritmo
-	{
-		[Description("Moeda")]
-		Moeda,
+	[Description("Moeda")]
+	Moeda,
 
-		[Description("Mais Rentável")]
-		MaisRentavel,
+	[Description("Mais Rentável")]
+	MaisRentavel,
 
-		[Description("Selecionado")]
-		Selecionado
-	}
+	[Description("Selecionado")]
+	Selecionado
 }

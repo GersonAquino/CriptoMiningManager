@@ -1,24 +1,23 @@
 ﻿using System;
 
-namespace Modelos.Exceptions
+namespace Modelos.Exceptions;
+
+public class CustomException : Exception
 {
-	public class CustomException : Exception
+	public string Detalhes { get; set; }
+
+	public CustomException()
 	{
-		public string Detalhes { get; set; }
+		Detalhes = "";
+	}
 
-		public CustomException()
-		{
-			Detalhes = "";
-		}
+	public CustomException(string mensagem, string detalhes = "") : base(mensagem)
+	{
+		Detalhes = detalhes;
+	}
 
-		public CustomException(string mensagem, string detalhes = "") : base(mensagem)
-		{
-			Detalhes = detalhes;
-		}
-
-		public CustomException(string mensagem, Exception innerException, string detalhes = "") : base(mensagem, innerException)
-		{
-			Detalhes = detalhes;
-		}
+	public CustomException(string mensagem, Exception innerException, string detalhes = "") : base(mensagem, innerException)
+	{
+		Detalhes = detalhes;
 	}
 }

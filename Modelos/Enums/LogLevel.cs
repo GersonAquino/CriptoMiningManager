@@ -1,11 +1,10 @@
-﻿namespace Modelos.Enums
+﻿namespace Modelos.Enums;
+
+public enum LogLevel
 {
-	public enum LogLevel
-	{
-		Debug,
-		Information,
-		Warning,
-		Error,
-		Fatal
-	}
+	Debug,
+	Information,
+	Warning,
+	Error,
+	Fatal
 }
