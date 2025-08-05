@@ -23,12 +23,12 @@
 		<Content Include="Icon.ico" />
 	</ItemGroup>
 	<ItemGroup>
-		<Compile Update="Views\UserControls\Configuracoes\ComandosUserControl.cs" />
-		<Compile Update="Views\UserControls\Configuracoes\Editores\ComandoEditorUserControl.cs" />
-		<Compile Update="Views\UserControls\Configuracoes\Editores\MineradorEditorUserControl.cs" />
-		<Compile Update="Views\UserControls\Configuracoes\MoedasUserControl.cs" />
-		<Compile Update="Views\UserControls\Configuracoes\MineradoresUserControl.cs" />
-		<Compile Update="Views\UserControls\Funcionalidades\GestaoAutomaticaMineracaoUserControl.cs" />
+		<Compile Update="Views\UserControls\Configurations\CommandUserControl.cs" />
+		<Compile Update="Views\UserControls\Configurations\Editors\ComandoEditorUserControl.cs" />
+		<Compile Update="Views\UserControls\Configurations\Editors\MineradorEditorUserControl.cs" />
+		<Compile Update="Views\UserControls\Configurations\CoinUserControl.cs" />
+		<Compile Update="Views\UserControls\Configurations\MinerUserControl.cs" />
+		<Compile Update="Views\UserControls\Main\AutomaticMiningManagerUserControl.cs" />
 		<EmbeddedResource Include="Properties\licenses.licx" />
 	</ItemGroup>
 	<ItemGroup>
@@ -38,8 +38,8 @@
 		</None>
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="..\GestorDados\GestorDados.csproj" />
-		<ProjectReference Include="..\Modelos\Modelos.csproj" />
+		<ProjectReference Include="..\DataManager\DataManager.csproj" />
+		<ProjectReference Include="..\Models\Models.csproj" />
 		<ProjectReference Include="..\Utils\Utils.csproj" />
 	</ItemGroup>
 	<ItemGroup>

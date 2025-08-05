@@ -1,12 +1,12 @@
 ﻿using Autofac;
 using CryptoMiningManager.Views.UserControls.Configuracoes;
 using CryptoMiningManager.Views.UserControls.Funcionalidades;
+using DataManager.Helpers;
 using DevExpress.XtraBars.Docking2010.Views;
 using DevExpress.XtraBars.Navigation;
 using DevExpress.XtraEditors;
 using DevExpress.XtraSplashScreen;
-using GestorDados.Helpers;
-using Modelos.Enums;
+using Models.Enums;
 using System;
 using System.Windows.Forms;
 
@@ -15,7 +15,7 @@ namespace CryptoMiningManager.Views;
 public partial class MainForm : DevExpress.XtraBars.Ribbon.RibbonForm
 {
 	private ILifetimeScope Scope { get; }
-	private GestaoAutomaticaMineracaoUserControl GestaoAutomaticaMineracaoUC { get; set; }
+	private AutomaticMiningManagerUserControl GestaoAutomaticaMineracaoUC { get; set; }
 
 	public MainForm(ILifetimeScope scope)
 	{
@@ -73,22 +73,22 @@ public partial class MainForm : DevExpress.XtraBars.Ribbon.RibbonForm
 	#region Eventos Click que criam um tab com um UserControl
 	private void ComandosACE_Click(object sender, EventArgs e)
 	{
-		CallUserControlTab<ComandosUserControl>(sender);
+		CallUserControlTab<CommandUserControl>(sender);
 	}
 
 	private void GestaoAutomaticaMineracaoACE_Click(object sender, EventArgs e)
 	{
-		CallUserControlTab<GestaoAutomaticaMineracaoUserControl>(sender);
+		CallUserControlTab<AutomaticMiningManagerUserControl>(sender);
 	}
 
 	private void MineradoresACE_Click(object sender, EventArgs e)
 	{
-		CallUserControlTab<MineradoresUserControl>(sender);
+		CallUserControlTab<MinerUserControl>(sender);
 	}
 
 	private void MoedasACE_Click(object sender, EventArgs e)
 	{
-		CallUserControlTab<MoedasUserControl>(sender);
+		CallUserControlTab<CoinUserControl>(sender);
 	}
 	#endregion
 
@@ -143,7 +143,7 @@ public partial class MainForm : DevExpress.XtraBars.Ribbon.RibbonForm
 			BaseDocument doc = this.TabbedView.AddOrActivateDocument(s => s.Caption == controlElement.Text, () => userControl);
 			doc.Caption = controlElement.Text;
 
-			if (userControl is GestaoAutomaticaMineracaoUserControl gestaoAutomaticaMineracao)
+			if (userControl is AutomaticMiningManagerUserControl gestaoAutomaticaMineracao)
 				GestaoAutomaticaMineracaoUC = gestaoAutomaticaMineracao;
 		}
 		catch (Exception ex)

@@ -3,10 +3,10 @@ using Autofac.Core;
 using CryptoMiningManager.Helpers;
 using CryptoMiningManager.Views;
 using CryptoMiningManager.Views.UserControls.Funcionalidades;
+using DataManager;
+using DataManager.Helpers;
 using DevExpress.XtraEditors;
-using GestorDados;
-using GestorDados.Helpers;
-using Modelos.Interfaces;
+using Models.Interfaces;
 using System;
 using System.Configuration;
 using System.IO;
@@ -56,15 +56,15 @@ internal static class Program
 
 		Type tipoString = typeof(string);
 
-		//Modelos
-		builder.RegisterAssemblyTypes(Assembly.Load(nameof(Modelos))).Where(t => t.Namespace != null).InstancePerDependency();
+		//Models
+		builder.RegisterAssemblyTypes(Assembly.Load(nameof(Models))).Where(t => t.Namespace != null).InstancePerDependency();
 
 		// SQL e dados
 		builder.RegisterType<Dados>().WithParameters(new Parameter[] { new TypedParameter(tipoString, connectionString), TypedParameter.From(true) })
-			.As<IDados>().InstancePerLifetimeScope();
-		builder.Register(context => new Dados(connectionString, true)).As<IDados>().InstancePerLifetimeScope();
-		builder.RegisterAssemblyTypes(Assembly.Load(nameof(GestorDados)))
-			.Where(t => t.Namespace != null && t.Namespace.Contains(nameof(GestorDados.Helpers.Entidades)))
+			.As<IData>().InstancePerLifetimeScope();
+		builder.Register(context => new Dados(connectionString, true)).As<IData>().InstancePerLifetimeScope();
+		builder.RegisterAssemblyTypes(Assembly.Load(nameof(DataManager)))
+			.Where(t => t.Namespace != null && t.Namespace.Contains(nameof(DataManager.Helpers.Entities)))
 			.AsImplementedInterfaces().InstancePerLifetimeScope();
 
 		// Base Helpers
@@ -80,14 +80,14 @@ internal static class Program
 			.Where(t => t.Namespace != null && t.Namespace.Contains(nameof(Views.UserControls.Configuracoes.Editores)))
 			.Keyed<XtraUserControl>((tipo) => tipo.Name.Replace("EditorUserControl", string.Empty)).InstancePerDependency().PreserveExistingDefaults();
 
-		builder.RegisterType<GestaoAutomaticaMineracaoUserControl>()
+		builder.RegisterType<AutomaticMiningManagerUserControl>()
 			.WithParameter(new TypedParameter(tipoString, ConfigurationManager.AppSettings["LocalizacaoLogsMineracao"])).InstancePerDependency();
 
 		builder.RegisterAssemblyTypes(Assembly.Load(nameof(CryptoMiningManager)))
 			.Where(t => t.Namespace != null && t.Namespace.Contains(nameof(Views.UserControls))).InstancePerDependency().PreserveExistingDefaults();
 
 		//Helpers
-		builder.RegisterType<ConfiguracoesEntidadesHelper>().InstancePerLifetimeScope();
+		builder.RegisterType<EntityConfigurationHelper>().InstancePerLifetimeScope();
 
 		//Utils
 		builder.RegisterAssemblyTypes(Assembly.Load(nameof(Utils))).Where(t => t.Namespace != null).SingleInstance();
