@@ -1,6 +1,6 @@
 ﻿using Autofac;
-using CryptoMiningManager.Views.UserControls.Configuracoes;
-using CryptoMiningManager.Views.UserControls.Funcionalidades;
+using CryptoMiningManager.Views.UserControls.Configurations;
+using CryptoMiningManager.Views.UserControls.Main;
 using DataManager.Helpers;
 using DevExpress.XtraBars.Docking2010.Views;
 using DevExpress.XtraBars.Navigation;
@@ -15,7 +15,7 @@ namespace CryptoMiningManager.Views;
 public partial class MainForm : DevExpress.XtraBars.Ribbon.RibbonForm
 {
 	private ILifetimeScope Scope { get; }
-	private AutomaticMiningManagerUserControl GestaoAutomaticaMineracaoUC { get; set; }
+	private AutomaticMiningManagerUserControl AutomaticMiningManagerUC { get; set; }
 
 	public MainForm(ILifetimeScope scope)
 	{
@@ -113,7 +113,7 @@ public partial class MainForm : DevExpress.XtraBars.Ribbon.RibbonForm
 			if (DialogResult.Yes == XtraMessageBox.Show("Fechar este separador irá parar qualquer processo de mineração em progresso, pretende continuar?",
 				"Atenção", MessageBoxButtons.YesNo, MessageBoxIcon.Warning))
 			{
-				await GestaoAutomaticaMineracaoUC.PararTudo();
+				await AutomaticMiningManagerUC.StopEverything();
 			}
 			else
 				e.Cancel = true;
@@ -144,11 +144,11 @@ public partial class MainForm : DevExpress.XtraBars.Ribbon.RibbonForm
 			doc.Caption = controlElement.Text;
 
 			if (userControl is AutomaticMiningManagerUserControl gestaoAutomaticaMineracao)
-				GestaoAutomaticaMineracaoUC = gestaoAutomaticaMineracao;
+				AutomaticMiningManagerUC = gestaoAutomaticaMineracao;
 		}
 		catch (Exception ex)
 		{
-			LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro ao abrir menu {menuText}", controlElement.Text);
+			LogHelper.WriteExceptionLog(LogLevel.Error, ex, "Erro ao abrir menu {menuText}", controlElement.Text);
 			XtraMessageBox.Show(ex.GetBaseException().Message, $"Não foi possível abrir o menu {controlElement.Text}",
 				MessageBoxButtons.OK, MessageBoxIcon.Error);
 		}

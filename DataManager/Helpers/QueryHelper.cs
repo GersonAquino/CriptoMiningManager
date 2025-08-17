@@ -7,28 +7,28 @@ internal static class QueryHelper
 	/// <summary>
 	/// Constroi um comando SQL com um DELETE
 	/// </summary>
-	/// <param name="tabela"></param>
-	/// <param name="condicoes">Parâmetro obrigatório para não apagar os dados inteiros duma tabela acidentalmente</param>
+	/// <param name="table"></param>
+	/// <param name="conditions">Parâmetro obrigatório para não apagar os dados inteiros duma tabela acidentalmente</param>
 	/// <returns></returns>
-	internal static string Delete(string tabela, string condicoes)
+	internal static string Delete(string table, string conditions)
 	{
-		return $"DELETE FROM {tabela} {(string.IsNullOrWhiteSpace(condicoes) ? "" : $"WHERE {condicoes}")}";
+		return $"DELETE FROM {table} {(string.IsNullOrWhiteSpace(conditions) ? "" : $"WHERE {conditions}")}";
 	}
 
 	/// <summary>
 	/// Constroi um comando SQL com um INSERT e parâmetros para o Dapper ou SqlParameters
 	/// </summary>
-	/// <param name="tabela"></param>
-	/// <param name="colunas"></param>
+	/// <param name="table"></param>
+	/// <param name="columns"></param>
 	/// <returns></returns>
-	internal static string InsertParametrizado(string tabela, params string[] colunas)
+	internal static string ParameterizedInsert(string table, params string[] columns)
 	{
-		StringBuilder sbInsert = new($"INSERT INTO {tabela} (");
+		StringBuilder sbInsert = new($"INSERT INTO {table} (");
 		StringBuilder sbValores = new(") VALUES (");
 
-		for (int i = 0; i < colunas.Length; i++)
+		for (int i = 0; i < columns.Length; i++)
 		{
-			string coluna = $"{colunas[i]}, ";
+			string coluna = $"{columns[i]}, ";
 			sbInsert.Append(coluna);
 			sbValores.Append('@').Append(coluna);
 		}
@@ -67,19 +67,19 @@ internal static class QueryHelper
 	/// <summary>
 	/// Constroi um comando SQL com um UPDATE e parâmetros para o Dapper ou SqlParameters
 	/// </summary>
-	/// <param name="tabela"></param>
-	/// <param name="condicoes"></param>
-	/// <param name="colunas"></param>
+	/// <param name="table"></param>
+	/// <param name="conditions"></param>
+	/// <param name="columns"></param>
 	/// <returns></returns>
-	internal static string UpdateParametrizado(string tabela, string condicoes, params string[] colunas)
+	internal static string ParameterizedUpdate(string table, string conditions, params string[] columns)
 	{
-		StringBuilder sbUpdate = new StringBuilder($"UPDATE ").Append(tabela).Append(" SET ");
+		StringBuilder sbUpdate = new StringBuilder($"UPDATE ").Append(table).Append(" SET ");
 
-		for (int i = 0; i < colunas.Length; i++)
+		for (int i = 0; i < columns.Length; i++)
 		{
-			sbUpdate.Append(colunas[i]).Append(" = @").Append(colunas[i]).Append(", ");
+			sbUpdate.Append(columns[i]).Append(" = @").Append(columns[i]).Append(", ");
 		}
 
-		return sbUpdate.Remove(sbUpdate.Length - 2, 2).Append(" WHERE ").Append(condicoes).ToString();
+		return sbUpdate.Remove(sbUpdate.Length - 2, 2).Append(" WHERE ").Append(conditions).ToString();
 	}
 }

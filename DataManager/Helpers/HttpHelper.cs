@@ -12,12 +12,12 @@ public class HttpHelper : IHttpHelper
 {
 	private readonly IJsonHelper jsonHelper;
 
-	public string URLBase { get; }
+	public string BaseURL { get; }
 
-	public HttpHelper(IJsonHelper serializationHelper, string urlBase)
+	public HttpHelper(IJsonHelper serializationHelper, string baseUrl)
 	{
 		jsonHelper = serializationHelper;
-		URLBase = urlBase;
+		BaseURL = baseUrl;
 	}
 
 	/// <summary>
@@ -31,10 +31,10 @@ public class HttpHelper : IHttpHelper
 	/// <returns></returns>
 	/// <exception cref="ArgumentNullException"></exception>
 	/// <exception cref="HttpRequestException"></exception>
-	public async Task<List<T>> PedidoGETHttp<T>(string uri, params (string Header, string Valor)[] headers) where T : class
+	public async Task<List<T>> GETRequestHttp<T>(string uri, params (string Header, string Value)[] headers) where T : class
 	{
 		if (string.IsNullOrWhiteSpace(uri))
-			uri = URLBase;
+			uri = BaseURL;
 
 		using HttpClient client = new();
 		DefinirHeaders(client, headers);
@@ -44,10 +44,10 @@ public class HttpHelper : IHttpHelper
 		return await jsonHelper.DeserializeAsync<T>(stream);
 	}
 
-	public async Task<T> PedidoGETHttpSingle<T>(string uri, params (string Header, string Valor)[] headers) where T : class
+	public async Task<T> GETRequestHttpSingle<T>(string uri, params (string Header, string Value)[] headers) where T : class
 	{
 		if (string.IsNullOrWhiteSpace(uri))
-			uri = URLBase;
+			uri = BaseURL;
 
 		using HttpClient client = new();
 		DefinirHeaders(client, headers);
@@ -58,10 +58,10 @@ public class HttpHelper : IHttpHelper
 	}
 
 	//Descrição na interface
-	public async Task<T> PedidoPOSTHttp<T>(string uri, string body, string contentTypeHeader, params (string Header, string Valor)[] requestHeaders) where T : class
+	public async Task<T> POSTRequestHttp<T>(string uri, string body, string contentTypeHeader, params (string Header, string Value)[] requestHeaders) where T : class
 	{
 		if (string.IsNullOrWhiteSpace(uri))
-			uri = URLBase;
+			uri = BaseURL;
 
 		string contentType = !string.IsNullOrWhiteSpace(contentTypeHeader) ? contentTypeHeader : "text/plain";
 		using HttpContent content = new StringContent(body, Encoding.UTF8, contentType);
@@ -69,17 +69,17 @@ public class HttpHelper : IHttpHelper
 	}
 
 	//Descrição na interface
-	public async Task<T> PedidoPOSTHttp<T>(string uri, Dictionary<string, string> parameters, params (string Header, string Valor)[] requestHeaders) where T : class
+	public async Task<T> POSTRequestHttp<T>(string uri, Dictionary<string, string> parameters, params (string Header, string Value)[] requestHeaders) where T : class
 	{
 		if (string.IsNullOrWhiteSpace(uri))
-			uri = URLBase;
+			uri = BaseURL;
 
 		using HttpContent content = new FormUrlEncodedContent(parameters);
 		return await PedidoPOSTHttpBase<T>(uri, content, requestHeaders);
 	}
 
 	//FUNÇÕES AUXILIARES
-	private async Task<T> PedidoPOSTHttpBase<T>(string uri, HttpContent content, params (string Header, string Valor)[] requestHeaders) where T : class
+	private async Task<T> PedidoPOSTHttpBase<T>(string uri, HttpContent content, params (string Header, string Value)[] requestHeaders) where T : class
 	{
 		using HttpClient client = new();
 		DefinirHeaders(client, requestHeaders);
@@ -87,22 +87,22 @@ public class HttpHelper : IHttpHelper
 		if (!uri.StartsWith("http"))
 			uri = "http://" + uri;
 
-		using HttpResponseMessage respostaHttp = await client.PostAsync(uri.TrimStart(), content);
-		using Stream stream = await respostaHttp.Content.ReadAsStreamAsync();
+		using HttpResponseMessage httpAnswer = await client.PostAsync(uri.TrimStart(), content);
+		using Stream stream = await httpAnswer.Content.ReadAsStreamAsync();
 		return jsonHelper.Deserialize<T>(stream);
 	}
 
-	private static void DefinirHeaders(HttpClient client, (string Header, string Valor)[] headers)
+	private static void DefinirHeaders(HttpClient client, (string Header, string Value)[] headers)
 	{
 		client.DefaultRequestHeaders.Accept.Clear();
 		//client.DefaultRequestHeaders.Add("User-Agent", ".NET Foundation Repository Reporter");
 
-		foreach ((string Header, string Valor) in headers)
+		foreach ((string Header, string Value) in headers)
 		{
-			if (string.IsNullOrEmpty(Header) || string.IsNullOrEmpty(Valor))
+			if (string.IsNullOrEmpty(Header) || string.IsNullOrEmpty(Value))
 				throw new ArgumentNullException("Erro ao usar header " + Header);
 
-			client.DefaultRequestHeaders.Add(Header, Valor);
+			client.DefaultRequestHeaders.Add(Header, Value);
 		}
 	}
 }

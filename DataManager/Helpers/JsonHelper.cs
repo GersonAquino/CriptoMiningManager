@@ -9,7 +9,7 @@ namespace DataManager.Helpers;
 
 public class JsonHelper : IJsonHelper
 {
-	public static JsonSerializerOptions _options = new JsonSerializerOptions() { PropertyNameCaseInsensitive = true };
+	public readonly static JsonSerializerOptions _options = new() { PropertyNameCaseInsensitive = true };
 
 	public T Deserialize<T>(string json) where T : class
 	{
@@ -20,7 +20,7 @@ public class JsonHelper : IJsonHelper
 		if (stream.CanSeek)
 			stream.Position = 0;
 
-		using StreamReader reader = new StreamReader(stream);
+		using StreamReader reader = new(stream);
 		return JsonSerializer.Deserialize<T>(reader.ReadToEnd(), _options);
 	}
 
@@ -68,7 +68,7 @@ public class JsonHelper : IJsonHelper
 	/// <returns>String JSON do objeto serializado</returns>
 	public async Task<string> SerializeAsync(object value)
 	{
-		using MemoryStream stream = new MemoryStream();
+		using MemoryStream stream = new();
 		await JsonSerializer.SerializeAsync(stream, value);
 		return Encoding.UTF8.GetString(stream.ToArray());
 	}

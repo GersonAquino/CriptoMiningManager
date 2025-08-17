@@ -10,110 +10,109 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace CryptoMiningManager.Views.UserControls.Configuracoes;
+namespace CryptoMiningManager.Views.UserControls.Configurations;
 
-internal partial class MinerUserControl : DevExpress.XtraEditors.XtraUserControl
+internal partial class MinerUserControl : XtraUserControl
 {
-	private EntityConfigurationHelper ConfiguracoesEntidadesHelper { get; }
-	private IEntityHelper<Miner> EntidadesHelper { get; }
+	private EntityConfigurationHelper EntityConfigurationHelper { get; }
+	private IEntityHelper<Miner> EntityHelper { get; }
 
-	public MinerUserControl(EntityConfigurationHelper configuracoesEntidadesHelper, IEntityHelper<Miner> entidadesHelper)
+	public MinerUserControl(EntityConfigurationHelper entityConfigurationHelper, IEntityHelper<Miner> entityHelper)
 	{
 		InitializeComponent();
 
-		ConfiguracoesEntidadesHelper = configuracoesEntidadesHelper;
-		EntidadesHelper = entidadesHelper;
+		EntityConfigurationHelper = entityConfigurationHelper;
+		EntityHelper = entityHelper;
 	}
 
-	private async void MineradoresUserControl_Load(object sender, EventArgs e)
+	private async void MinerUserControl_Load(object sender, EventArgs e)
 	{
-		await AtualizarDados();
-		MineradoresGV.BestFitColumns(true);
+		await RefreshData();
+		MinerGV.BestFitColumns(true);
 	}
 
-	private async void AtualizarBBI_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
+	private async void RefreshBBI_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
 	{
-		await AtualizarDados();
+		await RefreshData();
 	}
 
-	private void NovoBBI_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
+	private void NewBBI_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
 	{
-		ConfiguracoesEntidadesHelper.AbrirEditorUC<Miner>("Novo Minerador", ActiveControl);
+		EntityConfigurationHelper.OpenEditorTab<Miner>("Novo Minerador", ActiveControl);
 	}
 
-	private void MineradoresGV_DoubleClick(object sender, EventArgs e)
+	private void MinerGV_DoubleClick(object sender, EventArgs e)
 	{
-		ConfiguracoesEntidadesHelper.DuploCliqueEntidade<Miner>(e, MineradoresGV, ActiveControl);
+		EntityConfigurationHelper.EntityDoubleClick<Miner>(e, MinerGV, ActiveControl);
 	}
 
 	private void EditarBBI_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
 	{
-		ConfiguracoesEntidadesHelper.EditarEntidade<Miner>(MineradoresGV, ActiveControl);
+		EntityConfigurationHelper.EditEntity<Miner>(MinerGV, ActiveControl);
 	}
 
-	private async void EliminarBBI_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
+	private async void DeleteBBI_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
 	{
 		try
 		{
-			if (MineradoresGV.SelectedRowsCount == 0 ||
+			if (MinerGV.SelectedRowsCount == 0 ||
 				XtraMessageBox.Show("Pretende eliminar os mineradores selecionados?", "Eliminar mineradores", MessageBoxButtons.YesNo, MessageBoxIcon.Information) != DialogResult.Yes)
 				return;
 
-			int[] linhasSelecionadas = MineradoresGV.GetSelectedRows();
-			int[] idMineradores = new int[linhasSelecionadas.Length];
+			int[] selectedRows = MinerGV.GetSelectedRows();
+			int[] minerIds = new int[selectedRows.Length];
 
-			for (int i = 0; i < linhasSelecionadas.Length; i++)
+			for (int i = 0; i < selectedRows.Length; i++)
 			{
-				idMineradores[i] = (int)MineradoresGV.GetRowCellValue(linhasSelecionadas[i], colIdMinerador);
+				minerIds[i] = (int)MinerGV.GetRowCellValue(selectedRows[i], colMinerId);
 			}
 
-			MineradoresGV.BeginUpdate();
-			if (await EntidadesHelper.EliminarEntidades(idMineradores) == linhasSelecionadas.Length)
+			MinerGV.BeginUpdate();
+			if (await EntityHelper.DeleteEntities(minerIds) == selectedRows.Length)
 			{
-				MineradoresGV.DeleteSelectedRows();
+				MinerGV.DeleteSelectedRows();
 
 				XtraMessageBox.Show("Mineradores eliminados com sucesso!", "Mineradores eliminados", MessageBoxButtons.OK, MessageBoxIcon.Information);
 			}
 			else
 			{
 				//Atualizam-se os dados todos porque não se sabe exatamente quais as entidades eliminadas
-				await AtualizarDados();
+				await RefreshData();
 				XtraMessageBox.Show("Alguns mineradores não foram eliminados.", "Mineradores eliminados", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 			}
 		}
 		catch (Exception ex)
 		{
-			LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro ao eliminar os mineradores selecionados.");
+			LogHelper.WriteExceptionLog(LogLevel.Error, ex, "Erro ao eliminar os mineradores selecionados.");
 			XtraMessageBox.Show($"Erro ao eliminar os mineradores selecionados.{Environment.NewLine}{ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
 		}
 		finally
 		{
-			MineradoresGV.EndUpdate();
+			MinerGV.EndUpdate();
 		}
 	}
 
 	//FUNÇÕES AUXILIARES
-	private async Task AtualizarDados()
+	private async Task RefreshData()
 	{
-		IOverlaySplashScreenHandle splashScreenHandler = SplashScreenManager.ShowOverlayForm(MineradoresGC);
-		MineradoresGV.BeginDataUpdate();
+		MinerGV.BeginDataUpdate();
 		try
 		{
-			MineradoresBindingSource.Clear();
-			foreach (KeyValuePair<int, Miner> minerador in await EntidadesHelper.GetEntidadesComLista(ordenacao: "mi.Id, mo.Id"))
+			using IOverlaySplashScreenHandle splashScreenHandler = SplashScreenManager.ShowOverlayForm(MinersGC);
+			MinersBindingSource.Clear();
+			foreach (KeyValuePair<int, Miner> miner in await EntityHelper.GetEntitiesWithList(sorting: "mi.Id, mo.Id"))
 			{
-				MineradoresBindingSource.Add(minerador.Value);
+				MinersBindingSource.Add(miner.Value);
 			}
 		}
 		catch (Exception ex)
 		{
-			LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro ao carregar dados.");
+			LogHelper.WriteExceptionLog(LogLevel.Error, ex, "Erro ao carregar dados.");
 			XtraMessageBox.Show(ex.Message, "Erro ao carregar dados", MessageBoxButtons.OK, MessageBoxIcon.Error);
 		}
 		finally
 		{
-			MineradoresGV.EndDataUpdate();
-			splashScreenHandler.Dispose();
+			MinerGV.EndDataUpdate();
 		}
 	}
 }

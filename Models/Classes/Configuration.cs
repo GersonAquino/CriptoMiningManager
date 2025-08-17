@@ -11,7 +11,7 @@ public class Configuration
 {
 	[Key]
 	public int Id { get; set; } = -1;
-	public bool Ativo { get; set; }
-	public DateTime DataCriacao { get; set; } = DateTime.Now;
-	public DateTime DataAlteracao { get; set; } = DateTime.Now;
+	public bool Active { get; set; }
+	public DateTime CreatedDate { get; set; } = DateTime.Now;
+	public DateTime UpdatedDate { get; set; } = DateTime.Now;
 }

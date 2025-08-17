@@ -2,13 +2,13 @@
 
 namespace DataManager.Helpers;
 
-internal static class Extensoes
+internal static class Extensions
 {
-	internal static void ForEach<T>(this T[] array, Action<T> acao)
+	internal static void ForEach<T>(this T[] array, Action<T> action)
 	{
 		for (int i = 0; i < array.Length; i++)
 		{
-			acao(array[i]);
+			action(array[i]);
 		}
 	}
 }

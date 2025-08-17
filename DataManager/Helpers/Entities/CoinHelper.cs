@@ -8,101 +8,102 @@ using System.Threading.Tasks;
 
 namespace DataManager.Helpers.Entities;
 
-public class MoedasHelper : IEntityHelper<Coin>
+public class CoinHelper : IEntityHelper<Coin>
 {
-	private const string Tabela = "Moedas";
+	private const string Table = "Coins";
 
-	private IData Dados { get; set; }
+	private IData Data { get; set; }
 	private IHttpHelper HttpHelper { get; set; }
 
-	public MoedasHelper(IData dados, IHttpHelper httpHelper)
+	public CoinHelper(IData data, IHttpHelper httpHelper)
 	{
-		Dados = dados;
+		Data = data;
 		HttpHelper = httpHelper;
 	}
 
-	public async Task<int> EliminarEntidades(IEnumerable<int> ids)
+	public async Task<int> DeleteEntities(IEnumerable<int> ids)
 	{
-		string query = QueryHelper.Delete(Tabela, "Id IN @Ids");
+		string query = QueryHelper.Delete(Table, "Id IN @Ids");
 
-		return await Dados.ExecuteOpenAsync(query, new { Ids = ids });
+		return await Data.ExecuteOpenAsync(query, new { Ids = ids });
 	}
 
-	public async Task<IEnumerable<Coin>> GetEntidades(string condicoes = null, string ordenacao = null)
+	public async Task<IEnumerable<Coin>> GetEntities(string conditions = null, string sorting = null)
 	{
-		string query = QueryHelper.Select("*", Tabela, condicoes, ordenacao);
+		string query = QueryHelper.Select("*", Table, conditions, sorting);
 
-		return await Dados.QueryOpenAsync<Coin>(query);
+		return await Data.QueryOpenAsync<Coin>(query);
 	}
 
-	public async Task<IEnumerable<Coin>> GetEntidades(string condicoes, string ordenacao, params (string parametro, object valor)[] parametros)
+	public async Task<IEnumerable<Coin>> GetEntities(string conditions, string sorting, params (string parameter, object value)[] parameters)
 	{
-		string query = QueryHelper.Select("*", Tabela, condicoes, ordenacao);
+		string query = QueryHelper.Select("*", Table, conditions, sorting);
 
-		DynamicParameters parametrosDapper = new DynamicParameters();
-		for (int i = 0; i < parametros.Length; i++)
+		DynamicParameters dapperParameters = new();
+		for (int i = 0; i < parameters.Length; i++)
 		{
-			parametrosDapper.Add(parametros[i].parametro, parametros[i].valor);
+			dapperParameters.Add(parameters[i].parameter, parameters[i].value);
 		}
 
-		return await Dados.QueryOpenAsync<Coin>(query, parametrosDapper);
+		return await Data.QueryOpenAsync<Coin>(query, dapperParameters);
 	}
 
-	public async Task<Dictionary<int, Coin>> GetEntidadesComLista(string condicoes = null, string ordenacao = null)
+	public async Task<Dictionary<int, Coin>> GetEntitiesWithList(string conditions = null, string sorting = null)
 	{
-		return (await GetEntidades(condicoes, ordenacao)).ToDictionary(m => m.Id);
+		return (await GetEntities(conditions, sorting)).ToDictionary(m => m.Id);
 	}
 
-	public async Task<bool> GravarEntidade(Coin moeda)
+	public async Task<bool> SaveEntity(Coin coin)
 	{
-		return await Dados.ExecuteOpenAsync(GravarEntidade_Base(moeda), moeda) == 1;
+		return await Data.ExecuteOpenAsync(SaveEntity_Base(coin), coin) == 1;
 	}
 
-	public async Task<int> GravarEntidade_GetIdGerado(Coin moeda)
+	public async Task<int> SaveEntity_GetId(Coin coin)
 	{
-		if (moeda.Id == -1)
+		if (coin.Id == -1)
 		{
-			string query = GravarEntidade_Base(moeda) + "; SELECT LAST_INSERT_ROWID();";
-			return await Dados.ExecuteScalarOpenAsync<int, Coin>(query, moeda);
+			string query = SaveEntity_Base(coin) + "; SELECT LAST_INSERT_ROWID();";
+			return await Data.ExecuteScalarOpenAsync<int, Coin>(query, coin);
 		}
 
-		return await GravarEntidade(moeda) ? moeda.Id : -1;
+		return await SaveEntity(coin) ? coin.Id : -1;
 	}
 
-	public async Task<List<Coin>> GravarEntidades(IEnumerable<Coin> entidades = null)
+	public async Task<List<Coin>> SaveEntities(IEnumerable<Coin> entidades = null)
 	{
 		if (entidades == null)
 		{
-			List<Coin> moedasAPI = (await HttpHelper.PedidoGETHttpSingle<Coins>(null)).GetMoedas();
-			Dictionary<int, Coin> moedasExistentes = (await GetEntidades("IdExterno IN @IdsExternos", null,
-				("IdsExternos", moedasAPI.Select(m => m.IdExterno)))).ToDictionary(m => m.IdExterno);
+			List<Coin> coinsAPI = (await HttpHelper.GETRequestHttpSingle<Coins>(null)).GetCoins();
 
-			moedasAPI.ForEach(moeda =>
+			IEnumerable<Coin> filteredCoins = await GetEntities("ExternalId IN @IdsExternos", null, ("IdsExternos", coinsAPI.Select(m => m.ExternalId)));
+			Dictionary<int, Coin> moedasExistentes = filteredCoins.ToDictionary(m => m.ExternalId);
+
+			coinsAPI.ForEach(coin =>
 			{
-				if (moedasExistentes.TryGetValue(moeda.IdExterno, out Coin moedaExistente))
+				if (moedasExistentes.TryGetValue(coin.ExternalId, out Coin existentCoin))
 				{
-					moeda.Id = moedaExistente.Id;
-					moeda.Nome = moedaExistente.Nome;
+					coin.Id = existentCoin.Id;
+					coin.Name = existentCoin.Name;
 				}
 				else
 				{
-					moeda.Id = -1;
-					moeda.Nome = null;
+					coin.Id = -1;
+					coin.Name = null;
 				}
 			});
 
-			int resultado = await Dados.BulkMerge(moedasAPI.ToArray());
+			int resultado = await Data.BulkMerge(coinsAPI.ToArray());
 
-			return moedasAPI;
+			return coinsAPI;
 		}
 
-		await Dados.BulkMerge(entidades.ToArray());
+		await Data.BulkMerge(entidades.ToArray());
 
 		return null;
 	}
 
 	//FUNÇÕES AUXILIARES
-	private static string GravarEntidade_Base(Coin moeda)
+	private static string SaveEntity_Base(Coin moeda)
 	{
 		if (moeda.Id < -1)
 			throw new ArgumentException($"Moeda tem Id inválido ({moeda.Id}).");
@@ -112,13 +113,13 @@ public class MoedasHelper : IEntityHelper<Coin>
 		//Inserir caso Id seja um valor inválido mas esperado
 		if (moeda.Id == -1)
 		{
-			query = QueryHelper.InsertParametrizado(Tabela, "IdExterno", "Nome", "NomeExterno");
+			query = QueryHelper.ParameterizedInsert(Table, "ExternalId", "Name", "ExternalName");
 		}
 		else //Atualizar caso tenha Id válido
 		{
-			query = QueryHelper.UpdateParametrizado(Tabela, "Id = @Id", "IdExterno", "Nome", "NomeExterno");
+			query = QueryHelper.ParameterizedUpdate(Table, "Id = @Id", "ExternalId", "Name", "ExternalName");
 
-			//moeda.DataAlteracao = DateTime.Now;
+			//moeda.UpdatedDate = DateTime.Now;
 		}
 		return query;
 	}

@@ -8,42 +8,42 @@ using Models.Interfaces;
 using System;
 using System.Windows.Forms;
 
-namespace CryptoMiningManager.Views.UserControls.Configuracoes.Editores;
+namespace CryptoMiningManager.Views.UserControls.Configurations.Editors;
 
 public partial class ComandoEditorUserControl : XtraUserControl
 {
-	private IEntityHelper<Command> EntidadesHelper { get; }
+	private IEntityHelper<Command> EntityHelper { get; }
 
-	private Command Entidade { get; set; }
+	private Command Entity { get; set; }
 
-	public ComandoEditorUserControl(Command entidade, IEntityHelper<Command> entidadesHelper)
+	public ComandoEditorUserControl(Command entity, IEntityHelper<Command> entityHelper)
 	{
 		InitializeComponent();
 
-		Entidade = entidade;
-		EntidadesHelper = entidadesHelper;
+		Entity = entity;
+		EntityHelper = entityHelper;
 
-		ComandoBindingSource.Add(Entidade);
+		ComamandBindingSource.Add(Entity);
 	}
 
-	private async void GravarBBI_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
+	private async void SaveBBI_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
 	{
 		try
 		{
 			if (!BaseDLC.Validate())
 				return;
 
-			if (string.IsNullOrWhiteSpace(Entidade.Comandos))
+			if (string.IsNullOrWhiteSpace(Entity.Commands))
 			{
-				ComandosMemoEdit.Focus();
+				CommandMemoEdit.Focus();
 				throw new CustomException("Campo 'Comandos' não deve ficar vazio.", "Campos em falta");
 			}
 
-			int idGerado = await EntidadesHelper.GravarEntidade_GetIdGerado(Entidade);
+			int savedEntityId = await EntityHelper.SaveEntity_GetId(Entity);
 
-			if (idGerado != -1)
+			if (savedEntityId != -1)
 			{
-				//Entidade.DataAlteracao = DateTime.Now;
+				//Entidade.UpdatedDate = DateTime.Now;
 				XtraMessageBox.Show("Comando gravado com sucesso.", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
 
@@ -51,16 +51,16 @@ public partial class ComandoEditorUserControl : XtraUserControl
 				{
 					if (XtraMessageBox.Show("Pretende criar novos comandos?", "Criar novos comandos", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
 					{
-						Entidade = new Command();
-						ComandoBindingSource.Clear();
-						ComandoBindingSource.Add(Entidade);
+						Entity = new Command();
+						ComamandBindingSource.Clear();
+						ComamandBindingSource.Add(Entity);
 
 						docContainer.Document.Caption = "Novo Comando";
 					}
 					else
 					{
-						Entidade.Id = idGerado;
-						docContainer.Document.Caption = $"Editar Comando {Entidade.Id}";
+						Entity.Id = savedEntityId;
+						docContainer.Document.Caption = $"Editar Comando {Entity.Id}";
 					}
 				}
 			}
@@ -69,11 +69,11 @@ public partial class ComandoEditorUserControl : XtraUserControl
 		}
 		catch (CustomException ce)
 		{
-			XtraMessageBox.Show(ce.Message, string.IsNullOrWhiteSpace(ce.Detalhes) ? "Aviso" : ce.Detalhes, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+			XtraMessageBox.Show(ce.Message, string.IsNullOrWhiteSpace(ce.Details) ? "Aviso" : ce.Details, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 		}
 		catch (Exception ex)
 		{
-			LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro ao gravar dados.");
+			LogHelper.WriteExceptionLog(LogLevel.Error, ex, "Erro ao gravar dados.");
 			XtraMessageBox.Show($"Erro ao gravar dados!{Environment.NewLine}{ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
 		}
 	}

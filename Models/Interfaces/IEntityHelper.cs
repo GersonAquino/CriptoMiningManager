@@ -10,46 +10,46 @@ public interface IEntityHelper<T> //: IDisposable //Não se implementa IDisposab
 	/// </summary>
 	/// <param name="ids"></param>
 	/// <returns></returns>
-	Task<int> EliminarEntidades(IEnumerable<int> ids);
+	Task<int> DeleteEntities(IEnumerable<int> ids);
 
 	/// <summary>
 	/// Obtém todas entidades (<typeparamref name="T"/>)
 	/// </summary>
-	/// <param name="condicoes"></param>
-	/// <param name="ordenacao"></param>
+	/// <param name="conditions"></param>
+	/// <param name="sorting"></param>
 	/// <returns></returns>
-	Task<IEnumerable<T>> GetEntidades(string condicoes = null, string ordenacao = null);
+	Task<IEnumerable<T>> GetEntities(string conditions = null, string sorting = null);
 
 	/// <summary>
 	/// Obtém todas entidades (<typeparamref name="T"/>) com uma query parametrizada
 	/// </summary>
-	/// <param name="parametros"></param>
-	/// <param name="condicoes"></param>
-	/// <param name="ordenacao"></param>
+	/// <param name="parameters"></param>
+	/// <param name="conditions"></param>
+	/// <param name="sorting"></param>
 	/// <returns></returns>
-	Task<IEnumerable<T>> GetEntidades(string condicoes, string ordenacao, params (string parametro, object valor)[] parametros);
+	Task<IEnumerable<T>> GetEntities(string conditions, string sorting, params (string parameter, object value)[] parameters);
 
 	/// <summary>
 	/// Obtém todas entidades (<typeparamref name="T"/>) e preenche uma propriedade que seja uma <see cref="List{P}"/>
 	/// </summary>
-	/// <param name="condicoes"></param>
-	/// <param name="ordenacao"></param>
+	/// <param name="conditions"></param>
+	/// <param name="sorting"></param>
 	/// <returns>Dicionário de <see cref="int"/> e <typeparamref name="T"/> em que a chave é o Id de <typeparamref name="T"/></returns>
-	Task<Dictionary<int, T>> GetEntidadesComLista(string condicoes = null, string ordenacao = null);
+	Task<Dictionary<int, T>> GetEntitiesWithList(string conditions = null, string sorting = null);
 
 	/// <summary>
 	/// Grava a entidade (<typeparamref name="T"/>) na base de dados
 	/// </summary>
-	/// <param name="entidade"></param>
+	/// <param name="entity"></param>
 	/// <returns></returns>
-	Task<bool> GravarEntidade(T entidade);
+	Task<bool> SaveEntity(T entity);
 
 	/// <summary>
 	/// Grava a entidade (<typeparamref name="T"/>) na base de dados.
 	/// </summary>
-	/// <param name="entidade"></param>
+	/// <param name="entity"></param>
 	/// <returns>Id da entidade gravada ou -1 em caso de falha</returns>
-	Task<int> GravarEntidade_GetIdGerado(T entidade);
+	Task<int> SaveEntity_GetId(T entity);
 
-	Task<List<T>> GravarEntidades(IEnumerable<T> entidades = null);
+	Task<List<T>> SaveEntities(IEnumerable<T> entities = null);
 }

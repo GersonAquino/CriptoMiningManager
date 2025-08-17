@@ -9,120 +9,120 @@ using System.Threading.Tasks;
 
 namespace DataManager.Helpers.Entities;
 
-public class ComandoHelper : IEntityHelper<Command>
+public class CommandHelper : IEntityHelper<Command>
 {
-	private const string Tabela = "Comandos";
+	private const string Table = "Commands";
 
-	private IData Dados { get; set; }
+	private IData Data { get; set; }
 
-	public ComandoHelper(IData dados)
+	public CommandHelper(IData data)
 	{
-		Dados = dados;
+		Data = data;
 	}
 
 	///<inheritdoc/>
-	public async Task<int> EliminarEntidades(IEnumerable<int> ids)
+	public async Task<int> DeleteEntities(IEnumerable<int> ids)
 	{
-		string query = QueryHelper.Delete(Tabela, "Id IN @Ids");
+		string query = QueryHelper.Delete(Table, "Id IN @Ids");
 
-		return await Dados.ExecuteOpenAsync(query, new { Ids = ids });
+		return await Data.ExecuteOpenAsync(query, new { Ids = ids });
 	}
 
 	///<inheritdoc/>
-	public async Task<IEnumerable<Command>> GetEntidades(string condicoes = null, string ordenacao = null)
+	public async Task<IEnumerable<Command>> GetEntities(string conditions = null, string sorting = null)
 	{
-		string query = QueryHelper.Select("*", Tabela, condicoes, ordenacao);
+		string query = QueryHelper.Select("*", Table, conditions, sorting);
 
-		return await Dados.QueryOpenAsync<Command>(query);
+		return await Data.QueryOpenAsync<Command>(query);
 	}
 
 	///<inheritdoc/>
-	public async Task<IEnumerable<Command>> GetEntidades(string condicoes, string ordenacao, params (string parametro, object valor)[] parametros)
+	public async Task<IEnumerable<Command>> GetEntities(string conditions, string sorting, params (string parameter, object value)[] parameters)
 	{
-		string query = QueryHelper.Select("*", Tabela, condicoes, ordenacao);
+		string query = QueryHelper.Select("*", Table, conditions, sorting);
 
-		DynamicParameters parametrosDapper = new DynamicParameters();
-		for (int i = 0; i < parametros.Length; i++)
+		DynamicParameters dapperParameters = new();
+		for (int i = 0; i < parameters.Length; i++)
 		{
-			parametrosDapper.Add(parametros[i].parametro, parametros[i].valor);
+			dapperParameters.Add(parameters[i].parameter, parameters[i].value);
 		}
 
-		return await Dados.QueryOpenAsync<Command>(query, parametrosDapper);
+		return await Data.QueryOpenAsync<Command>(query, dapperParameters);
 	}
 
 	///<inheritdoc/>
-	public async Task<Dictionary<int, Command>> GetEntidadesComLista(string condicoes = null, string ordenacao = null)
+	public async Task<Dictionary<int, Command>> GetEntitiesWithList(string conditions = null, string sorting = null)
 	{
-		return (await GetEntidades(condicoes, ordenacao)).ToDictionary(c => c.Id);
+		return (await GetEntities(conditions, sorting)).ToDictionary(c => c.Id);
 	}
 
 	///<inheritdoc/>
-	public async Task<bool> GravarEntidade(Command comando)
+	public async Task<bool> SaveEntity(Command command)
 	{
-		return await Dados.ExecuteOpenAsync(GravarEntidade_Base(comando), comando) == 1;
+		return await Data.ExecuteOpenAsync(SaveEntity_Base(command), command) == 1;
 	}
 
 	///<inheritdoc/>
-	public async Task<int> GravarEntidade_GetIdGerado(Command comando)
+	public async Task<int> SaveEntity_GetId(Command command)
 	{
 		string query;
-		if (comando.Ativo)
+		if (command.Active)
 		{
-			if (!comando.PreMineracao && !comando.PosMineracao)
-				throw new CustomException("Por favor defina o tipo de comando (Pré-Mineração, Pós-Mineração ou ambos) antes de o definir como 'Ativo'.", "Comando inválido");
+			if (!command.PreMining && !command.PosMining)
+				throw new CustomException("Por favor defina o tipo de comando (Pré-Mineração, Pós-Mineração ou ambos) antes de o definir como 'Active'.", "Comando inválido");
 
-			string tipoComando;
-			if (comando.PreMineracao)
+			string commandType;
+			if (command.PreMining)
 			{
-				tipoComando = "AND PreMineracao = 1";
-				if (comando.PosMineracao)
-					tipoComando += " OR PosMineracao = 1";
+				commandType = "AND PreMining = 1";
+				if (command.PosMining)
+					commandType += " OR AfterMining = 1";
 			}
 			else
-				tipoComando = "AND PosMineracao = 1";
+				commandType = "AND AfterMining = 1";
 
-			query = QueryHelper.Select("Id", Tabela,
-				$"Ativo = 1 {tipoComando}{(comando.Id != -1 ? $" AND Id != {comando.Id}" : "")}", limit: 1);
+			query = QueryHelper.Select("Id", Table,
+				$"Active = 1 {commandType}{(command.Id != -1 ? $" AND Id != {command.Id}" : "")}", limit: 1);
 
-			int? idExistente = await Dados.ExecuteScalarOpenAsync<int?>(query);
-			if (idExistente.HasValue)
+			int? existentId = await Data.ExecuteScalarOpenAsync<int?>(query);
+			if (existentId.HasValue)
 				throw new CustomException("Já existe um comando ativo com as definições de Pré/Pós-Mineracao.", "Comando ativo do mesmo tipo já existente");
 		}
 
-		if (comando.Id == -1)
+		if (command.Id == -1)
 		{
-			query = GravarEntidade_Base(comando) + "; SELECT LAST_INSERT_ROWID();";
+			query = SaveEntity_Base(command) + "; SELECT LAST_INSERT_ROWID();";
 
-			return await Dados.ExecuteScalarOpenAsync<int, Command>(query, comando);
+			return await Data.ExecuteScalarOpenAsync<int, Command>(query, command);
 		}
 
-		return await GravarEntidade(comando) ? comando.Id : -1;
+		return await SaveEntity(command) ? command.Id : -1;
 	}
 
 	//FUNÇÕES AUXILIARES
-	private static string GravarEntidade_Base(Command comando)
+	private static string SaveEntity_Base(Command command)
 	{
-		if (comando.Id < -1)
-			throw new ArgumentException($"Comando tem Id inválido ({comando.Id}).");
+		if (command.Id < -1)
+			throw new ArgumentException($"Comando tem Id inválido ({command.Id}).");
 
 		string query;
 
 		//Inserir caso Id seja um valor inválido, mas esperado
-		if (comando.Id == -1)
+		if (command.Id == -1)
 		{
-			query = QueryHelper.InsertParametrizado(Tabela, "Comandos", "PreMineracao", "PosMineracao", "Ativo");
+			query = QueryHelper.ParameterizedInsert(Table, "Comandos", "PreMining", "AfterMining", "Active");
 		}
 		else //Atualizar caso tenha Id válido
 		{
-			query = QueryHelper.UpdateParametrizado(Tabela, "Id = @Id", "Comandos", "PreMineracao", "PosMineracao", "Ativo", "DataAlteracao");
+			query = QueryHelper.ParameterizedUpdate(Table, "Id = @Id", "Comandos", "PreMining", "AfterMining", "Active", "UpdatedDate");
 
-			comando.DataAlteracao = DateTime.Now;
+			command.UpdatedDate = DateTime.Now;
 		}
 
 		return query;
 	}
 
-	public Task<List<Command>> GravarEntidades(IEnumerable<Command> entidades = null)
+	public Task<List<Command>> SaveEntities(IEnumerable<Command> entidades = null)
 	{
 		throw new NotImplementedException();
 	}

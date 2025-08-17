@@ -6,33 +6,33 @@ namespace Utils;
 
 public static class Extensions
 {
-	public static string GetDescricaoClasse(this Type tipo)
+	public static string GetClassDescription(this Type type)
 	{
-		if (tipo.IsClass)
-			return tipo.GetCustomAttribute<DescriptionAttribute>().Description;
+		if (type.IsClass)
+			return type.GetCustomAttribute<DescriptionAttribute>().Description;
 
-		throw new ArgumentException($"Não é possível obter a descrição de {tipo.Name}.");
+		throw new ArgumentException($"Não é possível obter a descrição de {type.Name}.");
 	}
 
 	public static string GetDescricaoEnum(this Enum value)
 	{
-		FieldInfo campo = value.GetType().GetField(value.ToString());
-		return campo.GetCustomAttribute<DescriptionAttribute>().Description;
+		FieldInfo field = value.GetType().GetField(value.ToString());
+		return field.GetCustomAttribute<DescriptionAttribute>().Description;
 	}
 
-	public static string[] GetDescricoesEnum(this Type tipo)
+	public static string[] GetDescricoesEnum(this Type type)
 	{
-		if (!tipo.IsEnum)
-			throw new ArgumentException($"Não é possível obter as descrições de {tipo.Name}.");
+		if (!type.IsEnum)
+			throw new ArgumentException($"Não é possível obter as descrições de {type.Name}.");
 
-		FieldInfo[] campos = tipo.GetFields();
-		string[] valores = new string[campos.Length];
+		FieldInfo[] fields = type.GetFields();
+		string[] values = new string[fields.Length];
 
-		for (int i = 0; i < campos.Length; i++)
+		for (int i = 0; i < fields.Length; i++)
 		{
-			valores[i] = tipo.GetCustomAttribute<DescriptionAttribute>().Description;
+			values[i] = type.GetCustomAttribute<DescriptionAttribute>().Description;
 		}
 
-		return valores;
+		return values;
 	}
 }

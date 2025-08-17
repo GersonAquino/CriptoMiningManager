@@ -5,11 +5,11 @@ namespace Models.Enums;
 public enum Algorithm
 {
 	[Description("Moeda")]
-	Moeda,
+	Coin,
 
 	[Description("Mais Rentável")]
-	MaisRentavel,
+	MostProfitable,
 
 	[Description("Selecionado")]
-	Selecionado
+	Selected
 }

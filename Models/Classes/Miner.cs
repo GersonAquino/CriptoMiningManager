@@ -3,22 +3,22 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Models.Classes;
 
-[Description("Minerador"), Table("Mineradores")]
+[Description("Minerador"), Table("Miners")]
 public class Miner : Configuration
 {
-	public string Nome { get; set; }
-	public string Localizacao { get; set; }
-	public string Parametros { get; set; }
+	public string Name { get; set; }
+	public string Location { get; set; }
+	public string Parameters { get; set; }
 
-	public int? IdMoeda { get => Moeda?.Id; }
+	public int? CoinId { get => Coin?.Id; }
 
 	[NotMapped]
-	public Coin Moeda { get; set; }
+	public Coin Coin { get; set; }
 
 	public Miner() { }
 
 	public override string ToString()
 	{
-		return $"{Id} - {Nome}";
+		return $"{Id} - {Name}";
 	}
 }

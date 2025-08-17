@@ -12,7 +12,7 @@ namespace DataManager.Helpers;
 
 public class LogHelper
 {
-	private static readonly Semaphore SemaforoFicheiro = new Semaphore(1, 1);
+	private static readonly Semaphore FileSemaphore = new(1, 1);
 
 	/// <summary>
 	/// Instancia o Logger e define como lidar com erros internos (do Serilog)
@@ -23,7 +23,7 @@ public class LogHelper
 		SelfLog.Enable(msg =>
 		{
 			//Espera até 1 minuto para escrever a mensagem
-			if (!SemaforoFicheiro.WaitOne(60000))
+			if (!FileSemaphore.WaitOne(60000))
 				return;
 
 			try
@@ -32,12 +32,12 @@ public class LogHelper
 				using StreamWriter streamWriter = new("SerilogExceptions.txt", true);
 				try
 				{
-					StringBuilder sbPropriedades = new();
-					foreach (object propriedade in SetPropriedades())
+					StringBuilder sbProperties = new();
+					foreach (object property in SetProperties())
 					{
-						sbPropriedades.Append($"{propriedade} ");
+						sbProperties.Append($"{property} ");
 					}
-					streamWriter.WriteLine($"{sbPropriedades}{Environment.NewLine}{msg}{Environment.NewLine}");
+					streamWriter.WriteLine($"{sbProperties}{Environment.NewLine}{msg}{Environment.NewLine}");
 				}
 				catch (Exception ex)
 				{
@@ -46,7 +46,7 @@ public class LogHelper
 			}
 			finally
 			{
-				SemaforoFicheiro.Release();
+				FileSemaphore.Release();
 			}
 
 			//Se não se limpar o logger, ele vai continuar a tentar escrever o mesmo log periodicamente e a ter sempre o mesmo erro,
@@ -54,11 +54,11 @@ public class LogHelper
 			if (msg.Contains("Unable to write batch"))
 			{
 				Log.CloseAndFlush();
-				InstanciarLogger(connectionString);
+				InstantiateLogger(connectionString);
 			}
 		});
 
-		InstanciarLogger(connectionString);
+		InstantiateLogger(connectionString);
 	}
 
 	public static void StopLogger()
@@ -72,37 +72,37 @@ public class LogHelper
 	/// </summary>
 	/// <param name="level"></param>
 	/// <param name="messageTemplate"></param>
-	/// <param name="propriedadesExtra"></param>
+	/// <param name="extraProperties"></param>
 	/// <exception cref="ArgumentException"></exception>
-	public static void EscreveLog(LogLevel level, string messageTemplate, params object[] propriedadesExtra)
+	public static void WriteLog(LogLevel level, string messageTemplate, params object[] extraProperties)
 	{
-		string messageTemplateFinal = messageTemplate + " - {Modulo} | {NomeMaquina} | {Versao}";
-		object[] propriedades = SetPropriedades(propriedadesExtra);
+		string finalMessageTemplate = messageTemplate + " - {Modulo} | {NameMaquina} | {Versao}";
+		object[] properties = SetProperties(extraProperties);
 
 		switch (level)
 		{
 			case LogLevel.Debug:
 #if DEBUG
-				Log.Debug(messageTemplateFinal, propriedades);
+				Log.Debug(finalMessageTemplate, properties);
 #endif
 				break;
 
 			case LogLevel.Information:
-				Log.Information(messageTemplateFinal, propriedades);
+				Log.Information(finalMessageTemplate, properties);
 				break;
 			case LogLevel.Warning:
-				Log.Warning(messageTemplateFinal, propriedades);
+				Log.Warning(finalMessageTemplate, properties);
 				break;
 			case LogLevel.Error:
-				Log.Error(messageTemplateFinal, propriedades);
+				Log.Error(finalMessageTemplate, properties);
 				break;
 			case LogLevel.Fatal:
-				Log.Fatal(messageTemplateFinal, propriedades);
+				Log.Fatal(finalMessageTemplate, properties);
 				break;
 			default:
-				EscreveLog(LogLevel.Fatal, string.Concat("SerilogLevel inválido introduzido!",
+				WriteLog(LogLevel.Fatal, string.Concat("SerilogLevel inválido introduzido!",
 					"Será escrito um log com SerilogLevel.Error e mensagem recebida, de seguida será feito o throw de ArgumentException."));
-				EscreveLog(LogLevel.Error, messageTemplateFinal, propriedades);
+				WriteLog(LogLevel.Error, finalMessageTemplate, properties);
 				throw new ArgumentException("SerilogLevel inválido!");
 		}
 	}
@@ -115,43 +115,43 @@ public class LogHelper
 	/// <param name="level"></param>
 	/// <param name="exception"></param>
 	/// <param name="messageTemplate"></param>
-	/// <param name="propriedadesExtra"></param>
+	/// <param name="extraProperties"></param>
 	/// <exception cref="ArgumentException"></exception>
-	public static void EscreveLogException<T>(LogLevel level, T exception, string messageTemplate, params object[] propriedadesExtra) where T : Exception
+	public static void WriteExceptionLog<T>(LogLevel level, T exception, string messageTemplate, params object[] extraProperties) where T : Exception
 	{
-		string messageTemplateFinal = string.Concat(messageTemplate, " - {Modulo} | {NomeMaquina} | {Versao}");
-		object[] propriedades = SetPropriedades(propriedadesExtra);
+		string finalMessageTemplate = string.Concat(messageTemplate, " - {Modulo} | {NameMaquina} | {Versao}");
+		object[] properties = SetProperties(extraProperties);
 
 		switch (level)
 		{
 			case LogLevel.Debug:
 #if DEBUG
-				Log.Debug(exception.GetBaseException(), messageTemplateFinal, propriedades);
+				Log.Debug(exception.GetBaseException(), finalMessageTemplate, properties);
 #endif
 				break;
 			case LogLevel.Information:
-				Log.Information(exception.GetBaseException(), messageTemplateFinal, propriedades);
+				Log.Information(exception.GetBaseException(), finalMessageTemplate, properties);
 				break;
 			case LogLevel.Warning:
-				Log.Warning(exception.GetBaseException(), messageTemplateFinal, propriedades);
+				Log.Warning(exception.GetBaseException(), finalMessageTemplate, properties);
 				break;
 			case LogLevel.Error:
-				Log.Error(exception.GetBaseException(), messageTemplateFinal, propriedades);
+				Log.Error(exception.GetBaseException(), finalMessageTemplate, properties);
 				break;
 			case LogLevel.Fatal:
-				Log.Fatal(exception.GetBaseException(), messageTemplateFinal, propriedades);
+				Log.Fatal(exception.GetBaseException(), finalMessageTemplate, properties);
 				break;
 			default:
-				EscreveLog(LogLevel.Fatal, string.Concat("SerilogLevel inválido introduzido!",
+				WriteLog(LogLevel.Fatal, string.Concat("SerilogLevel inválido introduzido!",
 					"Será escrito um log com SerilogLevel.Error e a exceção e mensagem recebidas, de seguida será feito o throw de ArgumentException."));
 
-				EscreveLogException(LogLevel.Error, exception, messageTemplateFinal, propriedades);
+				WriteExceptionLog(LogLevel.Error, exception, finalMessageTemplate, properties);
 				throw new ArgumentException("SerilogLevel inválido!");
 		}
 	}
 
 	//MÉTODOS AUXILIARES
-	private static void InstanciarLogger(string connectionString)
+	private static void InstantiateLogger(string connectionString)
 	{
 		Log.Logger = new LoggerConfiguration()
 #if DEBUG
@@ -166,23 +166,23 @@ public class LogHelper
 	/// Define as propriedades default a serem guardadas no log: módulo, nome da máquina, utilizador e versão da aplicação. 
 	/// Devolve object[] em vez de string[] para facilitar o uso dos métodos de log do Serilog
 	/// </summary>
-	/// <param name="propriedadesExtra"></param>
-	/// <returns>object[propriedadesExtra.Length + 3] -> 0: Modulo 1: NomeMaquina 2: Versao</returns>
-	private static object[] SetPropriedades(object[] propriedadesExtra = null)
+	/// <param name="extraProperties"></param>
+	/// <returns>object[propriedadesExtra.Length + 3] -> 0: Modulo 1: NameMaquina 2: Versao</returns>
+	private static object[] SetProperties(object[] extraProperties = null)
 	{
-		Type classe = new StackTrace().GetFrame(2).GetMethod().DeclaringType;
-		string[] assembly = Assembly.GetAssembly(classe).FullName.Split(',');
+		Type classType = new StackTrace().GetFrame(2).GetMethod().DeclaringType;
+		string[] assembly = Assembly.GetAssembly(classType).FullName.Split(',');
 
-		int propsExtraLength = propriedadesExtra?.Length ?? 0;
-		object[] propriedades = new object[propsExtraLength + 3];
+		int extraPropsLength = extraProperties?.Length ?? 0;
+		object[] properties = new object[extraPropsLength + 3];
 
-		propriedadesExtra?.CopyTo(propriedades, 0);
+		extraProperties?.CopyTo(properties, 0);
 
 		new object[] {
-			$"{assembly[0]}.{classe.Name}",
+			$"{assembly[0]}.{classType.Name}",
 			Environment.MachineName,
-			assembly[1].Split('=')[1] }.CopyTo(propriedades, propsExtraLength);
+			assembly[1].Split('=')[1] }.CopyTo(properties, extraPropsLength);
 
-		return propriedades;
+		return properties;
 	}
 }

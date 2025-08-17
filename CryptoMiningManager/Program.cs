@@ -2,7 +2,7 @@
 using Autofac.Core;
 using CryptoMiningManager.Helpers;
 using CryptoMiningManager.Views;
-using CryptoMiningManager.Views.UserControls.Funcionalidades;
+using CryptoMiningManager.Views.UserControls.Main;
 using DataManager;
 using DataManager.Helpers;
 using DevExpress.XtraEditors;
@@ -75,13 +75,13 @@ internal static class Program
 		// Forms e UserControls
 		builder.RegisterType<MainForm>().SingleInstance();
 
-		//Regista os editores com o nome da classe correspondente //Nota: Os editores devem ser formados por NomeClasse + "EditorUserControl"
+		//Regista os editores com o nome da classe correspondente //Nota: Os editores devem ser formados por NameClasse + "EditorUserControl"
 		builder.RegisterAssemblyTypes(Assembly.Load(nameof(CryptoMiningManager)))
-			.Where(t => t.Namespace != null && t.Namespace.Contains(nameof(Views.UserControls.Configuracoes.Editores)))
+			.Where(t => t.Namespace != null && t.Namespace.Contains(nameof(Views.UserControls.Configurations.Editors)))
 			.Keyed<XtraUserControl>((tipo) => tipo.Name.Replace("EditorUserControl", string.Empty)).InstancePerDependency().PreserveExistingDefaults();
 
 		builder.RegisterType<AutomaticMiningManagerUserControl>()
-			.WithParameter(new TypedParameter(tipoString, ConfigurationManager.AppSettings["LocalizacaoLogsMineracao"])).InstancePerDependency();
+			.WithParameter(new TypedParameter(tipoString, ConfigurationManager.AppSettings["LocationLogsMineracao"])).InstancePerDependency();
 
 		builder.RegisterAssemblyTypes(Assembly.Load(nameof(CryptoMiningManager)))
 			.Where(t => t.Namespace != null && t.Namespace.Contains(nameof(Views.UserControls))).InstancePerDependency().PreserveExistingDefaults();

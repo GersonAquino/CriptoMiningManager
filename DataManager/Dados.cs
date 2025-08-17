@@ -14,75 +14,75 @@ namespace DataManager;
 
 public class Dados : IData
 {
-	private IDbConnection Conexao = null;
-	private IDbTransaction Transacao = null;
+	private IDbConnection Connection = null;
+	private IDbTransaction Transaction = null;
 	private string ConnectionString;
 
-	public Dados(string connectionString = null, bool iniciarConexao = false)
+	public Dados(string connectionString = null, bool startConnection = false)
 	{
 		ConnectionString = connectionString;
 
-		if (iniciarConexao)
+		if (startConnection)
 		{
-			Conexao = new SQLiteConnection(connectionString);
-			Conexao.Open();
+			Connection = new SQLiteConnection(connectionString);
+			Connection.Open();
 		}
 	}
 
-	#region Conexões
+	#region Connections
 	///<inheritdoc/>
-	public void IniciarConexao(string connectionString = null)
+	public void StartConnection(string connectionString = null)
 	{
-		FecharConexao();
+		CloseConnection();
 
 		if (!string.IsNullOrWhiteSpace(connectionString))
 			ConnectionString = connectionString;
 		else if (string.IsNullOrWhiteSpace(ConnectionString))
 			throw new ArgumentException("Não é possível inicar uma conexão sem uma connection string!");
 
-		Conexao = new SQLiteConnection(ConnectionString);
-		Conexao.Open();
+		Connection = new SQLiteConnection(ConnectionString);
+		Connection.Open();
 	}
 
 	///<inheritdoc/>
-	public void FecharConexao()
+	public void CloseConnection()
 	{
-		if (Conexao != null)
+		if (Connection != null)
 		{
-			DesfazTransacao();
+			UndoTransaction();
 
-			Conexao.Close();
-			Conexao.Dispose();
+			Connection.Close();
+			Connection.Dispose();
 		}
 	}
 	#endregion
 
-	#region Transações
+	#region Transactions
 	///<inheritdoc/>
-	public void IniciarTransacao()
+	public void StartTransaction()
 	{
-		DesfazTransacao();
+		UndoTransaction();
 
-		Transacao = Conexao.BeginTransaction();
+		Transaction = Connection.BeginTransaction();
 	}
 
 	///<inheritdoc/>
-	public void DesfazTransacao()
+	public void UndoTransaction()
 	{
-		if (Transacao != null)
+		if (Transaction != null)
 		{
-			Transacao.Rollback();
-			Transacao.Dispose();
+			Transaction.Rollback();
+			Transaction.Dispose();
 		}
 	}
 
 	///<inheritdoc/>
-	public void TerminaTransacao()
+	public void CommitTransaction()
 	{
-		if (Transacao != null)
+		if (Transaction != null)
 		{
-			Transacao.Commit();
-			Transacao.Dispose();
+			Transaction.Commit();
+			Transaction.Dispose();
 		}
 	}
 	#endregion
@@ -90,51 +90,51 @@ public class Dados : IData
 	///<inheritdoc/>
 	public async Task<int> ExecuteOpenAsync(string query)
 	{
-		return await Conexao.ExecuteAsync(query, transaction: Transacao);
+		return await Connection.ExecuteAsync(query, transaction: Transaction);
 	}
 
 	///<inheritdoc/>
-	public async Task<int> ExecuteOpenAsync<T>(string query, T parametros)
+	public async Task<int> ExecuteOpenAsync<T>(string query, T parameters)
 	{
-		return await Conexao.ExecuteAsync(query, parametros, transaction: Transacao);
+		return await Connection.ExecuteAsync(query, parameters, transaction: Transaction);
 	}
 
 	///<inheritdoc/>
 	public async Task<T> ExecuteScalarOpenAsync<T>(string query)
 	{
-		return await Conexao.ExecuteScalarAsync<T>(query, transaction: Transacao);
+		return await Connection.ExecuteScalarAsync<T>(query, transaction: Transaction);
 	}
 
 	///<inheritdoc/>
-	public async Task<T> ExecuteScalarOpenAsync<T, P>(string query, P parametros)
+	public async Task<T> ExecuteScalarOpenAsync<T, P>(string query, P parameters)
 	{
-		return await Conexao.ExecuteScalarAsync<T>(query, parametros, Transacao);
+		return await Connection.ExecuteScalarAsync<T>(query, parameters, Transaction);
 	}
 
 	///<inheritdoc/>
 	public async Task<T> GetValorOpenAsync<T>(string query)
 	{
-		return await Conexao.QueryFirstOrDefaultAsync<T>(query, transaction: Transacao);
+		return await Connection.QueryFirstOrDefaultAsync<T>(query, transaction: Transaction);
 	}
 
 	///<inheritdoc/>
-	public async Task<IEnumerable<T>> QueryOpenAsync<T>(string query, object parametros = null)
+	public async Task<IEnumerable<T>> QueryOpenAsync<T>(string query, object parameters = null)
 	{
-		return await Conexao.QueryAsync<T>(query, parametros, transaction: Transacao);
+		return await Connection.QueryAsync<T>(query, parameters, transaction: Transaction);
 	}
 
 	///<inheritdoc/>
-	public async Task<IEnumerable<T>> QueryOpenAsync<Entidade1, Entidade2, T>(string query, Func<Entidade1, Entidade2, T> mapeamento, string splitOn = "Id")
+	public async Task<IEnumerable<T>> QueryOpenAsync<Entidade1, Entidade2, T>(string query, Func<Entidade1, Entidade2, T> mapping, string splitOn = "Id")
 	{
-		return await Conexao.QueryAsync(query, mapeamento, transaction: Transacao, splitOn: splitOn);
+		return await Connection.QueryAsync(query, mapping, transaction: Transaction, splitOn: splitOn);
 	}
 
 	///<inheritdoc/>
-	public async Task<int> BulkMerge<T>(params T[] entidades) where T : class, new()
+	public async Task<int> BulkMerge<T>(params T[] entities) where T : class, new()
 	{
 		//Obter tabela alvo
 		Type tipo = typeof(T);
-		string tabela = tipo.GetCustomAttribute<TableAttribute>().Name ??
+		string table = tipo.GetCustomAttribute<TableAttribute>().Name ??
 			throw new NotImplementedException($"{tipo.Name} não tem o atributo 'Table' implementado!");
 
 		//Obter informação sobre chave primária - É autoincrement?
@@ -144,7 +144,7 @@ public class Dados : IData
                     END AS 'Autoincrement'
                 FROM sqlite_master
                 WHERE type = 'table'
-                AND name = '{tabela}'
+                AND name = '{table}'
                 LIMIT 1";
 
 		Task<bool> isAutoIncrementTask = ExecuteScalarOpenAsync<bool>(query);
@@ -152,25 +152,25 @@ public class Dados : IData
 
 		//Preparar variáveis usadas para o comando sql final
 		StringBuilder sbFinal = new();
-		DynamicParameters parametros = new();
-		PropertyInfo[] propriedades = tipo.GetProperties();
+		DynamicParameters parameters = new();
+		PropertyInfo[] properties = tipo.GetProperties();
 
 		//Guardar todas as colunas exceto a chave primária
-		List<PropertyInfo> colunas = new(propriedades.Length - 1);
-		PropertyInfo chavePrimaria = null;
+		List<PropertyInfo> colunas = new(properties.Length - 1);
+		PropertyInfo primaryKey = null;
 		Type notMapped = typeof(NotMappedAttribute);
 		Type key = typeof(KeyAttribute);
-		string baseUpdate = $"UPDATE {tabela} SET ";
+		string baseUpdate = $"UPDATE {table} SET ";
 
 		//Obter chave primária e definir colunas a inserir no Insert
 		bool isAutoIncrement = await isAutoIncrementTask;
 		StringBuilder sbInsertBase = new(isAutoIncrement ? "INSERT INTO " : "REPLACE INTO "); //REPLACE INTO é o mesmo que INSERT OR REPLACE INTO
 
-		sbInsertBase.Append(tabela).Append(" (");
+		sbInsertBase.Append(table).Append(" (");
 
-		for (int i = 0; i < propriedades.Length; i++)
+		for (int i = 0; i < properties.Length; i++)
 		{
-			PropertyInfo prop = propriedades[i];
+			PropertyInfo prop = properties[i];
 
 			if (prop.IsDefined(notMapped) ||
 				!prop.PropertyType.IsPrimitive &&
@@ -188,7 +188,7 @@ public class Dados : IData
 				if (!isAutoIncrement)
 					sbInsertBase.Append(prop.Name).Append(", ");
 
-				chavePrimaria = prop;
+				primaryKey = prop;
 			}
 			else
 			{
@@ -197,58 +197,58 @@ public class Dados : IData
 			}
 		}
 
-		if (chavePrimaria == null)
+		if (primaryKey == null)
 			throw new NoNullAllowedException($"Chave primária da classe {tipo.Name} não encontrada!");
 
 		string baseInsert = sbInsertBase.Remove(sbInsertBase.Length - 2, 2).Append(") VALUES (").ToString();
-		object valorDefeitoChavePrimaria = chavePrimaria.GetValue(new T());
+		object primaryKeyDefaultValue = primaryKey.GetValue(new T());
 
-		Action<T, StringBuilder, DynamicParameters, string, List<PropertyInfo>, PropertyInfo, string, object, int> TratarIteracao =
-			isAutoIncrement ? CriarComandoInsertOuUpdate : CriarComandoReplace_Aux;
+		Action<T, StringBuilder, DynamicParameters, string, List<PropertyInfo>, PropertyInfo, string, object, int> HandleIteration =
+			isAutoIncrement ? BuildInsertOrUpdateCommand : BuildReplaceCommand_Aux;
 
-		for (int i = 0; i < entidades.Length; i++)
+		for (int i = 0; i < entities.Length; i++)
 		{
-			TratarIteracao(entidades[i], sbFinal, parametros, baseUpdate, colunas, chavePrimaria, baseInsert, valorDefeitoChavePrimaria, i);
+			HandleIteration(entities[i], sbFinal, parameters, baseUpdate, colunas, primaryKey, baseInsert, primaryKeyDefaultValue, i);
 		}
 
-		return await Conexao.ExecuteAsync(sbFinal.ToString(), parametros);
+		return await Connection.ExecuteAsync(sbFinal.ToString(), parameters);
 	}
 
 	///<inheritdoc/>
 	public void Dispose()
 	{
-		FecharConexao();
+		CloseConnection();
 	}
 
 	//MÉTODOS AUXILIARES
 	/// <summary>
-	/// Atribuir valor de uma coluna com base na <paramref name="propriedade"/>
+	/// Atribuir valor de uma coluna com base na <paramref name="property"/>
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
-	/// <param name="entidade"></param>
+	/// <param name="entity"></param>
 	/// <param name="sbFinal"></param>
-	/// <param name="parametros"></param>
-	/// <param name="indice"></param>
-	/// <param name="propriedade"></param>
-	private static void AtribuirValorInsertOuReplace<T>(T entidade, StringBuilder sbFinal, DynamicParameters parametros, int indice, PropertyInfo propriedade) where T : class, new()
+	/// <param name="parameters"></param>
+	/// <param name="index"></param>
+	/// <param name="property"></param>
+	private static void AssignValueInsertOrReplace<T>(T entity, StringBuilder sbFinal, DynamicParameters parameters, int index, PropertyInfo property) where T : class, new()
 	{
-		string parametro = $"@{propriedade.Name}{indice}";
-		parametros.Add(parametro, propriedade.GetValue(entidade));
-		sbFinal.Append(parametro).Append(", ");
+		string parameter = $"@{property.Name}{index}";
+		parameters.Add(parameter, property.GetValue(entity));
+		sbFinal.Append(parameter).Append(", ");
 	}
 
 	/// <summary>
-	/// Atribui todos os valores de <paramref name="colunas"/> às colunas SQL e termina o comando sql de <paramref name="sbFinal"/> com ");"
+	/// Atribui todos os valores de <paramref name="columns"/> às colunas SQL e termina o comando sql de <paramref name="sbFinal"/> com ");"
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
-	/// <param name="entidade"></param>
+	/// <param name="entity"></param>
 	/// <param name="sbFinal"></param>
-	/// <param name="parametros"></param>
-	/// <param name="colunas"></param>
-	/// <param name="indice"></param>
-	private static void AtribuirValoresInsertOuReplace<T>(T entidade, StringBuilder sbFinal, DynamicParameters parametros, List<PropertyInfo> colunas, int indice) where T : class, new()
+	/// <param name="parameters"></param>
+	/// <param name="columns"></param>
+	/// <param name="index"></param>
+	private static void AssignValuesInsertOrReplace<T>(T entity, StringBuilder sbFinal, DynamicParameters parameters, List<PropertyInfo> columns, int index) where T : class, new()
 	{
-		colunas.ForEach(c => AtribuirValorInsertOuReplace(entidade, sbFinal, parametros, indice, c));
+		columns.ForEach(c => AssignValueInsertOrReplace(entity, sbFinal, parameters, index, c));
 		sbFinal.Remove(sbFinal.Length - 2, 2).AppendLine(");");
 	}
 
@@ -256,21 +256,21 @@ public class Dados : IData
 	/// Cria um comando INSERT ou UPDATE conforme o valor da chave primária.
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
-	/// <param name="entidade">Entidade a usar para os dados do comando</param>
+	/// <param name="entity">Entidade a usar para os dados do comando</param>
 	/// <param name="sbFinal">StringBuilder onde se vai acrescentar o comando</param>
-	/// <param name="parametros">Objeto onde se registarão os parâmetros do comando</param>
+	/// <param name="parameters">Objeto onde se registarão os parâmetros do comando</param>
 	/// <param name="baseUpdate">String $"UPDATE {tabela} SET" para evitar criar uma nova string a cada iteração</param>
-	/// <param name="colunas">A propriedade <see cref="MemberInfo.Name"/> será usada como nome das colunas da base de dados</param>
-	/// <param name="chavePrimaria">A propriedade que guarda os dados da chave primária</param>
+	/// <param name="columns">A propriedade <see cref="MemberInfo.Name"/> será usada como nome das colunas da base de dados</param>
+	/// <param name="primaryKey">A propriedade que guarda os dados da chave primária</param>
 	/// <param name="baseInsert">String base do INSERT (tudo até à parte "VALUES (" inclusive)</param>
-	/// <param name="valorDefeitoChavePrimaria"></param>
-	/// <param name="indice">Indice da iteração para acrescentar aos nomes dos <paramref name="parametros"/> que serão criados</param>
-	private static void CriarComandoInsertOuUpdate<T>(T entidade, StringBuilder sbFinal, DynamicParameters parametros, string baseUpdate, List<PropertyInfo> colunas,
-		PropertyInfo chavePrimaria, string baseInsert, object valorDefeitoChavePrimaria, int indice) where T : class, new()
+	/// <param name="primaryKeyDefaultValue"></param>
+	/// <param name="index">Indice da iteração para acrescentar aos nomes dos <paramref name="parameters"/> que serão criados</param>
+	private static void BuildInsertOrUpdateCommand<T>(T entity, StringBuilder sbFinal, DynamicParameters parameters, string baseUpdate, List<PropertyInfo> columns,
+		PropertyInfo primaryKey, string baseInsert, object primaryKeyDefaultValue, int index) where T : class, new()
 	{
-		object valorChavePrimaria = chavePrimaria.GetValue(entidade);
+		object primaryKeyValue = primaryKey.GetValue(entity);
 		//Se a chave primária for o valor por defeito, faz um INSERT
-		if (valorChavePrimaria.Equals(valorDefeitoChavePrimaria))
+		if (primaryKeyValue.Equals(primaryKeyDefaultValue))
 		{
 			sbFinal.Append(baseInsert);
 
@@ -278,28 +278,28 @@ public class Dados : IData
 			//sbFinal.Append(chavePrimaria.Name).Append(", ");
 			//parametros.Add($"@{chavePrimaria.Name}{indice}", valorChavePrimaria);
 
-			AtribuirValoresInsertOuReplace(entidade, sbFinal, parametros, colunas, indice);
+			AssignValuesInsertOrReplace(entity, sbFinal, parameters, columns, index);
 		}
 		else //Caso contrário faz um UPDATE
 		{
 			sbFinal.Append(baseUpdate);
 
-			colunas.ForEach(c =>
+			columns.ForEach(c =>
 			{
-				string parametro = $"@{c.Name}{indice}";
-				parametros.Add(parametro, c.GetValue(entidade));
-				sbFinal.Append(c.Name).Append(" = ").Append(parametro).Append(", ");
+				string parameter = $"@{c.Name}{index}";
+				parameters.Add(parameter, c.GetValue(entity));
+				sbFinal.Append(c.Name).Append(" = ").Append(parameter).Append(", ");
 			});
 
-			string parametro = $"@{chavePrimaria.Name}{indice}";
+			string parameter = $"@{primaryKey.Name}{index}";
 			sbFinal.Remove(sbFinal.Length - 2, 2)
 				.Append(" WHERE ")
-				.Append(chavePrimaria.Name)
+				.Append(primaryKey.Name)
 				.Append(" = ")
-				.Append(parametro)
+				.Append(parameter)
 				.AppendLine(";");
 
-			parametros.Add(parametro, valorChavePrimaria);
+			parameters.Add(parameter, primaryKeyValue);
 		}
 	}
 
@@ -307,38 +307,38 @@ public class Dados : IData
 	/// Cria comando (INSERT OR) REPLACE INTO
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
-	/// <param name="entidade"></param>
+	/// <param name="entity"></param>
 	/// <param name="sbFinal"></param>
-	/// <param name="parametros"></param>
-	/// <param name="colunas"></param>
-	/// <param name="chavePrimaria"></param>
+	/// <param name="parameters"></param>
+	/// <param name="columns"></param>
+	/// <param name="primaryKey"></param>
 	/// <param name="baseInsert"></param>
 	/// <param name="i"></param>
-	private static void CriarComandoReplace<T>(T entidade, StringBuilder sbFinal, DynamicParameters parametros,
-		List<PropertyInfo> colunas, PropertyInfo chavePrimaria, string baseInsert, int i) where T : class, new()
+	private static void BuildReplaceCommand<T>(T entity, StringBuilder sbFinal, DynamicParameters parameters,
+		List<PropertyInfo> columns, PropertyInfo primaryKey, string baseInsert, int i) where T : class, new()
 	{
 		sbFinal.Append(baseInsert);
 
-		AtribuirValorInsertOuReplace(entidade, sbFinal, parametros, i, chavePrimaria);
-		AtribuirValoresInsertOuReplace(entidade, sbFinal, parametros, colunas, i);
+		AssignValueInsertOrReplace(entity, sbFinal, parameters, i, primaryKey);
+		AssignValuesInsertOrReplace(entity, sbFinal, parameters, columns, i);
 	}
 
 	/// <summary>
-	/// Método que serve apenas para se poder criar um <see cref="Delegate"/> com uma assinatura comum entre <see cref="CriarComandoReplace"/> e <seealso cref="CriarComandoInsertOuUpdate"/>
+	/// Método que serve apenas para se poder criar um <see cref="Delegate"/> com uma assinatura comum entre <see cref="BuildReplaceCommand"/> e <seealso cref="BuildInsertOrUpdateCommand"/>
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
-	/// <param name="entidade"></param>
+	/// <param name="entity"></param>
 	/// <param name="sbFinal"></param>
-	/// <param name="parametros"></param>
+	/// <param name="parameters"></param>
 	/// <param name="baseUpdate"></param>
-	/// <param name="colunas"></param>
-	/// <param name="chavePrimaria"></param>
+	/// <param name="columns"></param>
+	/// <param name="primaryKey"></param>
 	/// <param name="baseInsert"></param>
-	/// <param name="valorDefeitoChavePrimaria"></param>
-	/// <param name="indice"></param>
-	private static void CriarComandoReplace_Aux<T>(T entidade, StringBuilder sbFinal, DynamicParameters parametros, string baseUpdate, List<PropertyInfo> colunas,
-		PropertyInfo chavePrimaria, string baseInsert, object valorDefeitoChavePrimaria, int indice) where T : class, new()
+	/// <param name="primaryKeyDefaultValue"></param>
+	/// <param name="index"></param>
+	private static void BuildReplaceCommand_Aux<T>(T entity, StringBuilder sbFinal, DynamicParameters parameters, string baseUpdate, List<PropertyInfo> columns,
+		PropertyInfo primaryKey, string baseInsert, object primaryKeyDefaultValue, int index) where T : class, new()
 	{
-		CriarComandoReplace(entidade, sbFinal, parametros, colunas, chavePrimaria, baseInsert, indice);
+		BuildReplaceCommand(entity, sbFinal, parameters, columns, primaryKey, baseInsert, index);
 	}
 }

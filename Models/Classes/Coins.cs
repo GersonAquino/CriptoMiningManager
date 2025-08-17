@@ -10,39 +10,39 @@ namespace Models.Classes;
 
 public class Coins
 {
-	public static Comparison<Coin> MaiorRentabilidade_Descendente { get; } = new((m1, m2) => -m1.Profitability24.CompareTo(m2.Profitability24));
+	public static Comparison<Coin> ProfitabilityComparison_Descending { get; } = new((m1, m2) => -m1.Profitability24.CompareTo(m2.Profitability24));
 
 	/// <summary>
-	/// Usar isto é desaconselhado, só está público para poder ser desserializado em condições. Usar <see cref="GetMoedas"/>
+	/// Usar isto é desaconselhado, só está público para poder ser desserializado em condições. Usar <see cref="GetCoins"/>
 	/// </summary>
-	public ListaMoedas coins { get; set; }
+	public CoinList coins { get; set; }
 
 	/// <summary>
 	/// Pega em todas as propriedades do tipo <see cref="Coin"/> em <see cref="coins"/> e passa-as para um <see cref="IEnumerable{T}"/> de <see cref="Coin"/>
 	/// </summary>
 	/// <returns></returns>
-	public List<Coin> GetMoedas()
+	public List<Coin> GetCoins()
 	{
-		if (coins == null)
+		if (this.coins == null)
 			return null;
 
-		PropertyInfo[] propriedades = coins.GetType().GetProperties();
+		PropertyInfo[] properties = this.coins.GetType().GetProperties();
 
-		List<Coin> moedas = new(propriedades.Length);
-		foreach (PropertyInfo propriedade in propriedades)
+		List<Coin> coins = new(properties.Length);
+		foreach (PropertyInfo propriedade in properties)
 		{
-			if (propriedade.GetValue(coins) is Coin moeda)
+			if (propriedade.GetValue(this.coins) is Coin coin)
 			{
-				moeda.NomeExterno = propriedade.Name;
-				moedas.Add(moeda);
+				coin.ExternalName = propriedade.Name;
+				coins.Add(coin);
 			}
 		}
 
-		return moedas;
+		return coins;
 	}
 }
 
-public class ListaMoedas
+public class CoinList
 {
 	//public Moeda Aeternity { get; set; }
 	//public Moeda Alephium { get; set; }
@@ -144,7 +144,7 @@ public class ListaMoedas
 /// <summary>
 /// Classe genérica com propriedades desnecessárias comentadas para evitar stresses e simplificar a leitura do JSON
 /// </summary>
-[System.ComponentModel.Description("Moeda"), Table("Moedas")]
+[System.ComponentModel.Description("Moeda"), Table("Coins")]
 public class Coin
 {
 	/// <summary>
@@ -152,12 +152,12 @@ public class Coin
 	/// </summary>
 	[Key, JsonIgnore(Condition = JsonIgnoreCondition.Always)]
 	public int Id { get; set; }
-	public string Nome { get; set; }
-	public string NomeExterno { get; set; }
+	public string Name { get; set; }
+	public string ExternalName { get; set; }
 
 	//Propriedades vindas da API
 	[JsonPropertyName("Id"), JsonConverter(typeof(IntConverter))]
-	public int IdExterno { get; set; }
+	public int ExternalId { get; set; }
 
 	[NotMapped]
 	public string Tag { get; set; }
@@ -223,6 +223,6 @@ public class Coin
 
 	public override string ToString()
 	{
-		return $"{Id} - {Nome} - {BtcPorDia} BTC/Dia";
+		return $"{Id} - {Name} - {BtcPorDia} BTC/Dia";
 	}
 }

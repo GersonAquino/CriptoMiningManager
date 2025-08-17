@@ -9,111 +9,110 @@ using System;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace CryptoMiningManager.Views.UserControls.Configuracoes;
+namespace CryptoMiningManager.Views.UserControls.Configurations;
 
-public partial class CommandUserControl : DevExpress.XtraEditors.XtraUserControl
+public partial class CommandUserControl : XtraUserControl
 {
-	private EntityConfigurationHelper ConfiguracoesEntidadesHelper { get; }
-	private IEntityHelper<Command> EntidadesHelper { get; }
+	private EntityConfigurationHelper EntityConfigurationHelper { get; }
+	private IEntityHelper<Command> EntityHelper { get; }
 
-	public CommandUserControl(EntityConfigurationHelper configuracoesEntidadesHelper, IEntityHelper<Command> entidadesHelper)
+	public CommandUserControl(EntityConfigurationHelper entityConfigurationHelper, IEntityHelper<Command> entityHelper)
 	{
 		InitializeComponent();
 
-		ConfiguracoesEntidadesHelper = configuracoesEntidadesHelper;
-		EntidadesHelper = entidadesHelper;
+		EntityConfigurationHelper = entityConfigurationHelper;
+		EntityHelper = entityHelper;
 	}
 
-	private async void ComandosUserControl_Load(object sender, EventArgs e)
+	private async void CommandUserControl_Load(object sender, EventArgs e)
 	{
-		await AtualizarDados();
-		ComandosGV.BestFitColumns(true);
+		await RefreshData();
+		CommandGV.BestFitColumns(true);
 	}
 
-	private async void AtualizarBBI_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
+	private async void RefreshBBI_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
 	{
-		await AtualizarDados();
+		await RefreshData();
 	}
 
 	private void NovoBBI_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
 	{
-		ConfiguracoesEntidadesHelper.AbrirEditorUC<Command>("Novo Comando", ActiveControl);
+		EntityConfigurationHelper.OpenEditorTab<Command>("Novo Comando", ActiveControl);
 	}
 
-	private void ComandosGV_DoubleClick(object sender, EventArgs e)
+	private void CommandGV_DoubleClick(object sender, EventArgs e)
 	{
-		ConfiguracoesEntidadesHelper.DuploCliqueEntidade<Command>(e, ComandosGV, ActiveControl);
+		EntityConfigurationHelper.EntityDoubleClick<Command>(e, CommandGV, ActiveControl);
 	}
 
-	private void EditarBBI_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
+	private void EditBBI_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
 	{
-		ConfiguracoesEntidadesHelper.EditarEntidade<Command>(ComandosGV, ActiveControl);
+		EntityConfigurationHelper.EditEntity<Command>(CommandGV, ActiveControl);
 	}
 
-	private async void EliminarBBI_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
+	private async void DeleteBBI_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
 	{
 		try
 		{
-			if (ComandosGV.SelectedRowsCount == 0 ||
+			if (CommandGV.SelectedRowsCount == 0 ||
 				XtraMessageBox.Show("Pretende eliminar os comandos selecionados?", "Eliminar comandos", MessageBoxButtons.YesNo, MessageBoxIcon.Information) != DialogResult.Yes)
 				return;
 
-			int[] linhasSelecionadas = ComandosGV.GetSelectedRows();
-			int[] idComandos = new int[linhasSelecionadas.Length];
+			int[] selectedRows = CommandGV.GetSelectedRows();
+			int[] commandIds = new int[selectedRows.Length];
 
-			for (int i = 0; i < linhasSelecionadas.Length; i++)
+			for (int i = 0; i < selectedRows.Length; i++)
 			{
-				idComandos[i] = (int)ComandosGV.GetRowCellValue(linhasSelecionadas[i], colId);
+				commandIds[i] = (int)CommandGV.GetRowCellValue(selectedRows[i], colId);
 			}
 
-			ComandosGV.BeginUpdate();
-			if (await EntidadesHelper.EliminarEntidades(idComandos) == linhasSelecionadas.Length)
+			CommandGV.BeginUpdate();
+			if (await EntityHelper.DeleteEntities(commandIds) == selectedRows.Length)
 			{
-				ComandosGV.DeleteSelectedRows();
+				CommandGV.DeleteSelectedRows();
 
 				XtraMessageBox.Show("Comandos eliminados com sucesso!", "Comandos eliminados", MessageBoxButtons.OK, MessageBoxIcon.Information);
 			}
 			else
 			{
 				//Atualizam-se os dados todos porque não se sabe exatamente quais as entidades eliminadas
-				await AtualizarDados();
+				await RefreshData();
 				XtraMessageBox.Show("Alguns comandos não foram eliminados.", "Comandos eliminados", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 			}
 		}
 		catch (Exception ex)
 		{
-			LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro ao eliminar os comandos selecionados.");
+			LogHelper.WriteExceptionLog(LogLevel.Error, ex, "Erro ao eliminar os comandos selecionados.");
 			XtraMessageBox.Show($"Erro ao eliminar os comandos selecionados.{Environment.NewLine}{ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
 		}
 		finally
 		{
-			ComandosGV.EndUpdate();
+			CommandGV.EndUpdate();
 		}
 	}
 
 	//FUNÇÕES AUXILIARES
-	private async Task AtualizarDados()
+	private async Task RefreshData()
 	{
 
-		IOverlaySplashScreenHandle splashScreenHandler = SplashScreenManager.ShowOverlayForm(ComandosGC);
-		ComandosGV.BeginDataUpdate();
+		CommandGV.BeginDataUpdate();
 		try
 		{
-			ComandosBindingSource.Clear();
-			foreach (Command comando in await EntidadesHelper.GetEntidades())
+			using IOverlaySplashScreenHandle splashScreenHandler = SplashScreenManager.ShowOverlayForm(ComandosGC);
+			CommandsBindingSource.Clear();
+			foreach (Command comando in await EntityHelper.GetEntities())
 			{
-				ComandosBindingSource.Add(comando);
+				CommandsBindingSource.Add(comando);
 			}
 		}
 		catch (Exception ex)
 		{
-			LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro ao carregar dados.");
+			LogHelper.WriteExceptionLog(LogLevel.Error, ex, "Erro ao carregar dados.");
 			XtraMessageBox.Show(ex.Message, "Erro ao carregar dados", MessageBoxButtons.OK, MessageBoxIcon.Error);
 		}
 		finally
 		{
-			ComandosGV.EndDataUpdate();
-			splashScreenHandler.Dispose();
+			CommandGV.EndDataUpdate();
 		}
 	}
 }

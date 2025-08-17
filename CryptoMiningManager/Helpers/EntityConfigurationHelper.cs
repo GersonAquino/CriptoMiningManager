@@ -32,9 +32,9 @@ public class EntityConfigurationHelper
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
 	/// <param name="caption"></param>
-	/// <param name="entidadeAEditar"></param>
+	/// <param name="entityToEdit"></param>
 	/// <param name="activeControl">Control para apresentar a animação de loading</param>
-	public void AbrirEditorUC<T>(string caption, Control activeControl = null, T entidadeAEditar = null) where T : class
+	public void OpenEditorTab<T>(string caption, Control activeControl = null, T entityToEdit = null) where T : class
 	{
 		IOverlaySplashScreenHandle splashScreenHandler = activeControl == null ? null : SplashScreenManager.ShowOverlayForm(activeControl);
 		try
@@ -45,8 +45,8 @@ public class EntityConfigurationHelper
 				mainForm.TabbedView.ActivateDocument(doc.Control);
 			else
 			{
-				Type tipoEntidade = typeof(T);
-				XtraUserControl editor = Scope.ResolveKeyed<XtraUserControl>(tipoEntidade.Name, new TypedParameter(tipoEntidade, entidadeAEditar ?? Scope.Resolve<T>()));
+				Type entityType = typeof(T);
+				XtraUserControl editor = Scope.ResolveKeyed<XtraUserControl>(entityType.Name, new TypedParameter(entityType, entityToEdit ?? Scope.Resolve<T>()));
 				doc = mainForm.TabbedView.AddDocument(editor, caption);
 			}
 
@@ -54,7 +54,7 @@ public class EntityConfigurationHelper
 		}
 		catch (Exception ex)
 		{
-			LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro ao abrir menu {menuCaption}", caption);
+			LogHelper.WriteExceptionLog(LogLevel.Error, ex, "Erro ao abrir menu {menuCaption}", caption);
 			XtraMessageBox.Show(ex.GetBaseException().Message, $"Não foi possível abrir o menu {caption}", MessageBoxButtons.OK, MessageBoxIcon.Error);
 		}
 		finally
@@ -70,7 +70,7 @@ public class EntityConfigurationHelper
 	/// <param name="e"></param>
 	/// <param name="gridView"></param>
 	/// <param name="activeControl"></param>
-	public void DuploCliqueEntidade<T>(EventArgs e, GridView gridView, Control activeControl = null) where T : Configuration
+	public void EntityDoubleClick<T>(EventArgs e, GridView gridView, Control activeControl = null) where T : Configuration
 	{
 		try
 		{
@@ -78,12 +78,12 @@ public class EntityConfigurationHelper
 			{
 				GridHitInfo info = gridView.CalcHitInfo(ea.Location);
 				if ((info.InRow || info.InRowCell) && gridView.FocusedRowObject is T entidade)
-					EditarEntidade(entidade, activeControl);
+					EditEntity(entidade, activeControl);
 			}
 		}
 		catch (Exception ex)
 		{
-			LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro ao tratar duplo clique.");
+			LogHelper.WriteExceptionLog(LogLevel.Error, ex, "Erro ao tratar duplo clique.");
 			XtraMessageBox.Show($"Erro ao tratar duplo clique!{Environment.NewLine}{ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
 		}
 	}
@@ -94,23 +94,23 @@ public class EntityConfigurationHelper
 	/// <typeparam name="T"></typeparam>
 	/// <param name="gridView"></param>
 	/// <param name="activeControl"></param>
-	public void EditarEntidade<T>(GridView gridView, Control activeControl = null) where T : Configuration
+	public void EditEntity<T>(GridView gridView, Control activeControl = null) where T : Configuration
 	{
 		try
 		{
 			if (gridView.SelectedRowsCount == 0)
 			{
-				if (gridView.FocusedRowObject is T entidade)
-					EditarEntidade(entidade, activeControl);
+				if (gridView.FocusedRowObject is T entity)
+					EditEntity(entity, activeControl);
 				else
-					throw new CustomException($"Por favor selecione um(a) {typeof(T).GetDescricaoClasse()} para editar.");
+					throw new CustomException($"Por favor selecione um(a) {typeof(T).GetClassDescription()} para editar.");
 			}
 			else
 			{
 				for (int i = 0; i < gridView.SelectedRowsCount; i++)
 				{
-					if (gridView.IsDataRow(i) && gridView.GetRow(i) is T entidade)
-						EditarEntidade(entidade, activeControl);
+					if (gridView.IsDataRow(i) && gridView.GetRow(i) is T entity)
+						EditEntity(entity, activeControl);
 				}
 			}
 		}
@@ -120,7 +120,7 @@ public class EntityConfigurationHelper
 		}
 		catch (Exception ex)
 		{
-			LogHelper.EscreveLogException(LogLevel.Error, ex, "Erro ao abrir editor da(s) linha(s) selecionada(s).");
+			LogHelper.WriteExceptionLog(LogLevel.Error, ex, "Erro ao abrir editor da(s) linha(s) selecionada(s).");
 			XtraMessageBox.Show($"Erro ao abrir editor da(s) linha(s) selecionada(s).{Environment.NewLine}{ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
 		}
 	}
@@ -129,10 +129,10 @@ public class EntityConfigurationHelper
 	/// Abre um separador com o editor adequado no modo edição com uma cópia da entidade recebida
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
-	/// <param name="entidadeAEditar"></param>
+	/// <param name="entityToEdit"></param>
 	/// <param name="activeControl">Control para apresentar a animação de loading</param>
-	private void EditarEntidade<T>(T entidadeAEditar, Control activeControl = null) where T : Configuration
+	private void EditEntity<T>(T entityToEdit, Control activeControl = null) where T : Configuration
 	{
-		AbrirEditorUC($"Editar {typeof(T).GetDescricaoClasse()} {entidadeAEditar?.Id}", activeControl, DeepCopier.Copy(entidadeAEditar));
+		OpenEditorTab($"Editar {typeof(T).GetClassDescription()} {entityToEdit?.Id}", activeControl, DeepCopier.Copy(entityToEdit));
 	}
 }

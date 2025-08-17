@@ -7,58 +7,58 @@ using System.Threading.Tasks;
 
 namespace DataManager.Helpers.Entities;
 
-public class MineradorHelper : IEntityHelper<Miner>
+public class MinerHelper : IEntityHelper<Miner>
 {
-	private const string Tabela = "Mineradores";
+	private const string Table = "Miners";
 
-	private IData Dados { get; set; }
+	private IData Data { get; set; }
 
-	public MineradorHelper(IData dados)
+	public MinerHelper(IData data)
 	{
-		Dados = dados;
+		Data = data;
 	}
 
 	///<inheritdoc/>
-	public async Task<int> EliminarEntidades(IEnumerable<int> ids)
+	public async Task<int> DeleteEntities(IEnumerable<int> ids)
 	{
-		string query = QueryHelper.Delete(Tabela, "Id IN @Ids");
+		string query = QueryHelper.Delete(Table, "Id IN @Ids");
 
-		return await Dados.ExecuteOpenAsync(query, new { Ids = ids });
+		return await Data.ExecuteOpenAsync(query, new { Ids = ids });
 	}
 
 	///<inheritdoc/>
-	public async Task<IEnumerable<Miner>> GetEntidades(string condicoes = null, string ordenacao = null)
+	public async Task<IEnumerable<Miner>> GetEntities(string condicoes = null, string ordenacao = null)
 	{
-		string query = QueryHelper.Select("*", Tabela, condicoes, ordenacao);
-		return await Dados.QueryOpenAsync<Miner>(query);
+		string query = QueryHelper.Select("*", Table, condicoes, ordenacao);
+		return await Data.QueryOpenAsync<Miner>(query);
 	}
 
 	///<inheritdoc/>
-	public async Task<IEnumerable<Miner>> GetEntidades(string condicoes, string ordenacao, params (string parametro, object valor)[] parametros)
+	public async Task<IEnumerable<Miner>> GetEntities(string condicoes, string ordenacao, params (string parameter, object value)[] parameters)
 	{
-		string query = QueryHelper.Select("*", Tabela, condicoes, ordenacao);
+		string query = QueryHelper.Select("*", Table, condicoes, ordenacao);
 
-		DynamicParameters parametrosDapper = new DynamicParameters();
-		for (int i = 0; i < parametros.Length; i++)
+		DynamicParameters dapperParameters = new();
+		for (int i = 0; i < parameters.Length; i++)
 		{
-			parametrosDapper.Add(parametros[i].parametro, parametros[i].valor);
+			dapperParameters.Add(parameters[i].parameter, parameters[i].value);
 		}
 
-		return await Dados.QueryOpenAsync<Miner>(query, parametrosDapper);
+		return await Data.QueryOpenAsync<Miner>(query, dapperParameters);
 	}
 
 	///<inheritdoc/>
-	public async Task<Dictionary<int, Miner>> GetEntidadesComLista(string condicoes = null, string ordenacao = null)
+	public async Task<Dictionary<int, Miner>> GetEntitiesWithList(string condicoes = null, string ordenacao = null)
 	{
 		string query = QueryHelper.Select("mi.*, mo.*",
 			@"Mineradores mi
                             LEFT JOIN Moedas mo
-                                ON mo.Id = mi.IdMoeda", condicoes, ordenacao);
+                                ON mo.Id = mi.CoinId", condicoes, ordenacao);
 
 		Dictionary<int, Miner> mineradores = new Dictionary<int, Miner>();
 
 		//Função para mapear as moedas com os mineradores
-		Func<Miner, Coin, Miner> mapeamento = (minerador, moeda) =>
+		Func<Miner, Coin, Miner> mapping = (minerador, moeda) =>
 		{
 			if (!mineradores.TryGetValue(minerador.Id, out Miner mineradorExistente))
 			{
@@ -67,7 +67,7 @@ public class MineradorHelper : IEntityHelper<Miner>
 			}
 
 			if (moeda != null)
-				mineradorExistente.Moeda = moeda;
+				mineradorExistente.Coin = moeda;
 
 			//O return aqui é o que vai ser devolvido para o IEnumerable<Minerador> que o Dapper está a criar
 			//Como não vai ser usado, mais vale que fique cheio de nulls
@@ -75,29 +75,29 @@ public class MineradorHelper : IEntityHelper<Miner>
 		};
 
 		//Não se guarda o resultado porque os dados serão preenchidos corretamente no Dictionary<int, Minerador>
-		await Dados.QueryOpenAsync(query, mapeamento, "Id");
+		await Data.QueryOpenAsync(query, mapping, "Id");
 		return mineradores;
 	}
 
 	///<inheritdoc/>
-	public async Task<bool> GravarEntidade(Miner minerador)
+	public async Task<bool> SaveEntity(Miner minerador)
 	{
-		return await Dados.ExecuteOpenAsync(GravarEntidade_Base(minerador), minerador) == 1;
+		return await Data.ExecuteOpenAsync(SaveEntity_Base(minerador), minerador) == 1;
 	}
 
-	public async Task<int> GravarEntidade_GetIdGerado(Miner minerador)
+	public async Task<int> SaveEntity_GetId(Miner minerador)
 	{
 		if (minerador.Id == -1)
 		{
-			string query = GravarEntidade_Base(minerador) + "; SELECT LAST_INSERT_ROWID();";
-			return await Dados.ExecuteScalarOpenAsync<int, Miner>(query, minerador);
+			string query = SaveEntity_Base(minerador) + "; SELECT LAST_INSERT_ROWID();";
+			return await Data.ExecuteScalarOpenAsync<int, Miner>(query, minerador);
 		}
 
-		return await GravarEntidade(minerador) ? minerador.Id : -1;
+		return await SaveEntity(minerador) ? minerador.Id : -1;
 	}
 
 	//FUNÇÕES AUXILIARES
-	private string GravarEntidade_Base(Miner minerador)
+	private static string SaveEntity_Base(Miner minerador)
 	{
 		if (minerador.Id < -1)
 			throw new ArgumentException($"Minerador tem Id inválido ({minerador.Id}).");
@@ -107,18 +107,18 @@ public class MineradorHelper : IEntityHelper<Miner>
 		//Inserir caso Id seja um valor inválido mas esperado
 		if (minerador.Id == -1)
 		{
-			query = QueryHelper.InsertParametrizado(Tabela, "Ativo", "IdMoeda", "Localizacao", "Nome", "Parametros");
+			query = QueryHelper.ParameterizedInsert(Table, "Active", "CoinId", "Location", "Name", "Parameters");
 		}
 		else //Atualizar caso tenha Id válido
 		{
-			query = QueryHelper.UpdateParametrizado(Tabela, "Id = @Id", "Ativo", "IdMoeda", "Localizacao", "Nome", "Parametros", "DataAlteracao");
+			query = QueryHelper.ParameterizedUpdate(Table, "Id = @Id", "Active", "CoinId", "Location", "Name", "Parameters", "UpdatedDate");
 
-			minerador.DataAlteracao = DateTime.Now;
+			minerador.UpdatedDate = DateTime.Now;
 		}
 		return query;
 	}
 
-	public Task<List<Miner>> GravarEntidades(IEnumerable<Miner> entidades = null)
+	public Task<List<Miner>> SaveEntities(IEnumerable<Miner> entidades = null)
 	{
 		throw new NotImplementedException();
 	}
